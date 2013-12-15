@@ -1,37 +1,38 @@
 <utility_space> 
-    <reservation value="0" />
-<objective index="0" etype="objective" type="objective" description="" name="LaptopDomain"> 
-<issue index="1" etype="discrete" type="discrete" vtype="discrete" name="Laptop"> 
-<item index="1" value="Dell"  cost="0"  evaluation="12" description="cheap laptop"> 
+<objective index="0" description="" name="LaptopDomain" type="objective" etype="objective"> 
+<issue index="1" name="Laptop" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" description="cheap laptop" value="Dell" evaluation="12"> 
 </item> 
-<item index="2" value="Macintosh"  cost="0" evaluation="20" description="quality laptop"> 
+<item index="2" description="quality laptop" value="Macintosh" evaluation="20"> 
 </item> 
-<item index="3" value="HP"  cost="0" evaluation="30" description="gamer laptop"> 
-</item> 
-</issue> 
-<issue index="2" etype="discrete" type="discrete" vtype="discrete" name="Harddisk"> 
-<item index="1" value="60 Gb"  cost="0" evaluation="30" description="the default internal HD"> 
-</item> 
-<item index="2" value="80 Gb"  cost="0" evaluation="20" description="some extra space"> 
-</item> 
-<item index="3" value="120 Gb"  cost="0" evaluation="9" description="enough for dual-boot or video editing"> 
+<item index="3" description="gamer laptop" value="HP" evaluation="30"> 
 </item> 
 </issue> 
-<issue index="3" etype="discrete" type="discrete" vtype="discrete" name="External Monitor"> 
-<item index="1" value="19'' LCD"  cost="0" evaluation="30" description="nothing special"> 
+<issue index="2" name="Harddisk" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" description="the default internal HD" value="60 Gb" evaluation="9"> 
 </item> 
-<item index="2" value="20'' LCD"  cost="0" evaluation="10" description="fast switching, high contrast"> 
+<item index="2" description="some extra space" value="80 Gb" evaluation="20"> 
 </item> 
-<item index="3" value="23'' LCD"  cost="0" evaluation="20" description="nice to play movies, lots of space"> 
+<item index="3" description="enough for dual-boot or video editing" value="120 Gb" evaluation="30"> 
 </item> 
 </issue> 
-<weight index="1" value="0.4452125771655631"> 
+<issue index="3" name="External Monitor" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" description="nothing special" value="19'' LCD" evaluation="30"> 
+</item> 
+<item index="2" description="fast switching, high contrast" value="20'' LCD" evaluation="10"> 
+</item> 
+<item index="3" description="nice to play movies, lots of space" value="23'' LCD" evaluation="20"> 
+</item> 
+</issue> 
+<weight index="1" value="0.2891173073854614"> 
 </weight> 
-<weight index="2" value="0.37808251708013424"> 
+<weight index="2" value="0.4085892257586013"> 
 </weight> 
-<weight index="3" value="0.1767567099260568"> 
+<weight index="3" value="0.30229346685593733"> 
 </weight> 
 </objective> 
-<discount_factor value="0.42441038">
-</discount_factor>
+<discount_factor value="0.4"> 
+</discount_factor> 
+<reservation value="0.0"> 
+</reservation> 
 </utility_space> 

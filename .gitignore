@@ -1,0 +1,9 @@
+genius/log/
+NegotiationAgent/report/*.pdf
+*.bbl
+*.aux
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fdb_latexmk
