@@ -24,7 +24,7 @@ import negotiator.boaframework.opponentmodel.NoModel;
  * 
  * @author Alex Dirkzwager, Mark Hendrikx
  */
-public class TimeDependent_Offering extends OfferingStrategy {
+public class Group7_BS extends OfferingStrategy {
 
 	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
 	private double k;

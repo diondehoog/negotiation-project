@@ -16,7 +16,7 @@ import negotiator.boaframework.OfferingStrategy;
  * @author Alex Dirkzwager, Mark Hendrikx
  * @version 18/12/11
  */
-public class AC_Next extends AcceptanceStrategy {
+public class Group7_AS extends AcceptanceStrategy {
 	
 	private double a;
 	private double b;

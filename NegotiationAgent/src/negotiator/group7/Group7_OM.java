@@ -29,7 +29,7 @@ import negotiator.utility.UtilitySpace;
  * 
  * @author Mark Hendrikx
  */
-public class HardHeadedFrequencyModel extends OpponentModel {
+public class Group7_OM extends OpponentModel {
 
 	// the learning coefficient is the weight that is added each turn to the issue weights
 	// which changed. It's a trade-off between concession speed and accuracy.

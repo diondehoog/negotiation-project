@@ -14,7 +14,7 @@ import negotiator.boaframework.OpponentModel;
  *
  * @author Mark Hendrikx
  */
-public class BestBid extends OMStrategy {
+public class Group7_OMS extends OMStrategy {
 
 	/**  when to stop updating the opponentmodel. Note that this value
 	 * 	 is not exactly one as a match sometimes lasts slightly longer. */
