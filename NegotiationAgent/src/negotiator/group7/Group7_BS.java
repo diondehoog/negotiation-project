@@ -1,4 +1,4 @@
-package negotiator.boaframework.offeringstrategy.other;
+package negotiator.group7;
 
 import java.util.HashMap;
 
@@ -41,9 +41,9 @@ public class Group7_BS extends OfferingStrategy {
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
 	 * is called next.
 	 */
-	public TimeDependent_Offering(){}
+	public Group7_BS(){}
 	
-	public TimeDependent_Offering(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
+	public Group7_BS(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
 		this.e = e;
 		this.k = k;
 		this.Pmax = max;

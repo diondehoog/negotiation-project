@@ -1,4 +1,4 @@
-package negotiator.boaframework.opponentmodel;
+package negotiator.group7;
 
 import java.util.HashMap;
 import java.util.Map.Entry;

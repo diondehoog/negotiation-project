@@ -1,6 +1,7 @@
-package negotiator.boaframework.acceptanceconditions.other;
+package negotiator.group7;
 
 import java.util.HashMap;
+
 import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
@@ -23,10 +24,11 @@ public class Group7_AS extends AcceptanceStrategy {
 
 	/**
 	 * Empty constructor for the BOA framework.
+	 * @return 
 	 */
-	public AC_Next() { }
+	public Group7_AS() { }
 	
-	public AC_Next(NegotiationSession negoSession, OfferingStrategy strat, double alpha, double beta){
+	public Group7_AS(NegotiationSession negoSession, OfferingStrategy strat, double alpha, double beta){
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
 		this.a =  alpha;

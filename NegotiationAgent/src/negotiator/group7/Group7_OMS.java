@@ -1,4 +1,4 @@
-package negotiator.boaframework.omstrategy;
+package negotiator.group7;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +23,14 @@ public class Group7_OMS extends OMStrategy {
 	/**
 	 * Empty constructor for the BOA framework.
 	 */
-	public BestBid() { }
+	public Group7_OMS() { }
 
 	/**
 	 * Normal constructor used to initialize the BestBid opponent model strategy.
 	 * @param negotiationSession symbolizing the negotiation state.
 	 * @param model used by the opponent model strategy.
 	 */
-	public BestBid(NegotiationSession negotiationSession, OpponentModel model) {
+	public Group7_OMS(NegotiationSession negotiationSession, OpponentModel model) {
 		try {
 			super.init(negotiationSession, model);
 		} catch (Exception e) {
