@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>negosimulator.jar</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/genius/negosimulator.jar</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
