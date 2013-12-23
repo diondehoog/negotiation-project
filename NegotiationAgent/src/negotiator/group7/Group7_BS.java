@@ -10,6 +10,7 @@ import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.boaframework.opponentmodel.NoModel;
 
+/* Test voor Bas, kan je dit zien?
 /**
  * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
  * 	[1]	S. Shaheen Fatima  Michael Wooldridge  Nicholas R. Jennings
