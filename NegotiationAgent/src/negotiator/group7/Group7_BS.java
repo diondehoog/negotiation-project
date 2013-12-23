@@ -11,6 +11,7 @@ import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.boaframework.opponentmodel.NoModel;
 
 /**
+ * Test 2: Werkt dit?
  * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
  * 	[1]	S. Shaheen Fatima  Michael Wooldridge  Nicholas R. Jennings
  * 		Optimal Negotiation Strategies for Agents with Incomplete Information
