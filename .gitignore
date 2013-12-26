@@ -1,4 +1,6 @@
+.metadata/
 genius/log/
+NegotiationAgent/bin/
 NegotiationAgent/report/*.pdf
 *.bbl
 *.aux
