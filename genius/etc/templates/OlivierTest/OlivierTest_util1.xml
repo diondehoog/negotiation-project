@@ -1,0 +1,54 @@
+<utility_space> 
+<objective index="0" description="" name="OlivierTest" type="objective" etype="objective"> 
+<issue index="1" name="Bubbels" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Veel bubbels" evaluation="5"> 
+</item> 
+<item index="2" value="Beetje bubbels" evaluation="7"> 
+</item> 
+<item index="3" value="Geen bubbels" evaluation="1"> 
+</item> 
+</issue> 
+<issue index="2" name="Fles" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="150 cL" evaluation="1"> 
+</item> 
+<item index="2" value="100 cL" evaluation="3"> 
+</item> 
+<item index="3" value="50 cL" evaluation="5"> 
+</item> 
+<item index="4" value="33 cL" evaluation="1"> 
+</item> 
+</issue> 
+<issue index="3" name="Inschenken" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Wijnglas" evaluation="1"> 
+</item> 
+<item index="2" value="Bierglas" evaluation="2"> 
+</item> 
+<item index="3" value="Soepkom" evaluation="4"> 
+</item> 
+<item index="4" value="Fietsband" evaluation="7"> 
+</item> 
+<item index="5" value="IKEA glas" evaluation="4"> 
+</item> 
+</issue> 
+<issue index="4" name="Koekje" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Geen" evaluation="0"> 
+</item> 
+<item index="2" value="Muffin" evaluation="5"> 
+</item> 
+<item index="3" value="Boterkoekje" evaluation="1"> 
+</item> 
+</issue> 
+<weight index="1" value="0.26335529569149657"> 
+</weight> 
+<weight index="2" value="0.15721566431624243"> 
+</weight> 
+<weight index="3" value="0.11700059102057"> 
+</weight> 
+<weight index="4" value="0.462428448971691"> 
+</weight> 
+</objective> 
+<discount_factor value="0.0"> 
+</discount_factor> 
+<reservation value="0.0"> 
+</reservation> 
+</utility_space> 

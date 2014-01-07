@@ -1,0 +1,44 @@
+<negotiation_template> 
+<utility_space number_of_issues="4"> 
+<objective index="0" description="" name="OlivierTest" type="objective" etype="objective"> 
+<issue index="1" name="Bubbels" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Veel bubbels"> 
+</item> 
+<item index="2" value="Beetje bubbels"> 
+</item> 
+<item index="3" value="Geen bubbels"> 
+</item> 
+</issue> 
+<issue index="2" name="Fles" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="150 cL"> 
+</item> 
+<item index="2" value="100 cL"> 
+</item> 
+<item index="3" value="50 cL"> 
+</item> 
+<item index="4" value="33 cL"> 
+</item> 
+</issue> 
+<issue index="3" name="Inschenken" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Wijnglas"> 
+</item> 
+<item index="2" value="Bierglas"> 
+</item> 
+<item index="3" value="Soepkom"> 
+</item> 
+<item index="4" value="Fietsband"> 
+</item> 
+<item index="5" value="IKEA glas"> 
+</item> 
+</issue> 
+<issue index="4" name="Koekje" vtype="discrete" type="discrete" etype="discrete"> 
+<item index="1" value="Geen"> 
+</item> 
+<item index="2" value="Muffin"> 
+</item> 
+<item index="3" value="Boterkoekje"> 
+</item> 
+</issue> 
+</objective> 
+</utility_space> 
+</negotiation_template> 
