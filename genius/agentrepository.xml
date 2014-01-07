@@ -13,9 +13,11 @@
 			<agentRepItem description="ANAC 2012 - AgentLG" classPath="agents.anac.y2012.AgentLG.AgentLG" agentName="ANAC 2012 - AgentLG"/>		
 			<agentRepItem description="ANAC 2012 - CUHKAgent" classPath="agents.anac.y2012.CUHKAgent.CUHKAgent" agentName="ANAC 2012 - CUHKAgent"/>	
 			<agentRepItem description="ANAC 2012 - OMACAgent" classPath="agents.anac.y2012.OMACagent.OMACagent" agentName="ANAC 2012 - OMACAgent"/>
+            <agentRepItem description="Group 7 - Agent" classPath="" agentName="Group 7 - Agent" params="e=2;time=0.95"/>
         </agentRepItems>
         <domainRepItem/>
         <protocolRepItem/>
     </items>
     <filename>agentrepository.xml</filename>
 </repository>
+
