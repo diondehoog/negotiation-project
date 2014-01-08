@@ -173,4 +173,24 @@ public class Group7_BS extends OfferingStrategy {
 	public double p(double t) {
 		return Pmin + (Pmax - Pmin) * (1 - f(t));
 	}
+	
+	/**
+	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)
+	 *  - Met hoge biedeingen beginnen in eerste fase (+90%)
+	 *  - De reactie van hoge biedingen gebruiken om strategie/preference van opponent te bepalen
+	 *  
+	 *  - Combineren van twee strategien:
+	 *  	- Conceder --> Hard-Headed
+	 *  	- Hard-Headed --> Tit-for-That
+	 * 
+	 * 	- Fase 1: hoge biedingen 90%
+	 *  - Fase 2: afhankelijk van strategy HH/TfT
+	 *  - Fase 3: acceptance strategy
+	 *  
+	 *  Nash Point schatten a.d.h. preference profile
+	 *  Paar functies (sin/exp) implementeren en kijken hoe je de OS fuckt
+	 *  
+	 *  Runnen: saven in Eclipse, class file in Genius laden (TomV maakt XML)
+	 *  
+	 */
 }
