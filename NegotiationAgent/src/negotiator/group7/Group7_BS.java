@@ -1,7 +1,9 @@
 package negotiator.group7;
 
 import java.util.HashMap;
+import java.util.Random;
 
+import negotiator.Bid;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
@@ -35,6 +37,9 @@ public class Group7_BS extends OfferingStrategy {
 	private double e;
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
+	
+	/** Phase boundaries */
+	private double[] phaseBoundary = {0.2, 0.8};
 	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
@@ -100,6 +105,10 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
+		
+		
+		
+		
 		return determineNextBid();
 	}
 
@@ -123,8 +132,25 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
 		
-		// Calculate the utility goal by using p(t)
+		// We want to find the nearest bid to this goal
 		double utilityGoal;
+		
+		// Do we have an opponent model?
+		boolean useOM = !(opponentModel instanceof NoModel);
+		
+		// Based on the normalized time we determine in which 
+		// negotiation phase we are currently. Depending on which
+		// phase we are the bid generation differs.
+		if (time < phaseBoundary[0]) {
+			// Negotiation Phase 1
+			
+			
+			
+			
+		}
+		
+		
+		// Calculate the utility goal by using p(t)
 		utilityGoal = p(time);
 		
 		// System.out.println("[e=" + e + ", Pmin = " + BilateralAgent.round2(Pmin) + "] t = " + 
@@ -172,6 +198,17 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public double p(double t) {
 		return Pmin + (Pmax - Pmin) * (1 - f(t));
+	}
+	
+	public BidDetails getRandomBidFirstPhase () {
+		
+		Random randgen = new Random();
+		// Generate random number between 0.9 and 1.
+		double utilGoal = 0.9+(randgen.nextInt(1)/100);
+		
+		BidDetails bd = negotiationSession.getOutcomeSpace().getBidNearUtility(utilGoal);
+		return bd;
+		
 	}
 	
 	/**
