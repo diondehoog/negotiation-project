@@ -3,6 +3,7 @@ genius/negotiator
 genius/log/
 NegotiationAgent/bin/
 NegotiationAgent/report/*.pdf
+genius/previousTournament
 *.bbl
 *.aux
 *.blg
