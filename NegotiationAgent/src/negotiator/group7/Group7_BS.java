@@ -159,11 +159,11 @@ public class Group7_BS extends OfferingStrategy {
 			} else {
 				// Opponent Model IS available
 				// Base the next bid on the OM and outcome space
-				int opponentCategory = omStrategy.getOpponentModel();
+				int opponentCategory = ((Group7_OMS) omStrategy).getOpponentModel();
 				
 				//Opponent is Conceder: act tit for tat
 				if(opponentCategory == 1){
-					negotiationSession.getOpponentBidHistory()
+					negotiationSession.getOpponentBidHistory().getLastBid();
 				}
 				
 				//Opponent is Hardheaded: act hard headed
