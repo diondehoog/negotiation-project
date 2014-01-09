@@ -147,6 +147,21 @@ public class Group7_BS extends OfferingStrategy {
 			
 			
 			
+		} else if (time < phaseBoundary[1]) {
+		// Negotiation Phase 2
+			// Calculate the utility goal by using p(t)
+			utilityGoal = p(time);
+			
+			if (opponentModel instanceof NoModel) {
+				// Opponent model NOT available
+				// Use to utilityGoal to get the nearest bid in the outcome space
+				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
+			} else {
+				// Opponent Model IS available
+				// Base the next bid on the OM and outcome space
+				nextBid = omStrategy.getBid(outcomespace, utilityGoal);
+			}
+			return nextBid;
 		}
 		
 		
