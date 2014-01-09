@@ -105,4 +105,14 @@ public class Group7_OMS extends OMStrategy {
 	public boolean canUpdateOM() {
 		return negotiationSession.getTime() < updateThreshold;
 	}
+	
+	// TODO: implemented this!
+	public int getOpponentModel() {
+		
+		// 1 = Conceder
+		// 2 = HardHeaded
+		
+		return 1;
+		
+	}
 }
