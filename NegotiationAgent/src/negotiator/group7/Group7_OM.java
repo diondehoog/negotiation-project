@@ -1,43 +1,30 @@
 package negotiator.group7;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 import negotiator.Bid;
-import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
+import negotiator.boaframework.opponentmodel.BayesianModel;
+import negotiator.boaframework.opponentmodel.NashFrequencyModel;
 import negotiator.issue.Issue;
-import negotiator.issue.Objective;
-import negotiator.issue.ValueDiscrete;
-import negotiator.issue.IssueDiscrete;
-import negotiator.utility.Evaluator;
-import negotiator.utility.EvaluatorDiscrete;
 import negotiator.utility.UtilitySpace;
 
 /**
- * BOA framework implementation of the HardHeaded Frequecy Model.
- * My main contribution to this model is that I fixed a bug in the mainbranch
- * which resulted in an equal preference of each bid in the ANAC 2011 competition.
- * Effectively, the corrupt model resulted in the offering of a random bid in the ANAC 2011.
- * 
- * Default: learning coef l = 0.2; learnValueAddition v = 1.0
- * 
- * Adapted by Mark Hendrikx to be compatible with the BOA framework.
- *
- * Tim Baarslag, Koen Hindriks, Mark Hendrikx, Alex Dirkzwager and Catholijn M. Jonker.
- * Decoupling Negotiating Agents to Explore the Space of Negotiation Strategies
- * 
- * @author Mark Hendrikx
+ * Group 7 oppononent model. Depending on the bidding space size, we choose either frequency modeling (for a large bidding space),
+ * or Bayesian modeling if we have a relatively small bidding space. Thi is done for performance reasons. 
  */
 public class Group7_OM extends OpponentModel {
 
-	// the learning coefficient is the weight that is added each turn to the issue weights
-	// which changed. It's a trade-off between concession speed and accuracy.
-	private double learnCoef;
-	// value which is added to a value if it is found. Determines how fast
-	// the value weights converge.
-	private int learnValueAddition;
-	private int amountOfIssues;
+	/**
+	 * The maximum size of the bidding space for which we use Bayesian modelling
+	 */
+	private final static long biddingSpaceThreshold = 10000;
+	
+	private long biddingSpaceSize;
+	
+	private OpponentModel curOM;
+	
+	private HashMap<String, Double> parameters;
 	
 	/**
 	 * Initializes the utility space of the opponent such that all value
@@ -46,57 +33,44 @@ public class Group7_OM extends OpponentModel {
 	@Override
 	public void init(NegotiationSession negotiationSession, HashMap<String, Double> parameters) throws Exception {
 		this.negotiationSession = negotiationSession;
-		if (parameters != null && parameters.get("l") != null) {
-			learnCoef = parameters.get("l");
-		} else {
-			learnCoef = 0.2;
-		}
-		learnValueAddition = 1;
+		this.parameters = parameters;
 		initializeModel();
+		initializeOpponentModeller();
+	}
+	
+	@Override
+	public void init(NegotiationSession negotiationSession)
+	{
+			try {
+				init(negotiationSession, new HashMap<String, Double>());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 	
 	private void initializeModel(){
 		opponentUtilitySpace = new UtilitySpace(negotiationSession.getUtilitySpace());
-		amountOfIssues = opponentUtilitySpace.getDomain().getIssues().size();
-		double commonWeight = 1D / (double)amountOfIssues;    
-		
-		// initialize the weights
-		for(Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()){
-			// set the issue weights
-			opponentUtilitySpace.unlock(e.getKey());
-			e.getValue().setWeight(commonWeight);
-			try {
-				// set all value weights to one (they are normalized when calculating the utility)
-				for(ValueDiscrete vd : ((IssueDiscrete)e.getKey()).getValues())
-					((EvaluatorDiscrete)e.getValue()).setEvaluation(vd,1);  
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		biddingSpaceSize = opponentUtilitySpace.getDomain().getNumberOfPossibleBids();
+	}
+	
+	private void initializeOpponentModeller()
+	{
+		if (biddingSpaceSize > biddingSpaceThreshold)
+		{
+			curOM = new NashFrequencyModel();
+		} else {
+			curOM = new BayesianModel();
+		}
+		try {
+			curOM.init(negotiationSession, parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
-	/**
-	 * Determines the difference between bids. For each issue, it is determined if the
-	 * value changed. If this is the case, a 1 is stored in a hashmap for that issue, else a 0.
-	 * 
-	 * @param a bid of the opponent
-	 * @param another bid
-	 * @return
-	 */
-	private HashMap<Integer, Integer> determineDifference(BidDetails first, BidDetails second){
-		
-		HashMap<Integer, Integer> diff = new HashMap<Integer, Integer>();
-		try{
-			for(Issue i : opponentUtilitySpace.getDomain().getIssues()){
-				diff.put(i.getNumber(), (
-						((ValueDiscrete)first.getBid().getValue(i.getNumber())).equals((ValueDiscrete)second.getBid().getValue(i.getNumber()))
-						 				)?0:1);
-			}
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
-		
-		return diff;
+	@Override
+	public void updateModel(Bid opponentBid) {
+		curOM.updateModel(opponentBid);
 	}
 	
 	/**
@@ -104,67 +78,52 @@ public class Group7_OM extends OpponentModel {
 	 */
 	@Override
 	public void updateModel(Bid opponentBid, double time) {		
-		if(negotiationSession.getOpponentBidHistory().size() < 2) {
-			return;
-		}
-		int numberOfUnchanged = 0;
-		BidDetails oppBid = negotiationSession.getOpponentBidHistory().getHistory().get(negotiationSession.getOpponentBidHistory().size() - 1);
-		BidDetails prevOppBid = negotiationSession.getOpponentBidHistory().getHistory().get(negotiationSession.getOpponentBidHistory().size() - 2);
-		HashMap<Integer, Integer> lastDiffSet = determineDifference(prevOppBid, oppBid);
-		
-		// count the number of changes in value
-		for(Integer i: lastDiffSet.keySet()){
-			if(lastDiffSet.get(i) == 0)
-				numberOfUnchanged ++;
-		}
-		
-		// This is the value to be added to weights of unchanged issues before normalization. 
-		// Also the value that is taken as the minimum possible weight, (therefore defining the maximum possible also). 
-		double goldenValue = learnCoef / (double)amountOfIssues;
-		// The total sum of weights before normalization.
-		double totalSum = 1D + goldenValue * (double)numberOfUnchanged;
-		// The maximum possible weight
-		double maximumWeight = 1D - ((double)amountOfIssues) * goldenValue / totalSum; 
-		
-		
-		
-		// re-weighing issues while making sure that the sum remains 1 
-		for(Integer i: lastDiffSet.keySet()){
-			if (lastDiffSet.get(i) == 0 && opponentUtilitySpace.getWeight(i)< maximumWeight)
-				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), (opponentUtilitySpace.getWeight(i) + goldenValue)/totalSum);
-			else
-				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
-		}
-		
-		// Then for each issue value that has been offered last time, a constant value is added to its corresponding ValueDiscrete.
-		try{
-			for(Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()){
-				( (EvaluatorDiscrete)e.getValue() ).setEvaluation(oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()), 
-					( learnValueAddition + 
-						((EvaluatorDiscrete)e.getValue()).getEvaluationNotNormalized( 
-							( (ValueDiscrete)oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()) ) 
-						)
-					)
-				);
-			}
-		} catch(Exception ex){
-			ex.printStackTrace();
-		}
+		curOM.updateModel(opponentBid, time);
 	}
 
 	@Override
 	public double getBidEvaluation(Bid bid) {
-		double result = 0;
-		try {
-			result = opponentUtilitySpace.getUtility(bid);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
+		return curOM.getBidEvaluation(bid);
+	}
+	
+	@Override
+	public UtilitySpace getOpponentUtilitySpace() {
+		return curOM.getOpponentUtilitySpace();
+	}
+	
+	@Override
+	public void setOpponentUtilitySpace(negotiator.protocol.BilateralAtomicNegotiationSession fNegotiation)
+	{
+		curOM.setOpponentUtilitySpace(fNegotiation);
+	}
+	
+	@Override
+	public void setOpponentUtilitySpace(UtilitySpace opponentUtilitySpace) {
+		curOM.setOpponentUtilitySpace(opponentUtilitySpace);
+	}
+	
+	@Override
+	public double getWeight(Issue issue) {
+		return curOM.getWeight(issue);
+	}
+	
+	@Override
+	public double[] getIssueWeights() {
+		return curOM.getIssueWeights();
+	}
+	
+	@Override
+	public void cleanUp() {
+		curOM.cleanUp();
+	}
+	
+	@Override
+	public boolean isCleared() {
+		return curOM.isCleared();
 	}
 	
 	@Override
 	public String getName() {
-		return "HardHeaded Frequency Model";
+		return "Group 7 Flexible Opponent Model";
 	}
 }

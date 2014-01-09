@@ -66,7 +66,6 @@ public class Group7_BS extends OfferingStrategy {
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
-		
 		// All the parameters are given as HashMap<String,Double>
 		if (parameters.get("e") != null) {
 			this.negotiationSession = negoSession;
