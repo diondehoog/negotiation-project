@@ -36,6 +36,9 @@ public class Group7_BS extends OfferingStrategy {
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
+	/** Phase boundaries */
+	private double[] phaseBoundary = {0.2, 0.8};
+	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
 	 * is called next.
@@ -100,6 +103,10 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
+		
+		
+		
+		
 		return determineNextBid();
 	}
 
@@ -122,6 +129,11 @@ public class Group7_BS extends OfferingStrategy {
 		
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
+		
+		if (time < phaseBoundary[0]) {
+			// Negotiation Phase 1
+		}
+		
 		
 		// Calculate the utility goal by using p(t)
 		double utilityGoal;
