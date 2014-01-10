@@ -39,6 +39,7 @@
 	</acceptanceconditions>
 	<opponentmodels>
 		<opponentmodel description="Group7 - OM" classPath="negotiator.group7.Group7_OM"/>
+		<opponentmodel description="Logging Frequency Model" classPath="negotiator.group7.BidSaverFrequencyModel" />
 		<opponentmodel description="No Model" classPath="negotiator.boaframework.opponentmodel.NoModel"/>
 		<opponentmodel description="HardHeaded Frequency Model" classPath="negotiator.boaframework.opponentmodel.HardHeadedFrequencyModel">
 			<parameter name="l" default="0.2" description="The learning coefficient determines how quickly the issue weights are learned"/>
