@@ -164,6 +164,7 @@ public class Group7_BS extends OfferingStrategy {
 				//Opponent is Conceder: act tit for tat
 				if(opponentCategory == 1){
 					negotiationSession.getOpponentBidHistory().getLastBid();
+					result = opponentUtilitySpace.getUtility(bid);
 				}
 				
 				//Opponent is Hardheaded: act hard headed
