@@ -46,22 +46,22 @@ public class Group7_BS extends OfferingStrategy {
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
 	 * is called next.
 	 */
-	public Group7_BS(){}
-	
-	public Group7_BS(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
-	//	this.e = e;		// Concession factor
-		this.e = 0;
-		this.k = k;		
-		this.Pmax = max;	// Max target utility
-		this.Pmin = min;	// Min target utility
-		
-		this.negotiationSession = negoSession;
-		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
-		negotiationSession.setOutcomeSpace(outcomespace);
-		
-		this.opponentModel = model;	// Opponent model
-		this.omStrategy = oms;		// Opponent strategy
-	}
+//	public Group7_BS(){}
+//	
+//	public Group7_BS(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
+//		System.out.println("Deze functie wordt gebruikt");
+//		this.e = e;		// Concession factor
+//		this.k = k;		
+//		this.Pmax = max;	// Max target utility
+//		this.Pmin = min;	// Min target utility
+//		
+//		this.negotiationSession = negoSession;
+//		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
+//		negotiationSession.setOutcomeSpace(outcomespace);
+//		
+//		this.opponentModel = model;	// Opponent model
+//		this.omStrategy = oms;		// Opponent strategy
+//	}
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -69,16 +69,19 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
+		System.out.println("Hij komt hier langs en daarna crashed hij");
 		// All the parameters are given as HashMap<String,Double>
-//		if (parameters.get("e") != null) {
-		if(true){
+		
+		// If there is no concession speed set up, it is set to the default 0
+		if (parameters.get("e") == null)
+			parameters.put("e", 0.0);
+		
 			this.negotiationSession = negoSession;
 			
 			outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
 			negotiationSession.setOutcomeSpace(outcomespace);
 			
-//			this.e = parameters.get("e");
-			this.e = 0;
+			this.e = parameters.get("e");
 			
 			// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
 			if (parameters.get("k") != null)
@@ -101,19 +104,17 @@ public class Group7_BS extends OfferingStrategy {
 			this.opponentModel = model;
 			this.omStrategy = oms;
 			
-		} else {
-			throw new Exception("Constant \"e\" for the concession speed was not set.");
-		}
 	}
 
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
 		
+		double time = negotiationSession.getTime();
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
 		
-		
-		
-		return determineNextBid();
+		return openingBid;
+		//return determineNextBid();
 	}
 
 	/**
@@ -133,95 +134,99 @@ public class Group7_BS extends OfferingStrategy {
 		 *  - The 'BidFilter' class has some useful methods for filtering bids on time/utility
 		 */
 		
-		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
-		
-		// We want to find the nearest bid to this goal
-		double utilityGoal;
-		
-		// Do we have an opponent model?
-		boolean useOM = !(opponentModel instanceof NoModel);
-		
-		// Based on the normalized time we determine in which 
-		// negotiation phase we are currently. Depending on which
-		// phase we are the bid generation differs.
-		if (time < phaseBoundary[0]) {
-			// Negotiation Phase 1	
-			
-		} 
-		
-		else if (time < phaseBoundary[1]) {
-		// Negotiation Phase 2
-			// Calculate the utility goal by using p(t)
-			utilityGoal = p(time);
-			
-			if(!useOM) {
-				// Opponent model NOT available
-				// Use to utilityGoal to get the nearest bid in the outcome space
-				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-			} else {
-				// Opponent Model IS available
-				try {
+//		System.out.println("time is: " + time);
+//		
+//		// We want to find the nearest bid to this goal
+//		double utilityGoal;
+//		
+//		// Do we have an opponent model?
+//		boolean useOM = !(opponentModel instanceof NoModel);
+//		
+//		// Based on the normalized time we determine in which 
+//		// negotiation phase we are currently. Depending on which
+//		// phase we are the bid generation differs.
+//		if (time < phaseBoundary[0]) {
+//			// Negotiation Phase 1	
+//			
+//		} 
+//		
+//		else if (time < phaseBoundary[1]) {
+//		// Negotiation Phase 2
+//			// Calculate the utility goal by using p(t)
+//			utilityGoal = p(time);
+//			
+//			if(!useOM) {
+//				// Opponent model NOT available
+//				// Use to utilityGoal to get the nearest bid in the outcome space
+//				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
+//			} else {
+//				// Opponent Model IS available
+//				try {
 				
-					int opponentCategory = ((Group7_OMS) omStrategy).getOpponentModel();
+					//int opponentCategory = ((Group7_OMS) omStrategy).getOpponentModel();
 								
 					// Base the next bid on the OM and outcome space
 									
 					//Opponent is Conceder: act tit for tat
-					if(opponentCategory == 1){
+//					if(opponentCategory == 1){
 						List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 						Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 						//Calculate difference between last bid and before last bid
-						double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
-						double nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
-						nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
-						System.out.println(difference);
-					} 
-				
-						//Opponent is Hardheaded: act hard headed
-					if(opponentCategory == 2){
-					
-					}
-				
-					else{
-						nextBid = omStrategy.getBid(outcomespace, utilityGoal);
-					}
-				
-				return nextBid;
-				
-				}	catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		else{
-			//last negotiation phase
-			// Calculate the utility goal by using p(t)
-			utilityGoal = p(time);
-		
-			// System.out.println("[e=" + e + ", Pmin = " + BilateralAgent.round2(Pmin) + "] t = " + 
-			//					  BilateralAgent.round2(time) + ". Aiming for " + utilityGoal);
-		
-			// if there is no opponent model available
-			if (opponentModel instanceof NoModel) {
-				// Opponent model NOT available
-				// Use to utilityGoal to get the nearest bid in the outcome space
-				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-			} else {
-				// Opponent Model IS available
-				// Base the next bid on the OM and outcome space
-			
-				nextBid = omStrategy.getBid(outcomespace, utilityGoal);
-			}
-			return nextBid;
-		}
-		
-		//temporary!
-		utilityGoal = p(time);
-		nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-		return nextBid;
+						if (lastOpponentBids.size() > 0){
+							double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+							double nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
+						}
+						else
+							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+						return nextBid;
+//					} 
+//				
+//						//Opponent is Hardheaded: act hard headed
+//					if(opponentCategory == 2){
+//					
+//					}
+//				
+//					else{
+//						nextBid = omStrategy.getBid(outcomespace, utilityGoal);
+//					}
+//				
+//				return nextBid;
+//				
+//				}	catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		
+//		else{
+//			//last negotiation phase
+//			// Calculate the utility goal by using p(t)
+//			utilityGoal = p(time);
+//		
+//			// System.out.println("[e=" + e + ", Pmin = " + BilateralAgent.round2(Pmin) + "] t = " + 
+//			//					  BilateralAgent.round2(time) + ". Aiming for " + utilityGoal);
+//		
+//			// if there is no opponent model available
+//			if (opponentModel instanceof NoModel) {
+//				// Opponent model NOT available
+//				// Use to utilityGoal to get the nearest bid in the outcome space
+//				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
+//			} else {
+//				// Opponent Model IS available
+//				// Base the next bid on the OM and outcome space
+//			
+//				nextBid = omStrategy.getBid(outcomespace, utilityGoal);
+//			}
+//			return nextBid;
+//		}
+//		
+//		//temporary!
+//		utilityGoal = p(time);
+//		nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
+//		return nextBid;
 	}
 	
 	/**
