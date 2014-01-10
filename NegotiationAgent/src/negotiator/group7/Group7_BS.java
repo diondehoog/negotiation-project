@@ -174,12 +174,15 @@ public class Group7_BS extends OfferingStrategy {
 						Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 						//Calculate difference between last bid and before last bid
 						if (lastOpponentBids.size() > 0){
+							System.out.println("bidsize > 0");
 							double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 							double nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
 						}
-						else
+						else{
+							System.out.println("bidsize not > 0");
 							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+						}
 						return nextBid;
 //					} 
 //				
