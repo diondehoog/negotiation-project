@@ -8,6 +8,9 @@
 		<biddingstrategy description="Other - Offer decreasing utility" classpath="negotiator.boaframework.offeringstrategy.other.ChoosingAllBids"/>
 		<biddingstrategy description="2011 - IAMHaggler2011" classpath="negotiator.boaframework.offeringstrategy.anac2011.IAMhaggler2011_Offering"/>
 		<biddingstrategy description="2011 - The Negotiator" classpath="negotiator.boaframework.offeringstrategy.anac2011.TheNegotiator_Offering"/>
+		<biddingstrategy description="Group7_BS_old" classpath="negotiator.group7.Group7_BS_old">
+			<parameter name="e" default="0.3" description=""/>
+		</biddingstrategy>
 		<biddingstrategy description="Group7_BS" classpath="negotiator.group7.Group7_BS"/>
 		<biddingstrategy description="2011 - HardHeaded" classpath="negotiator.boaframework.offeringstrategy.anac2011.HardHeaded_Offering"/>
 		<biddingstrategy description="Other - Better Time dependent" classpath="negotiator.boaframework.offeringstrategy.other.GeniusTimeDependent_Offering">
@@ -53,6 +56,5 @@
 		<omstrategy description="Best bid" classpath="negotiator.boaframework.omstrategy.BestBid">
 			<parameter name="t" default="1.0" description="Time after which the OM should not be updated"/>
 		</omstrategy>
-		<omstrategy description="Group7_OMS" classpath="negotiator.group7.Group7_OMS"/>
 	</omstrategy>
 </repository>
