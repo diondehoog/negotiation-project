@@ -144,7 +144,7 @@ public class Group7_BS extends OfferingStrategy {
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 		
-		getAverageDiffLastNBids (5);
+		getAverageDiffLastNBids (10);
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -193,9 +193,9 @@ public class Group7_BS extends OfferingStrategy {
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
-				if(lastOpponentBids.size() > 10)
+				/*if(lastOpponentBids.size() > 10)
 					difference = getAverageDiffLastNBids(10);
-				else
+				else */
 				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				double nextBidUtil;
 				
@@ -448,8 +448,13 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double[] smooth = new double[n];
 		
+		Log.rln("###################################");
+		
+		// Smoothing kernel 
+		double[] kernel = {1.0/6.0, 4.0/6.0, 1.0/6.0};
+		
 		for (int i = 0; i < n; i++) {
-			smooth[i] = applyConvolution(vals, i);
+			smooth[i] = applyConvolution(vals, i, kernel);
 			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
 		}
 		
@@ -462,24 +467,17 @@ public class Group7_BS extends OfferingStrategy {
 	}
 	
 	/**
-	 * input = double array containing values to be smoothed
-	 * x = location where to apply smooth
-	 * k = kernel
+	 * Applies convolution kernel k to input array at position x
 	 * 
-	 * @param input
-	 * @param x
-	 * @param y
-	 * @param k
-	 * @param kernelWidth
-	 * @param kernelHeight
+	 * input = 	Double array containing values to be smoothed
+	 * x = 		Location where to apply smooth
+	 * k = 		Kernel
+	 *
 	 * @return
 	 */
-	public double applyConvolution(double[] input, int x) {
+	public double applyConvolution(double[] input, int x, double[] k) {
 		
-		// Smoothing kernel for convolution
-		double[] k = {1.0/5.0, 3.0/5.0, 1.0/5.0};
-		
-		// Build double array
+		// Build double array with end values repeated
 		double[] toConvolve = new double[input.length+2];
 		toConvolve[0] = input[0];
 		for (int j = 0; j < input.length; j++) {
@@ -488,12 +486,9 @@ public class Group7_BS extends OfferingStrategy {
 		toConvolve[input.length+1] = input[input.length-1];
 	
 		double output = 0;	
-		
-		// Smooth the function
-		for (int i = -1; i < k.length-2; i++) {
-			output = output + toConvolve[x+i+1]*k[i+1];
-			
-			//output = output + (toConvolve[x+i] * k[i+1]);
+
+		for (int i = 0; i < k.length; i++) {
+			output = output + (toConvolve[x+i]*k[i]);
 		}
 		
 		return output;
