@@ -22,9 +22,9 @@ public class OpponentBidCompare implements Comparator<BidDetails> {
 		double Uy = model.getBidEvaluation(y.getBid());
 		
 		if (Ux > Uy)
-			return 1;
+			return -1;
 		if (Ux == Uy)
 			return 0;
-		return -1;
+		return 1;
 	 }
 }

@@ -55,8 +55,8 @@ public class Group7_BS extends OfferingStrategy {
 	BidHistory biddingHistory;
 	
 	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
-	double tft1 = 2;
-	double tft2 = 4/3;
+	double tft1 = 1;
+	double tft2 = 1;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -292,6 +292,7 @@ public class Group7_BS extends OfferingStrategy {
 	 * @return double
 	 */
 	public double p(double t) {
+		
 		return phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
 	}
 	
