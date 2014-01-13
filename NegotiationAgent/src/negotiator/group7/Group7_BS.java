@@ -32,13 +32,14 @@ import negotiator.boaframework.opponentmodel.NoModel;
 public class Group7_BS extends OfferingStrategy {
 
 	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
-	private double k;
+	private double k = 0.0;
 	/** Maximum target utility */
 	private double Pmax;
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
 	private double e = 0.0;
+	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
@@ -86,24 +87,22 @@ public class Group7_BS extends OfferingStrategy {
 		if (parameters.get("phase2lowerbound") != null)
 			phase2LowerBound = parameters.get("phase2lowerbound");
 		
-		if (parameters.get("e") == null)
+		if (parameters.get("e") != null)
 			e = parameters.get("e");
 		
-		this.negotiationSession = negoSession;
+		negotiationSession = negoSession;
 		
 		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
 		negotiationSession.setOutcomeSpace(outcomespace);
 		
-		// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
+		// If k is given it is set to the given value, else it will have the initial value
 		if (parameters.get("k") != null)
-			this.k = parameters.get("k");
-		else
-			this.k = 0;
+			k = parameters.get("k");
 		
 		if (parameters.get("min") != null)
-			this.Pmin = parameters.get("min");
+			Pmin = parameters.get("min");
 		else
-			this.Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
+			Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
 	
 		if (parameters.get("max") != null) {
 			Pmax= parameters.get("max");
@@ -202,10 +201,11 @@ public class Group7_BS extends OfferingStrategy {
 								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 							//The opponent is going away from us in utility
 							else
-								nextBidUtil = Math.max(lastOwnUtil+(difference),p(time));
+								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 							
 							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
-							System.out.print("("+difference + "," + nextBidUtil+"),");
+							//System.out.print("("+difference + "," + nextBidUtil+"),");
+							System.out.print(p(time) +", ");
 						}
 						else{
 							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
