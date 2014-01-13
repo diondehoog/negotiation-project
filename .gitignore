@@ -13,4 +13,5 @@ genius/previousTournament
 *.synctex.gz
 *.fdb_latexmk
 *.tex.backup
+*.toc
 
