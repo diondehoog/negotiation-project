@@ -143,28 +143,46 @@ public class Group7_AS extends AcceptanceStrategy {
 		//ACList.add(new AC_MAC()); // this is the class that we extend..
 	}
 
+	double averageDeltaTime = 0;
+	double previousTime = 0;
+	int counter = 0;
+	
 	public Actions determineAcceptability() {
 		if (negotiationSession == null) return Actions.Reject;
 		if (negotiationSession.getOwnBidHistory() == null) return Actions.Reject;
 		if (negotiationSession.getOpponentBidHistory() == null) return Actions.Reject;
 		if (negotiationSession.getOwnBidHistory().getWorstBidDetails() == null) return Actions.Reject;
 		if (negotiationSession.getOpponentBidHistory().getWorstBidDetails() == null) return Actions.Reject;
+
+		// Averaging execution time
+		counter++;
+		double time = negotiationSession.getTime();
+		double dt = time - previousTime;
+		if (previousTime != 0) {
+			if (averageDeltaTime == 0) {
+				averageDeltaTime = dt;
+			} else {
+				averageDeltaTime = (9 * averageDeltaTime + dt) / 10;
+			}
+		}
+		previousTime = time;
+		int bidsLeft = (int) ((1.0 - time) / (averageDeltaTime + 0.00001));
 		
+		Log.hln("Guessed Bids Left: " + bidsLeft + "; now: " + counter + "; total guessed: " + (counter + bidsLeft));
 //		Actions a = super.determineAcceptability();
 		double hisLast = negotiationSession.getOpponentBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 		double hisBest = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
-		double time = negotiationSession.getTime();
 		double ourWorstFixed = Math.max(ourWorst, 1 - time);
-		if (hisLast > 0.9) {
-			Log.hln("~~~~~~~~~~~ hisLast > 0.9 ==> hislast: " + hisLast);
+		if (hisLast > 0.85) {
+			Log.hln("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
 			return Actions.Accept;
-//		} else if (hisBest == hisLast && time > 0.90) {
-//			Log.hln("~~~~~~~~~~~ hisBest == hisLast && time > 0.90 ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
-//			return Actions.Accept;
-//		} else if (time > 0.995) {
-//			Log.hln("~~~~~~~~~~~ time > 0.995");
-//			return Actions.Accept;
+		} else if (hisBest == hisLast && bidsLeft < 10) {
+			Log.hln("~~~~~~~~~~~ hisBest == hisLast && time > 0.97 ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
+			return Actions.Accept;
+		} else if (bidsLeft < 3) {
+			Log.hln("~~~~~~~~~~~ bidsLeft < 2");
+			return Actions.Accept;
 		} else if (hisLast > ourWorstFixed) {
 			Log.hln("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
 			return Actions.Accept;
