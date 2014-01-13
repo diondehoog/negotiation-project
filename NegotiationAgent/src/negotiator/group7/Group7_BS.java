@@ -397,7 +397,7 @@ public class Group7_BS extends OfferingStrategy {
 		// Set upper bound to 1 is exceeds
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
 		
-		Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
+		//Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
 		
 		return r;
 	}
@@ -443,29 +443,57 @@ public class Group7_BS extends OfferingStrategy {
 		
 		avg = avg/n;
 		
-		Log.rln("Average concede over last " + n + " bids = " + avg);
+		double[] smooth = new double[n];
+		
+		for (int i = 0; i < n; i++) {
+			smooth[i] = applyConvolution(vals, i);
+			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
+		}
+		
+		
+		//Log.rln("Average concede over last " + n + " bids = " + avg);
+		
+		
 		
 		return avg;
 	}
 	
-	
 	/**
-	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)
-	 *  - Met hoge biedeingen beginnen in eerste fase (+90%)
-	 *  - De reactie van hoge biedingen gebruiken om strategie/preference van opponent te bepalen
-	 *  
-	 *  - Combineren van twee strategien:
-	 *  	- Conceder --> Hard-Headed
-	 *  	- Hard-Headed --> Tit-for-That
+	 * input = double array containing values to be smoothed
+	 * x = location where to apply smooth
+	 * k = kernel
 	 * 
-	 * 	- Fase 1: hoge biedingen 90%
-	 *  - Fase 2: afhankelijk van strategy HH/TfT
-	 *  - Fase 3: acceptance strategy
-	 *  
-	 *  Nash Point schatten a.d.h. preference profile
-	 *  Paar functies (sin/exp) implementeren en kijken hoe je de OS fuckt
-	 *  
-	 *  Runnen: saven in Eclipse, class file in Genius laden (TomV maakt XML)
-	 *  
+	 * @param input
+	 * @param x
+	 * @param y
+	 * @param k
+	 * @param kernelWidth
+	 * @param kernelHeight
+	 * @return
 	 */
+	public double applyConvolution(double[] input, int x) {
+		
+		// Smoothing kernel for convolution
+		double[] k = {1.0/5.0, 3.0/5.0, 1.0/5.0};
+		
+		// Build double array
+		double[] toConvolve = new double[input.length+2];
+		toConvolve[0] = input[0];
+		for (int j = 0; j < input.length; j++) {
+			toConvolve[j+1] = input[j];
+		}
+		toConvolve[input.length+1] = input[input.length-1];
+	
+		double output = 0;	
+		
+		// Smooth the function
+		for (int i = -1; i < k.length-2; i++) {
+			output = output + toConvolve[x+i+1]*k[i+1];
+			
+			//output = output + (toConvolve[x+i] * k[i+1]);
+		}
+		
+		return output;
+	}
+	
 }
