@@ -16,7 +16,7 @@ public class Log {
 	/**
 	 * What to print?
 	 */
-	private static final int PRINT = ALL; // set to NONE for only important outputs
+	private static final int PRINT = SCHUTTER; // set to NONE for only important outputs
 	
 	
 	
