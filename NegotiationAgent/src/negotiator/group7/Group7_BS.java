@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import misc.Range;
+import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
