@@ -48,6 +48,10 @@ public class Group7_BS extends OfferingStrategy {
 	/** Keep track of the current phase */
 	private int curPhase = 1;
 	
+	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
+	double tft1 = 2;
+	double tft2 = 4/3;
+	
 	/**
 	 * Method which initializes the agent by setting all parameters.
 	 * The parameter "e" is the only parameter which is required (concession factor).
@@ -148,12 +152,14 @@ public class Group7_BS extends OfferingStrategy {
 			if (lastOpponentBids.size() > 0){
 				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				double nextBidUtil;
+				
 				//The opponent is approaching us in utility
 				if (difference>0)
-					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft1),p(time));
+				
 				//The opponent is going away from us in utility
 				else
-					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft2),p(time));
 				
 				nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponent likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
@@ -169,8 +175,9 @@ public class Group7_BS extends OfferingStrategy {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
 			
+			
 			// For now, we just return a random bid...
-			return getRandomBid(0.2, 0.6);
+			return getRandomBid(0.4, 0.6);
 			
 		}
 		
