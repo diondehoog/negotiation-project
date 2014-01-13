@@ -1,3 +1,4 @@
+/Report/negotiation_final_report.pdf
 .metadata/
 genius/negotiator
 genius/log/
@@ -11,3 +12,5 @@ genius/previousTournament
 *.out
 *.synctex.gz
 *.fdb_latexmk
+*.tex.backup
+
