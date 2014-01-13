@@ -222,7 +222,7 @@ public class Group7_BS extends OfferingStrategy {
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
-				/*if(lastOpponentBids.size() > 10)
+				if(lastOpponentBids.size() > 10)
 					difference = getAverageDiffLastNBids(10);
 				else
 
