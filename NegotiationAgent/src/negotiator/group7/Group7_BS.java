@@ -408,6 +408,18 @@ public class Group7_BS extends OfferingStrategy {
 		return false;
 	}
 	
+	public double getAverageDiffLastNBids (int N) {
+		
+		double avg;
+		
+		// Get list of opponent bids sorted on time
+		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+		
+		return 1.0;
+		
+		
+	}
+	
 	
 	/**
 	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)
