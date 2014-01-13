@@ -1,10 +1,12 @@
 package negotiator.group7;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import misc.Range;
+import negotiator.Bid;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
@@ -44,6 +46,7 @@ public class Group7_BS extends OfferingStrategy {
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
+	private double   phase2range = 0.05;
 	
 	/** Keep track of the current phase */
 	private int curPhase = 1;
@@ -153,9 +156,32 @@ public class Group7_BS extends OfferingStrategy {
 					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 				//The opponent is going away from us in utility
 				else
-					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+					nextBidUtil = Math.max(lastOwnUtil+(difference),p(time));
 				
-				nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
+				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
+				
+				Double temp = new Double(nextBidUtil);
+				Double range2 = new Double(phase2range);
+				System.out.println("I want an utility of: " + temp.toString() + " range: " + range2);
+				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+
+				if (bidsInRange.size() == 0) {
+					nextBid = outcomespace.getBidNearUtility(nextBidUtil);
+				} else { // do an intelligent bid since we have choiches!
+				
+					Double sizeList = new Double(bidsInRange.size());
+					System.out.println("Number of bids found that are in range:" + sizeList.toString());
+					
+					OpponentBidCompare comparebids = new OpponentBidCompare();
+					comparebids.setOpponentModel(opponentModel);
+					
+					Collections.sort(bidsInRange, comparebids);
+					
+					nextBid = bidsInRange.get(0);
+				}
+				
+				
+				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				System.out.print("("+difference + "," + nextBidUtil+"),");
 				// System.out.print(p(time) +", ");
