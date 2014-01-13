@@ -35,12 +35,13 @@ public class Group7_BS extends OfferingStrategy {
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
-	private double e;
+	private double e = 0.0;
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.2, 0.8};
+	private double   phase1LowerBound = 0.8;
 	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
@@ -69,18 +70,22 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
-		// All the parameters are given as HashMap<String,Double>
+		if (parameters.get("phase2") != null)
+			phaseBoundary[0] = parameters.get("phase2");
 		
-		// If there is no concession speed set up, it is set to the default 0
+		if (parameters.get("phase3") != null)
+			phaseBoundary[1] = parameters.get("phase3");
+		
+		if (parameters.get("phase1lowerbound") != null)
+			phase1LowerBound = parameters.get("phase1lowerbound");
+		
 		if (parameters.get("e") == null)
-			parameters.put("e", 0.0);
+			e = parameters.get("e");
 		
 			this.negotiationSession = negoSession;
 			
 			outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
 			negotiationSession.setOutcomeSpace(outcomespace);
-			
-			this.e = parameters.get("e");
 			
 			// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
 			if (parameters.get("k") != null)
