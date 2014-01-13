@@ -130,9 +130,9 @@ public class Group7_BS extends OfferingStrategy {
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 
-		System.out.println("################################################");
-		System.out.println("NEGOTIATION PHASE 1");
-		System.out.println("Generating random bids within range [0.9, 1.0]...");
+//		System.out.println("################################################");
+//		System.out.println("NEGOTIATION PHASE 1");
+//		System.out.println("Generating random bids within range [0.9, 1.0]...");
 		
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -154,7 +154,6 @@ public class Group7_BS extends OfferingStrategy {
 				//The opponent is going away from us in utility
 				else
 					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
-				
 				nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				System.out.print("("+difference + "," + nextBidUtil+"),");
@@ -241,14 +240,14 @@ public class Group7_BS extends OfferingStrategy {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+//			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
 			
 		} else {
 			// No bids within range are found, now we selected the bid that is closest 
 			// to the UPPER bound of the given range.
 			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(ub);
 			
-			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
+//			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
 		}
 		
 //		System.out.println("################################################");
