@@ -293,7 +293,9 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public double p(double t) {
 		
-		return phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
+		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
+		Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
+		return pt;
 	}
 	
 	public BidDetails getRandomBidFirstPhase () {
