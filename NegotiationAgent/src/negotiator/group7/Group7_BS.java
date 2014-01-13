@@ -42,6 +42,7 @@ public class Group7_BS extends OfferingStrategy {
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.2, 0.8};
 	private double   phase1LowerBound = 0.8;
+	private double   phase2LowerBound = 0.5;
 	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
@@ -75,38 +76,41 @@ public class Group7_BS extends OfferingStrategy {
 		
 		if (parameters.get("phase3") != null)
 			phaseBoundary[1] = parameters.get("phase3");
-		
+
 		if (parameters.get("phase1lowerbound") != null)
 			phase1LowerBound = parameters.get("phase1lowerbound");
+		
+		if (parameters.get("phase2lowerbound") != null)
+			phase2LowerBound = parameters.get("phase2lowerbound");
 		
 		if (parameters.get("e") == null)
 			e = parameters.get("e");
 		
-			this.negotiationSession = negoSession;
-			
-			outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
-			negotiationSession.setOutcomeSpace(outcomespace);
-			
-			// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
-			if (parameters.get("k") != null)
-				this.k = parameters.get("k");
-			else
-				this.k = 0;
-			
-			if (parameters.get("min") != null)
-				this.Pmin = parameters.get("min");
-			else
-				this.Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
+		this.negotiationSession = negoSession;
 		
-			if (parameters.get("max") != null) {
-				Pmax= parameters.get("max");
-			} else {
-				BidDetails maxBid = negoSession.getMaxBidinDomain();
-				Pmax = maxBid.getMyUndiscountedUtil();
-			}
-			
-			this.opponentModel = model;
-			this.omStrategy = oms;
+		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
+		negotiationSession.setOutcomeSpace(outcomespace);
+		
+		// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
+		if (parameters.get("k") != null)
+			this.k = parameters.get("k");
+		else
+			this.k = 0;
+		
+		if (parameters.get("min") != null)
+			this.Pmin = parameters.get("min");
+		else
+			this.Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
+	
+		if (parameters.get("max") != null) {
+			Pmax= parameters.get("max");
+		} else {
+			BidDetails maxBid = negoSession.getMaxBidinDomain();
+			Pmax = maxBid.getMyUndiscountedUtil();
+		}
+		
+		this.opponentModel = model;
+		this.omStrategy = oms;
 			
 	}
 
