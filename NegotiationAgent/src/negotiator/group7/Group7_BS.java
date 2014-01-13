@@ -117,7 +117,7 @@ public class Group7_BS extends OfferingStrategy {
 		double time = negotiationSession.getTime();
 		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
 		
-		Log.debugNewLine("openingBid = " + openingBid.toString());
+		Log.sln("openingBid = " + openingBid.toString());
 		return openingBid;
 		//return determineNextBid();
 	}
@@ -193,7 +193,7 @@ public class Group7_BS extends OfferingStrategy {
 				
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
-				Log.debugNewLine("I want an utility of: " + temp.toString() + " range: " + range2);
+				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
@@ -201,7 +201,7 @@ public class Group7_BS extends OfferingStrategy {
 				} else { // do an intelligent bid since we have choiches!
 				
 					Double sizeList = new Double(bidsInRange.size());
-					Log.debugNewLine("Number of bids found that are in range:" + sizeList.toString());
+					Log.vln("Number of bids found that are in range:" + sizeList.toString());
 					
 					OpponentBidCompare comparebids = new OpponentBidCompare();
 					comparebids.setOpponentModel(opponentModel);
@@ -214,7 +214,7 @@ public class Group7_BS extends OfferingStrategy {
 				
 				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
-				Log.debugInLine("("+difference + "," + nextBidUtil+"),");
+				Log.s("("+difference + "," + nextBidUtil+"),");
 				// Log.inLine(p(time) +", ");
 			}
 			else{
@@ -359,7 +359,7 @@ public class Group7_BS extends OfferingStrategy {
 		// Set upper bound to 1 is exceeds
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
 		
-		Log.debugNewLine("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
+		Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
 		
 		return r;
 	}
