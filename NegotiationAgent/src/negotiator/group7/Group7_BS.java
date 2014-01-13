@@ -46,6 +46,7 @@ public class Group7_BS extends OfferingStrategy {
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.2, 0.8};
 	private double   phase1LowerBound = 0.8;
+	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.5;
 	
 	/**
@@ -83,6 +84,9 @@ public class Group7_BS extends OfferingStrategy {
 
 		if (parameters.get("phase1lowerbound") != null)
 			phase1LowerBound = parameters.get("phase1lowerbound");
+		
+		if (parameters.get("phase1upperbound") != null)
+			phase1UpperBound = parameters.get("phase1upperbound");
 		
 		if (parameters.get("phase2lowerbound") != null)
 			phase2LowerBound = parameters.get("phase2lowerbound");
