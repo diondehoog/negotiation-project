@@ -2,6 +2,21 @@
 %\documentclass[a4paper,10pt]{scrartcl}
 
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{catoptions}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{soul}
+\usepackage{float}
+\usepackage{framed}
+\usepackage[sc]{mathpazo}
+\linespread{1.20}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{enumerate}
+\usepackage{courier}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
@@ -24,25 +39,137 @@
   /Keywords (Automated Negotiation, Genius, Bidding Strategy, Acceptance Strategy, Opponent Model, Opponent Model Strategy)
 }
 
+% Settings for hyperref package (e.g. wat \autoref en \nameref moeten doen)
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = [rgb]{0.1,0.1,0.5},
+  citecolor   = [rgb]{0.5,0.1,0.1},
+  filecolor   = [rgb]{0.1,0.5,0.5},
+  urlcolor    = [rgb]{0.1,0.1,0.7}
+}
+
+% Adds the command "\Autoref" to make it possible to use a capital in the referenced object name
+\makeatletter
+\def\figureautorefname{figure}
+\def\tableautorefname{table}
+\def\Autoref#1{%
+  \begingroup
+  \edef\reserved@a{\cpttrimspaces{#1}}%
+  \ifcsndefTF{r@#1}{%
+    \xaftercsname{\expandafter\testreftype\@fourthoffive}
+      {r@\reserved@a}.\\{#1}%
+  }{%
+    \ref{#1}%
+  }%
+  \endgroup
+}
+\def\testreftype#1.#2\\#3{%
+  \ifcsndefTF{#1autorefname}{%
+    \def\reserved@a##1##2\@nil{%
+      \uppercase{\def\ref@name{##1}}%
+      \csn@edef{#1autorefname}{\ref@name##2}%
+      \autoref{#3}%
+    }%
+    \reserved@a#1\@nil
+  }{%
+    \autoref{#3}%
+  }%
+}
+\makeatother
+
+% Settings for listings of java code
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{light-gray}{gray}{0.95}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true,language=Java}
+\lstset{frame=single,commentstyle=\color{mygreen},keywordstyle=\color{blue}}
+\lstset{aboveskip=0.5cm,belowskip=0.3cm}
+\lstset{backgroundcolor=\color{light-gray}}
+
+% Define the todo command
+\newcommand{\todo}[1] {\hl{TODO: #1}}
+\setlength{\parindent}{0cm}
+
 \begin{document}
 \maketitle
+\newpage
+
+\tableofcontents
+\newpage
 
 \section{Introduction}
+\label{sec:introduction}
+A relatively new and evolving branch of Artificial Intelligence is automated negotiation. In automated negotiation, two or more agents negotiate about a multi-issue problem in order to find a solution that maximizes their utility. The utilities for each possible bid are determined using a human-defined preference profile, which consists of weights for each of the issues and a utility for each possible value of the issues. 
+
+In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. \Autoref{sec:questions} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
+
+\section{High-Level Description of the Agent}
+\label{sec:highleveldescription}
+
+
 
 \section{Strategy}
-\subsection{Acceptance Strategy}
-\subsection{Bidding Strategy}
-\subsection{Opponent Model}
-\subsection{Opponent Strategy Model}
+\label{sec:strategy}
 
-\section{Implementation}
-\subsection{Acceptance Strategy}
-\subsection{Bidding Strategy}
-\subsection{Opponent Model}
-\subsection{Opponent Strategy Model}
+\todo{``a high-level description of the agent and its structure, including the main Java methods(mention these explicitly!) used in the negotiating agent that have been implemented in the source code.''
+I suggest we name most methods in the subsection about the BOA components}
 
-\section{Performance}
+Example of java code inclusion:
+\begin{lstlisting}
+public Action chooseAction () { Action action = null;
+  try {
+    if (actionOfPartner == null) {
+      action = chooseRandomBidAction ();
+    }
+    if (actionOfPartner instanceof Offer) {
+      Bid partnerBid = ((Offer) actionOfPartner).getBid();
+    }
+  } catch
+    e.printStackTrace();
+    action = new Accept(getAgentID()); // best guess if things go wrong.
+  }
+  return action; 
+}
+\end{lstlisting}
+
+\todo{In the subchapters per boa component, go into more detail about the strategy. We should include ``an explanation of the negotiation strategy, decision function for accepting offers, any important preparatory steps, and heuristics that the agent uses to decide what to do next, including the factors that have been selected and their combination into these functions.''.
+I'd suggest we mention java method names here and not in the high level description}
+
+\subsection{Acceptance Strategy}
+\label{sec:strategyAS}
+
+\subsection{Bidding Strategy}
+\label{sec:strategyBS}
+
+\subsection{Opponent Model}
+\label{sec:strategyOM}
+
+\subsection{Opponent Strategy Model}
+\label{sec:strategyOMS}
+
+\section{Testing \& Performance}
+\label{sec:performance}
+\todo{a section documenting the tests you performed to improve the negotiation strength of your agent. You must include scores of various tests over multiple sessions that you performed while testing your agent. Describe how you set up the testing situation and how you used the results to modify your agent.}
+
+\section{Questions}
+\label{sec:questions}
+
+\subsection{Analysis of the Party Domain}
+
+\begin{enumerate}[(a)]
+
+\item{test}
+
+\end{enumerate}
 
 \section{Conclusion}
+\label{sec:conclusion}
+\todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.}
+As a conclusion I'd like to cite: \cite{baarslag2012decoupling}
+
+\newpage
+\section*{Appendix}
+
+\bibliography{negotiation_final_report}
+\bibliographystyle{plain}
 
 \end{document}
