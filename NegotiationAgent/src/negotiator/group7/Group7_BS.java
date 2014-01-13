@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.Random;
 
 import misc.Range;
+import negotiator.Bid;
 import negotiator.BidHistory;
+import negotiator.analysis.BidSpace;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
 import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
+import negotiator.boaframework.opponentmodel.tools.UtilitySpaceAdapter;
+import negotiator.utility.UtilitySpace;
 
 /**
  * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
@@ -47,6 +51,7 @@ public class Group7_BS extends OfferingStrategy {
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
 	private double   phase2range = 0.05;
+
 	
 	/** Keep track of the current phase */
 	private int curPhase = 1;
@@ -57,6 +62,15 @@ public class Group7_BS extends OfferingStrategy {
 	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
 	double tft1 = 1/2;
 	double tft2 = 3/4;
+	
+	/** Pareto frontier needs bidspace and utility space to be computed */
+	private BidSpace bidSpace; // (not implemented, does not work :( )
+	private UtilitySpace myUtilSpace;
+	private List<Bid> par; // parato frontier (not implemented)
+	private int bidNum = 0; // current bid number
+	private int recomputePar = 500; // after every 500 bids recompute the pareto frontier
+	private BidDetails nash; // nash product
+	
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -84,7 +98,11 @@ public class Group7_BS extends OfferingStrategy {
 		
 		negotiationSession = negoSession;
 		
+		this.myUtilSpace = negotiationSession.getUtilitySpace();
+		
+		// TODO: outcomespace is more efficient in finding bids near a known utility for us (not for opponent preferences)
 		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
+		
 		negotiationSession.setOutcomeSpace(outcomespace);
 		
 		// If k is given it is set to the given value, else it will have the initial value
@@ -131,6 +149,17 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineNextBid() {
 		
+		bidNum++;
+		Log.vln("Bid nummer: " + bidNum);
+		
+		if (bidNum % recomputePar == 0) {
+			Log.vln("Ik ga nash product uitrekenen");
+			this.computeNash();
+			Log.vln("Ik heb de nash product uitgerekend, het is de volgende bid:");
+			Log.vln("Mijn utility in Nash: " + nash.getMyUndiscountedUtil());
+			Log.vln("Geschatte utility van tegenstander in Nash: " + opponentModel.getBidEvaluation(nash.getBid()));
+		}
+		
 		/* Tom R (2013-12-28)
 		 * Some ideas:
 		 * 	- NS.getBidHistory() and NS.getOpponentBidHistory() might be useful
@@ -143,6 +172,8 @@ public class Group7_BS extends OfferingStrategy {
 			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
+		
+		Log.vln("Current phase: " + curPhase);
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -227,6 +258,8 @@ public class Group7_BS extends OfferingStrategy {
 					
 					Collections.sort(bidsInRange, comparebids);
 					
+					Log.vln("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()));
+					Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
 					nextBid = bidsInRange.get(0);
 				}
 				
@@ -257,6 +290,52 @@ public class Group7_BS extends OfferingStrategy {
 		
 		// Never used :-)
 		return getRandomBid(0.9, 1.0);
+	}
+	
+	public void computeNash() {
+		
+		//if 
+		
+		List<BidDetails> allOutcomes = negotiationSession.getOutcomeSpace().getAllOutcomes();
+		double max = -1;
+		BidDetails best = null;
+		for (BidDetails koe : allOutcomes)
+		{
+			double myUtil = koe.getMyUndiscountedUtil();
+			double enUtil = opponentModel.getBidEvaluation(koe.getBid());
+			double prod = myUtil*enUtil;
+			if (prod > max) {
+				best = koe;
+				max = prod;
+			}
+		}
+		
+		this.nash = best;
+		
+		/* This code does not work, I dont know why :(
+		UtilitySpace A = opponentModel.getOpponentUtilitySpace();
+		if (A == null) {
+			Log.vln("Ja dat werkt dus niet, KUT!");
+			try {
+				this.wait(1000000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			this.bidSpace = new BidSpace(A, this.myUtilSpace, false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			this.par = this.bidSpace.getParetoFrontierBids();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		*/
 	}
 	
 	/**
