@@ -259,7 +259,9 @@ public class Group7_BS extends OfferingStrategy {
 	 * at the beginning it will give the initial constant and when the deadline is reached, it
 	 * will offer the reservation value.
 	 * 
-	 * For e = 0 (special case), it will behave as a Hardliner.
+	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
+	 * For e = 1 it will behave as a lineair agent
+	 * For e > 1 it will behave as a conceder (it will give low utilities faster than lineair)                 
 	 */
 	public double f(double t)
 	{
