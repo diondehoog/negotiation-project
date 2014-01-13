@@ -51,6 +51,10 @@ public class Group7_BS extends OfferingStrategy {
 	/** Keep track of the current phase */
 	private int curPhase = 1;
 	
+	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
+	double tft1 = 2;
+	double tft2 = 4/3;
+	
 	/**
 	 * Method which initializes the agent by setting all parameters.
 	 * The parameter "e" is the only parameter which is required (concession factor).
@@ -133,11 +137,14 @@ public class Group7_BS extends OfferingStrategy {
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 
-		System.out.println("################################################");
-		System.out.println("NEGOTIATION PHASE 1");
-		System.out.println("Generating random bids within range [0.9, 1.0]...");
+
 		
 		if (curPhase == 1) {
+		
+			System.out.println("################################################");
+			System.out.println("NEGOTIATION PHASE 1");
+			System.out.println("Generating random bids within range [0.9, 1.0]...");
+				
 			// First negotiation phase (implemented by Tom)
 			// During the first phase we select random bids.
 			return getRandomBid(0.9, 1.0);
@@ -151,12 +158,14 @@ public class Group7_BS extends OfferingStrategy {
 			if (lastOpponentBids.size() > 0){
 				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				double nextBidUtil;
+				
 				//The opponent is approaching us in utility
 				if (difference>0)
-					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft1),p(time));
+				
 				//The opponent is going away from us in utility
 				else
-					nextBidUtil = Math.max(lastOwnUtil+(difference),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft2),p(time));
 				
 				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
 				
@@ -165,8 +174,8 @@ public class Group7_BS extends OfferingStrategy {
 				System.out.println("I want an utility of: " + temp.toString() + " range: " + range2);
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
-				if (bidsInRange.size() == 0) {
-					nextBid = outcomespace.getBidNearUtility(nextBidUtil);
+				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
+				nextBid = outcomespace.getBidNearUtility(nextBidUtil); 
 				} else { // do an intelligent bid since we have choiches!
 				
 					Double sizeList = new Double(bidsInRange.size());
@@ -195,8 +204,9 @@ public class Group7_BS extends OfferingStrategy {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
 			
+			
 			// For now, we just return a random bid...
-			return getRandomBid(0.2, 0.6);
+			return getRandomBid(0.4, 0.6);
 			
 		}
 		
@@ -267,14 +277,14 @@ public class Group7_BS extends OfferingStrategy {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+//			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
 			
 		} else {
 			// No bids within range are found, now we selected the bid that is closest 
 			// to the UPPER bound of the given range.
 			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(ub);
 			
-			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
+//			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
 		}
 		
 //		System.out.println("################################################");
