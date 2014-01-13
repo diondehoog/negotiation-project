@@ -20,56 +20,56 @@ public class Log {
 	
 	
 	
-	public static void s(String shizzle) {
-		inLine(shizzle, SCHUTTER);
+	public static void s(String dikke_grote_tieten) {
+		inLine(dikke_grote_tieten, SCHUTTER);
 	}
-	public static void sln(String shizzle) {
-		newLine(shizzle, SCHUTTER);
-	}
-	
-	public static void v(String shizzle) {
-		inLine(shizzle, VIERING);
-	}
-	public static void vln(String shizzle) {
-		newLine(shizzle, VIERING);
+	public static void sln(String dikke_grote_tieten) {
+		newLine(dikke_grote_tieten, SCHUTTER);
 	}
 	
-	public static void r(String shizzle) {
-		inLine(shizzle, RUNIA);
+	public static void v(String dikke_grote_tieten) {
+		inLine(dikke_grote_tieten, VIERING);
 	}
-	public static void rln(String shizzle) {
-		newLine(shizzle, RUNIA);
-	}
-	
-	public static void d(String shizzle) {
-		inLine(shizzle, DADO);
-	}
-	public static void dln(String shizzle) {
-		newLine(shizzle, DADO);
+	public static void vln(String dikke_grote_tieten) {
+		newLine(dikke_grote_tieten, VIERING);
 	}
 	
-	public static void h(String shizzle) {
-		inLine(shizzle, HOKKE);
+	public static void r(String dikke_grote_tieten) {
+		inLine(dikke_grote_tieten, RUNIA);
 	}
-	public static void hln(String shizzle) {
-		newLine(shizzle, HOKKE);
-	}
-	
-	public static void inLine(String shizzle) {
-		System.out.print(shizzle);
-	}
-	public static void newLine(String shizzle) {
-		System.out.println(shizzle);
+	public static void rln(String dikke_grote_tieten) {
+		newLine(dikke_grote_tieten, RUNIA);
 	}
 	
-	public static void inLine(String shizzle, int type) {
+	public static void d(String dikke_grote_tieten) {
+		inLine(dikke_grote_tieten, DADO);
+	}
+	public static void dln(String dikke_grote_tieten) {
+		newLine(dikke_grote_tieten, DADO);
+	}
+	
+	public static void h(String dikke_grote_tieten) {
+		inLine(dikke_grote_tieten, HOKKE);
+	}
+	public static void hln(String dikke_grote_tieten) {
+		newLine(dikke_grote_tieten, HOKKE);
+	}
+	
+	public static void inLine(String dikke_grote_tieten) {
+		System.out.print(dikke_grote_tieten);
+	}
+	public static void newLine(String dikke_grote_tieten) {
+		System.out.println(dikke_grote_tieten);
+	}
+	
+	public static void inLine(String dikke_grote_tieten, int type) {
 		if (type == PRINT || PRINT == ALL) {
-			inLine(shizzle);
+			inLine(dikke_grote_tieten);
 		}
 	}
-	public static void newLine(String shizzle, int type) {
+	public static void newLine(String dikke_grote_tieten, int type) {
 		if (type == PRINT || PRINT == ALL) {
-			newLine(shizzle);
+			newLine(dikke_grote_tieten);
 		}
 	}
 }
