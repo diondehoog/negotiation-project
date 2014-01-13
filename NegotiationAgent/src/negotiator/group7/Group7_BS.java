@@ -173,11 +173,8 @@ public class Group7_BS extends OfferingStrategy {
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 		
-<<<<<<< HEAD
 		Log.vln("Current phase: " + curPhase);
-=======
 		getAverageDiffLastNBids (5);
->>>>>>> 4057f1435ef0384ef1f4760c6aefc053ff617e4a
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -221,7 +218,7 @@ public class Group7_BS extends OfferingStrategy {
 			
 			
 			double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
-			
+			double difference;
 			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
@@ -229,7 +226,7 @@ public class Group7_BS extends OfferingStrategy {
 				if(lastOpponentBids.size() > 10)
 					difference = getAverageDiffLastNBids(10);
 				else
-				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				double nextBidUtil;
 				
 				//The opponent is approaching us in utility
