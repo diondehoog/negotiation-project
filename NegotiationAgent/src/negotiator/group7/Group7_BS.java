@@ -211,7 +211,6 @@ public class Group7_BS extends OfferingStrategy {
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
 
-
 				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
 
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
