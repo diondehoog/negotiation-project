@@ -248,13 +248,23 @@ public class Group7_BS extends OfferingStrategy {
 	 * will offer the reservation value.
 	 * 
 	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
-	 * For e = 1 it will behave as a lineair agent
-	 * For e > 1 it will behave as a conceder (it will give low utilities faster than lineair)                 
+	 * For e = 1 it will behave as a linear agent
+	 * For e > 1 it will behave as a conceder (it will give low utilities faster than linear)                 
 	 */
 	public double f(double t)
 	{
 		if (e == 0)
 			return k;
+		if (t < this.phaseBoundary[0])
+			return 1;
+		if (t < this.phaseBoundary[1])
+			return 0;
+		
+		// scale t
+		double torig = t;
+		t = (t - this.phaseBoundary[0]) / (this.phaseBoundary[1] -  this.phaseBoundary[0]);
+		Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
+		
 		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
 		return ft;
 	}
