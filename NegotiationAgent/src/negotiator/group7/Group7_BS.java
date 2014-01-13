@@ -42,7 +42,7 @@ public class Group7_BS extends OfferingStrategy {
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.2, 0.8};
+	private double[] phaseBoundary = {0.0, 0.8};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
@@ -172,6 +172,11 @@ public class Group7_BS extends OfferingStrategy {
 		} else if (curPhase == 2) {
 			// Second negotiation phase (implemented by Arnold)
 			
+			/* Opponent modelling by Bas */
+					
+			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
+			
+			
 			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
@@ -193,7 +198,10 @@ public class Group7_BS extends OfferingStrategy {
 				
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
+
+
 				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
+
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
