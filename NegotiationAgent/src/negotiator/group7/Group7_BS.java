@@ -143,8 +143,6 @@ public class Group7_BS extends OfferingStrategy {
 			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
-		
-		getAverageDiffLastNBids (5);
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -188,15 +186,14 @@ public class Group7_BS extends OfferingStrategy {
 			
 			
 			double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
+			double difference; 
 			
 			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
-				if(lastOpponentBids.size() > 10)
-					difference = getAverageDiffLastNBids(10);
-				else
-				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				
+				difference = getAverageDiffLastNBids(10);
 				double nextBidUtil;
 				
 				//The opponent is approaching us in utility
@@ -422,9 +419,12 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public double getAverageDiffLastNBids (int n) {
 		
+		// Get list of opponent bids sorted on time
+		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+
 		if (n > negotiationSession.getOpponentBidHistory().size()) {
-			// Not enough bids in history!
-			return 0.0;
+			// Not enough bids in history! n is set to the size-1
+			n = negotiationSession.getOpponentBidHistory().size()-1;
 		}
 		
 		// Save values
@@ -432,21 +432,19 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double avg = 0;
 		
-		// Get list of opponent bids sorted on time
-		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-		
 		// TODO: Smooth the values
 		
-		for (int i = 0; i < n; i++) {
-			BidDetails bd = h.get(i);
+		for (int i = 0; i < n-1; i++) {
+			//BidDetails bd = h.get(i);
 			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
-			vals[i] = bd.getMyUndiscountedUtil();
+			vals[i] = h.get(i).getMyUndiscountedUtil()-h.get(i+1).getMyUndiscountedUtil();
 			avg += vals[i];
 		}
 		
 		avg = avg/n;
 		
 		Log.rln("Average concede over last " + n + " bids = " + avg);
+		Log.sln("Average concede over last " + n + " bids = " + avg);
 		
 		return avg;
 	}
