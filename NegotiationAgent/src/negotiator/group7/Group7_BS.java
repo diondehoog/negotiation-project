@@ -49,6 +49,9 @@ public class Group7_BS extends OfferingStrategy {
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.5;
 	
+	/** Keep track of the current phase */
+	private int curPhase = 1;
+	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
 	 * is called next.
@@ -150,7 +153,19 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
 		
-		getRandomBid(0.8, 0.9);
+		// Determine current negotiation phase
+		curPhase = getNegotiationPhase();
+
+		System.out.println("################################################");
+		System.out.println("NEGOTIATION PHASE 1");
+		System.out.println("Generating random bids within range [0.9, 1.0]...");
+		
+		if (curPhase == 1) {
+			// First negotiation phase.
+			// During the first phase we select random bids.
+			
+			return getRandomBid(0.9, 1.0);
+		}
 		
 		
 //		System.out.println("time is: " + time);
@@ -343,6 +358,26 @@ public class Group7_BS extends OfferingStrategy {
 		return randBid;
 		
 	}
+	
+	/**
+	 * Returns the current phase of the negotiation session
+	 * based on the elapsed time. Phases are 1, 2 or 3.
+	 * 
+	 * @return
+	 */
+	public int getNegotiationPhase () {
+		double time = negotiationSession.getTime(); // Normalized time [0,1]
+		
+		if (time < phaseBoundary[0]) 
+			curPhase = 1;
+		else if (time >= phaseBoundary[0] && time < phaseBoundary[1])
+			curPhase = 2;
+		else if (time >= phaseBoundary[1])
+			curPhase = 3; 
+		
+		return curPhase;
+	}
+	
 	
 	/**
 	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)
