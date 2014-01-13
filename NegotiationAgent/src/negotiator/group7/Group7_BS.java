@@ -110,10 +110,10 @@ public class Group7_BS extends OfferingStrategy {
 		biddingHistory = new BidHistory();
 		
 		// For display purspose, clear the console
-		if(System.getProperty("os.name").equals("Mac OS X"))
-			Runtime.getRuntime().exec("clear"); // Awesome!
-		else
-			Runtime.getRuntime().exec("cls");
+		//if(System.getProperty("os.name").equals("Mac OS X"))
+		//	Runtime.getRuntime().exec("clear"); // Awesome!
+		//else
+		//	Runtime.getRuntime().exec("cls");
 			
 	}
 
