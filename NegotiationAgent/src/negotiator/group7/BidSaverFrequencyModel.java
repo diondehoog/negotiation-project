@@ -2,7 +2,6 @@ package negotiator.group7;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import negotiator.utility.UtilitySpace;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class BidSaverFrequencyModel extends OpponentModel {
