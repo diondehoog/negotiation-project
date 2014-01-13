@@ -185,8 +185,8 @@ public class Group7_AS extends AcceptanceStrategy {
 		} else if (bidsLeft < 3) {
 			Log.newLine("~~~~~~~~~~~ bidsLeft < 3");
 			return Actions.Accept;
-		} else if (hisLast > ourWorstFixed - 0.05) {
-			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed + 0.05 ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
+		} else if (hisLast > ourWorstFixed) {
+			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
 			return Actions.Accept;
 		}
 		return Actions.Reject;
