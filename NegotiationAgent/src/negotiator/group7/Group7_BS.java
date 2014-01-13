@@ -1,16 +1,18 @@
 package negotiator.group7;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
-import negotiator.Bid;
+import misc.Range;
+import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
 import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
-import negotiator.boaframework.opponentmodel.NoModel;
 
 /**
  * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
@@ -28,87 +30,102 @@ import negotiator.boaframework.opponentmodel.NoModel;
 public class Group7_BS extends OfferingStrategy {
 
 	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
-	private double k;
+	private double k = 0.0;
 	/** Maximum target utility */
 	private double Pmax;
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
-	private double e;
+	private double e = 1.0;
+	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.2, 0.8};
+	private double   phase1LowerBound = 0.8;
+	private double   phase1UpperBound = 1.0;
+	private double   phase2LowerBound = 0.6;
+	private double   phase2range = 0.05;
 	
-	/**
-	 * Empty constructor used for reflexion. Note this constructor assumes that init
-	 * is called next.
-	 */
-	public Group7_BS(){}
+	/** Keep track of the current phase */
+	private int curPhase = 1;
+
+	/** Initialize bid history */
+	BidHistory biddingHistory;
 	
-	public Group7_BS(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
-		this.e = e;		// Concession factor
-		this.k = k;		
-		this.Pmax = max;	// Max target utility
-		this.Pmin = min;	// Min target utility
-		
-		this.negotiationSession = negoSession;
-		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
-		negotiationSession.setOutcomeSpace(outcomespace);
-		
-		this.opponentModel = model;	// Opponent model
-		this.omStrategy = oms;		// Opponent strategy
-	}
+	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
+	double tft1 = 2;
+	double tft2 = 4/3;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
-		// All the parameters are given as HashMap<String,Double>
-		if (parameters.get("e") != null) {
-			this.negotiationSession = negoSession;
-			
-			outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
-			negotiationSession.setOutcomeSpace(outcomespace);
-			
-			this.e = parameters.get("e");
-			
-			// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
-			if (parameters.get("k") != null)
-				this.k = parameters.get("k");
-			else
-				this.k = 0;
-			
-			if (parameters.get("min") != null)
-				this.Pmin = parameters.get("min");
-			else
-				this.Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
 		
-			if (parameters.get("max") != null) {
-				Pmax= parameters.get("max");
-			} else {
-				BidDetails maxBid = negoSession.getMaxBidinDomain();
-				Pmax = maxBid.getMyUndiscountedUtil();
-			}
-			
-			this.opponentModel = model;
-			this.omStrategy = oms;
-			
+		if (parameters.get("phase2") != null)
+			phaseBoundary[0] = parameters.get("phase2");
+		
+		if (parameters.get("phase3") != null)
+			phaseBoundary[1] = parameters.get("phase3");
+
+		if (parameters.get("phase1lowerbound") != null)
+			phase1LowerBound = parameters.get("phase1lowerbound");
+		
+		if (parameters.get("phase1upperbound") != null)
+			phase1UpperBound = parameters.get("phase1upperbound");
+		
+		if (parameters.get("phase2lowerbound") != null)
+			phase2LowerBound = parameters.get("phase2lowerbound");
+		
+		if (parameters.get("e") != null)
+			e = parameters.get("e");
+		
+		negotiationSession = negoSession;
+		
+		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
+		negotiationSession.setOutcomeSpace(outcomespace);
+		
+		// If k is given it is set to the given value, else it will have the initial value
+		if (parameters.get("k") != null)
+			k = parameters.get("k");
+		
+		if (parameters.get("min") != null)
+			Pmin = parameters.get("min");
+		else
+			Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
+	
+		if (parameters.get("max") != null) {
+			Pmax= parameters.get("max");
 		} else {
-			throw new Exception("Constant \"e\" for the concession speed was not set.");
+			BidDetails maxBid = negoSession.getMaxBidinDomain();
+			Pmax = maxBid.getMyUndiscountedUtil();
 		}
+		
+		this.opponentModel = model;
+		this.omStrategy = oms;
+		
+		// Initialize bidding history
+		biddingHistory = new BidHistory();
+		
+		// For display purspose, clear the console
+		if(System.getProperty("os.name").equals("Mac OS X"))
+			Runtime.getRuntime().exec("clear"); // Awesome!
+		else
+			Runtime.getRuntime().exec("cls");
+			
 	}
 
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
+		double time = negotiationSession.getTime();
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
 		
-		
-		
-		
-		return determineNextBid();
+		System.out.println("openingBid = " + openingBid.toString());
+		return openingBid;
+		//return determineNextBid();
 	}
 
 	/**
@@ -128,44 +145,99 @@ public class Group7_BS extends OfferingStrategy {
 		 *  - The 'BidFilter' class has some useful methods for filtering bids on time/utility
 		 */
 		
-		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
 		
-		// We want to find the nearest bid to this goal
-		double utilityGoal;
-		
-		// Do we have an opponent model?
-		boolean useOM = !(opponentModel instanceof NoModel);
-		
-		// Based on the normalized time we determine in which 
-		// negotiation phase we are currently. Depending on which
-		// phase we are the bid generation differs.
-		if (time < phaseBoundary[0]) {
-			// Negotiation Phase 1
+		// Determine current negotiation phase
+		curPhase = getNegotiationPhase();
+
+		if (curPhase == 1) {
+			// First negotiation phase (implemented by Tom)
+			// During the first phase we select random bids.
+			Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
+			
+			/*while (true) {
+				BidDetails bd = getRandomBid(randBidRange);
+				System.out.println("Generated random bid within range: " + bd.getMyUndiscountedUtil());
+				
+				if (!isAlreadyOffered(bd)) {
+					// Add selected bid to history
+					biddingHistory.add(bd);
+					
+					// Return the random bid
+					return bd; 
+				} else {
+					// Bid was already offered, generate new one...
+					System.out.println("Generating NEW random bid since current was already offered!");
+				}
+			}*/
+			
+			BidDetails bd = getRandomBid(randBidRange);
+			return bd;
 			
 			
+		} else if (curPhase == 2) {
+			// Second negotiation phase (implemented by Arnold)
 			
+			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
+			//Calculate difference between last bid and before last bid
+			if (lastOpponentBids.size() > 0){
+				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				double nextBidUtil;
+				
+				//The opponent is approaching us in utility
+				if (difference>0)
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft1),p(time));
+				
+				//The opponent is going away from us in utility
+				else
+					nextBidUtil = Math.max(lastOwnUtil-(difference/tft2),p(time));
+				
+				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
+				
+				Double temp = new Double(nextBidUtil);
+				Double range2 = new Double(phase2range);
+				System.out.println("I want an utility of: " + temp.toString() + " range: " + range2);
+				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+
+				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
+				nextBid = outcomespace.getBidNearUtility(nextBidUtil); 
+				} else { // do an intelligent bid since we have choiches!
+				
+					Double sizeList = new Double(bidsInRange.size());
+					System.out.println("Number of bids found that are in range:" + sizeList.toString());
+					
+					OpponentBidCompare comparebids = new OpponentBidCompare();
+					comparebids.setOpponentModel(opponentModel);
+					
+					Collections.sort(bidsInRange, comparebids);
+					
+					nextBid = bidsInRange.get(0);
+				}
+				
+				
+				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
+				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
+				System.out.print("("+difference + "," + nextBidUtil+"),");
+				// System.out.print(p(time) +", ");
+			}
+			else{
+				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+			}
+			return nextBid;
+			
+		} else if (curPhase == 3) {
+			// Final negotiation phase
+			// TODO: implemented this based on Acceptance Strategy
+			
+			
+			// For now, we just return a random bid...
+			return getRandomBid(0.4, 0.6);
 			
 		}
 		
-		
-		// Calculate the utility goal by using p(t)
-		utilityGoal = p(time);
-		
-		// System.out.println("[e=" + e + ", Pmin = " + BilateralAgent.round2(Pmin) + "] t = " + 
-		//					  BilateralAgent.round2(time) + ". Aiming for " + utilityGoal);
-		
-		// if there is no opponent model available
-		if (opponentModel instanceof NoModel) {
-			// Opponent model NOT available
-			// Use to utilityGoal to get the nearest bid in the outcome space
-			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-		} else {
-			// Opponent Model IS available
-			// Base the next bid on the OM and outcome space
-			nextBid = omStrategy.getBid(outcomespace, utilityGoal);
-		}
-		return nextBid;
+		// Never used :-)
+		return getRandomBid(0.0, 1.0);
 	}
 	
 	/**
@@ -179,7 +251,9 @@ public class Group7_BS extends OfferingStrategy {
 	 * at the beginning it will give the initial constant and when the deadline is reached, it
 	 * will offer the reservation value.
 	 * 
-	 * For e = 0 (special case), it will behave as a Hardliner.
+	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
+	 * For e = 1 it will behave as a lineair agent
+	 * For e > 1 it will behave as a conceder (it will give low utilities faster than lineair)                 
 	 */
 	public double f(double t)
 	{
@@ -196,7 +270,7 @@ public class Group7_BS extends OfferingStrategy {
 	 * @return double
 	 */
 	public double p(double t) {
-		return Pmin + (Pmax - Pmin) * (1 - f(t));
+		return phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
 	}
 	
 	public BidDetails getRandomBidFirstPhase () {
@@ -209,6 +283,99 @@ public class Group7_BS extends OfferingStrategy {
 		return bd;
 		
 	}
+	
+	/**
+	 * Returns a random bid within the range [lb, ub]
+	 * 
+	 * @param lb
+	 * @param ub
+	 */
+	public BidDetails getRandomBid (Range r) {
+		
+//		System.out.println("################################################");
+//		System.out.println("Generating random bids within range [" + lb + ", " + ub + "]");
+
+		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+		
+		// Just for testing, print all bids in range
+		//for (BidDetails b : bidsInRange) {
+		//	System.out.println("Found bid: " + b.getMyUndiscountedUtil());
+		//}
+		
+		int numBids = bidsInRange.size(); // Number of found bids
+		BidDetails randBid;
+		
+//		System.out.println("Found " + numBids + " within range.");
+		
+		if (numBids > 0) {
+			// One or more bids within range are found.
+			// Select a random bid and return it.
+			Random randgen = new Random();
+			randBid = bidsInRange.get(randgen.nextInt(numBids));
+			
+			//System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+			
+		} else {
+			// No bids within range are found, now we selected the bid that is closest 
+			// to the UPPER bound of the given range.
+			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(r.getUpperbound());
+			
+			//System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
+		}
+		
+		//		System.out.println("################################################");
+		return randBid;
+		
+	}
+	
+	public BidDetails getRandomBid (double lb, double ub) {
+		Range r = new Range(lb, ub);
+		return getRandomBid(r);
+	}
+	
+	/**
+	 * Returns the current phase of the negotiation session
+	 * based on the elapsed time. Phases are 1, 2 or 3.
+	 * 
+	 * @return
+	 */
+	public int getNegotiationPhase () {
+		double time = negotiationSession.getTime(); // Normalized time [0,1]
+		int p = 0;
+		
+		if (time <= phaseBoundary[0]) 
+			return 1;
+		else if (time > phaseBoundary[0] && time <= phaseBoundary[1])
+			return 2;
+		else if (time > phaseBoundary[1])
+			return 3;
+		
+		return 0;
+	}
+	
+	public Range getRangeFunctionFirstPhase (double t, double margin) {
+
+		double normTime = t/phaseBoundary[0]; // Normalized time
+		
+		double val = 1-(normTime/10);
+		Range r = new Range(val-margin, val+margin);
+		
+		// Set upper bound to 1 is exceeds
+		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
+		
+		System.out.println("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
+		
+		return r;
+	}
+	
+	public boolean isAlreadyOffered (BidDetails bd) {
+		
+		List<BidDetails> historyList = biddingHistory.getHistory();
+		if (historyList.contains(bd)) return true;
+		
+		return false;
+	}
+	
 	
 	/**
 	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)

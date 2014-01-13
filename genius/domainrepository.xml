@@ -63,10 +63,6 @@
                 <profile url="file:etc/templates/partydomain/AI2009/party_user23_utility.xml"/>
                 <profile url="file:etc/templates/partydomain/AI2009/party_user24_utility.xml"/>
             </domainRepItem>
-            <domainRepItem url="file:etc/templates/OlivierTest/OlivierTest.xml">
-                <profile url="file:etc/templates/OlivierTest/OlivierTest_util1.xml"/>
-                <profile url="file:etc/templates/OlivierTest/OlivierTest_util2.xml"/>
-            </domainRepItem>
         </domainRepItem>
         <protocolRepItem/>
     </items>
