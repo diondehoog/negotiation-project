@@ -51,7 +51,7 @@ public class Group7_OMS extends OMStrategy {
 		if (parameters.get("t") != null) {
 			updateThreshold = parameters.get("t").doubleValue();
 		} else {
-			System.out.println("OMStrategy assumed t = 1.1");
+			Log.dln("OMStrategy assumed t = 1.1");
 		}
 	}
 	
