@@ -1,15 +1,18 @@
 package negotiator.group7;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import misc.Range;
 import negotiator.Bid;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
 import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
+import negotiator.boaframework.OutcomeSpace;
 import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.boaframework.opponentmodel.NoModel;
 
@@ -68,9 +71,6 @@ public class Group7_BS extends OfferingStrategy {
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
-		
-		System.out.println("Hij komt hier langs en daarna crashed hij");
-		// All the parameters are given as HashMap<String,Double>
 		
 		// If there is no concession speed set up, it is set to the default 0
 		if (parameters.get("e") == null)
@@ -135,6 +135,10 @@ public class Group7_BS extends OfferingStrategy {
 		 */
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
+		
+		getRandomBid(0.8, 0.9);
+		
+		
 //		System.out.println("time is: " + time);
 //		
 //		// We want to find the nearest bid to this goal
@@ -263,14 +267,46 @@ public class Group7_BS extends OfferingStrategy {
 		return Pmin + (Pmax - Pmin) * (1 - f(t));
 	}
 	
-	public BidDetails getRandomBidFirstPhase () {
+	/**
+	 * Returns a random bid within the range [lb, ub]
+	 * 
+	 * @param lb
+	 * @param ub
+	 */
+	public BidDetails getRandomBid (double lb, double ub) {
 		
-		Random randgen = new Random();
-		// Generate random number between 0.9 and 1.
-		double utilGoal = 0.9+(randgen.nextInt(1)/100);
+		System.out.println("################################################");
+		System.out.println("Generating random bids within range [" + lb + ", " + ub + "]");
+
+		Range r = new Range(lb, ub);
+		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		
-		BidDetails bd = negotiationSession.getOutcomeSpace().getBidNearUtility(utilGoal);
-		return bd;
+		// Just for testing, print all bids in range
+		//for (BidDetails b : bidsInRange) {
+		//	System.out.println("Found bid: " + b.getMyUndiscountedUtil());
+		//}
+		
+		int numBids = bidsInRange.size(); // Number of found bids
+		BidDetails randBid;
+		
+		System.out.println("Found " + numBids + " within range.");
+		
+		if (numBids > 0) {
+			// One or more bids within range are found.
+			// Select a random bid and return it.
+			Random randgen = new Random();
+			randBid = bidsInRange.get(randgen.nextInt(numBids));
+			
+			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+			
+		} else {
+			// No bids within range are found, finds the closest one to the given range.
+			// TODO: if no bids within range are found, then found the closest one...
+			randBid = null;
+		}
+		
+		System.out.println("################################################");
+		return randBid;
 		
 	}
 	
