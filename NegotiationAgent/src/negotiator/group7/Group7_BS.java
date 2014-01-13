@@ -54,9 +54,9 @@ public class Group7_BS extends OfferingStrategy {
 	/** Initialize bid history */
 	BidHistory biddingHistory;
 	
-	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
-	double tft1 = 1;
-	double tft2 = 1;
+	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
+	double tft1 = 1/2;
+	double tft2 = 3/4;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -149,23 +149,30 @@ public class Group7_BS extends OfferingStrategy {
 			// During the first phase we select random bids.
 			Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
 			
-			/*while (true) {
-				BidDetails bd = getRandomBid(randBidRange);
+			/* Code below checks if offer was already used... 
+			BidDetails bd = null;
+			boolean foundOffer = false;
+			int iterations = 0;
+			
+			// Iterate until we found offer that was not offered before...
+			while (!foundOffer && iterations < 5) {
+				bd = getRandomBid(randBidRange);
 				Log.newLine("Generated random bid within range: " + bd.getMyUndiscountedUtil());
 				
-				if (!isAlreadyOffered(bd)) {
-					// Add selected bid to history
-					biddingHistory.add(bd);
-					
-					// Return the random bid
-					return bd; 
-				} else {
+				if (isAlreadyOffered(bd)) {
 					// Bid was already offered, generate new one...
-					Log.newLine("Generating NEW random bid since current was already offered!");
+					Log.rln("Generating NEW random bid since current was already offered!");
+				} else {
+					// We found a new available offer :-)
+					foundOffer = true;
 				}
-			}*/
+				
+				iterations++;
+			} */
 			
 			BidDetails bd = getRandomBid(randBidRange);
+			biddingHistory.add(bd);
+			
 			return bd;
 			
 			
@@ -191,11 +198,11 @@ public class Group7_BS extends OfferingStrategy {
 				
 				//The opponent is approaching us in utility
 				if (difference>0)
-					nextBidUtil = Math.max(lastOwnUtil-(difference/tft1),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
 				
 				//The opponent is going away from us in utility
 				else
-					nextBidUtil = Math.max(lastOwnUtil-(difference/tft2),p(time));
+					nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
 				
 				
 				/* Decide bid closest to optimal frontier */				
