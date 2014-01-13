@@ -42,7 +42,7 @@ public class Group7_BS extends OfferingStrategy {
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.0, 0.8};
+	private double[] phaseBoundary = {0.1, 0.8};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
@@ -115,7 +115,7 @@ public class Group7_BS extends OfferingStrategy {
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
 		double time = negotiationSession.getTime();
-		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9);
 		
 		Log.sln("openingBid = " + openingBid.toString());
 		return openingBid;
@@ -264,13 +264,23 @@ public class Group7_BS extends OfferingStrategy {
 	 * will offer the reservation value.
 	 * 
 	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
-	 * For e = 1 it will behave as a lineair agent
-	 * For e > 1 it will behave as a conceder (it will give low utilities faster than lineair)                 
+	 * For e = 1 it will behave as a linear agent
+	 * For e > 1 it will behave as a conceder (it will give low utilities faster than linear)                 
 	 */
 	public double f(double t)
 	{
 		if (e == 0)
 			return k;
+		if (t < this.phaseBoundary[0])
+			return 1;
+		if (t < this.phaseBoundary[1])
+			return 0;
+		
+		// scale t
+		double torig = t;
+		t = (t - this.phaseBoundary[0]) / (this.phaseBoundary[1] -  this.phaseBoundary[0]);
+		Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
+		
 		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
 		return ft;
 	}
