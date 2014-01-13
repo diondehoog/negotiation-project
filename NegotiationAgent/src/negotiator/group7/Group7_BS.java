@@ -38,7 +38,7 @@ public class Group7_BS extends OfferingStrategy {
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
-	private double e = 0.0;
+	private double e = 1.0;
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
@@ -47,7 +47,7 @@ public class Group7_BS extends OfferingStrategy {
 	private double[] phaseBoundary = {0.2, 0.8};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
-	private double   phase2LowerBound = 0.5;
+	private double   phase2LowerBound = 0.6;
 	
 	/** Keep track of the current phase */
 	private int curPhase = 1;
@@ -202,8 +202,8 @@ public class Group7_BS extends OfferingStrategy {
 								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 							
 							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
-							//System.out.print("("+difference + "," + nextBidUtil+"),");
-							System.out.print(p(time) +", ");
+							System.out.print("("+difference + "," + nextBidUtil+"),");
+//							System.out.print(p(time) +", ");
 						}
 						else{
 							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
@@ -290,7 +290,7 @@ public class Group7_BS extends OfferingStrategy {
 	 * @return double
 	 */
 	public double p(double t) {
-		return Pmin + (Pmax - Pmin) * (1 - f(t));
+		return phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
 	}
 	
 	/**
@@ -301,8 +301,8 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public BidDetails getRandomBid (double lb, double ub) {
 		
-		System.out.println("################################################");
-		System.out.println("Generating random bids within range [" + lb + ", " + ub + "]");
+//		System.out.println("################################################");
+//		System.out.println("Generating random bids within range [" + lb + ", " + ub + "]");
 
 		Range r = new Range(lb, ub);
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
@@ -315,7 +315,7 @@ public class Group7_BS extends OfferingStrategy {
 		int numBids = bidsInRange.size(); // Number of found bids
 		BidDetails randBid;
 		
-		System.out.println("Found " + numBids + " within range.");
+//		System.out.println("Found " + numBids + " within range.");
 		
 		if (numBids > 0) {
 			// One or more bids within range are found.
@@ -323,7 +323,7 @@ public class Group7_BS extends OfferingStrategy {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			System.out.println("Selected random bid with utility: " + randBid.getMyUndiscountedUtil());
+			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
 			
 		} else {
 			// No bids within range are found, now we selected the bid that is closest 
@@ -333,7 +333,7 @@ public class Group7_BS extends OfferingStrategy {
 			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
 		}
 		
-		System.out.println("################################################");
+//		System.out.println("################################################");
 		return randBid;
 		
 	}
