@@ -16,60 +16,60 @@ public class Log {
 	/**
 	 * What to print?
 	 */
-	private static final int PRINT = ALL; // set to NONE for only important outputs
+	private static final int PRINT = HOKKE; // set to NONE for only important outputs
 	
 	
 	
-	public static void s(String dikke_grote_tieten) {
-		inLine(dikke_grote_tieten, SCHUTTER);
+	public static void s(String msg) {
+		inLine(msg, SCHUTTER);
 	}
-	public static void sln(String dikke_grote_tieten) {
-		newLine(dikke_grote_tieten, SCHUTTER);
-	}
-	
-	public static void v(String dikke_grote_tieten) {
-		inLine(dikke_grote_tieten, VIERING);
-	}
-	public static void vln(String dikke_grote_tieten) {
-		newLine(dikke_grote_tieten, VIERING);
+	public static void sln(String msg) {
+		newLine(msg, SCHUTTER);
 	}
 	
-	public static void r(String dikke_grote_tieten) {
-		inLine(dikke_grote_tieten, RUNIA);
+	public static void v(String msg) {
+		inLine(msg, VIERING);
 	}
-	public static void rln(String dikke_grote_tieten) {
-		newLine(dikke_grote_tieten, RUNIA);
-	}
-	
-	public static void d(String dikke_grote_tieten) {
-		inLine(dikke_grote_tieten, DADO);
-	}
-	public static void dln(String dikke_grote_tieten) {
-		newLine(dikke_grote_tieten, DADO);
+	public static void vln(String msg) {
+		newLine(msg, VIERING);
 	}
 	
-	public static void h(String dikke_grote_tieten) {
-		inLine(dikke_grote_tieten, HOKKE);
+	public static void r(String msg) {
+		inLine(msg, RUNIA);
 	}
-	public static void hln(String dikke_grote_tieten) {
-		newLine(dikke_grote_tieten, HOKKE);
-	}
-	
-	public static void inLine(String dikke_grote_tieten) {
-		System.out.print(dikke_grote_tieten);
-	}
-	public static void newLine(String dikke_grote_tieten) {
-		System.out.println(dikke_grote_tieten);
+	public static void rln(String msg) {
+		newLine(msg, RUNIA);
 	}
 	
-	public static void inLine(String dikke_grote_tieten, int type) {
+	public static void d(String msg) {
+		inLine(msg, DADO);
+	}
+	public static void dln(String msg) {
+		newLine(msg, DADO);
+	}
+	
+	public static void h(String msg) {
+		inLine(msg, HOKKE);
+	}
+	public static void hln(String msg) {
+		newLine(msg, HOKKE);
+	}
+	
+	public static void inLine(String msg) {
+		System.out.print(msg);
+	}
+	public static void newLine(String msg) {
+		System.out.println(msg);
+	}
+	
+	public static void inLine(String msg, int type) {
 		if (type == PRINT || PRINT == ALL) {
-			inLine(dikke_grote_tieten);
+			inLine(msg);
 		}
 	}
-	public static void newLine(String dikke_grote_tieten, int type) {
+	public static void newLine(String msg, int type) {
 		if (type == PRINT || PRINT == ALL) {
-			newLine(dikke_grote_tieten);
+			newLine(msg);
 		}
 	}
 }

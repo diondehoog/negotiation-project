@@ -55,8 +55,8 @@ public class Group7_BS extends OfferingStrategy {
 	BidHistory biddingHistory;
 	
 	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
-	double tft1 = 1/2;
-	double tft2 = 3/4;
+	double tft1 = 0.5;
+	double tft2 = 0.75;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -143,6 +143,8 @@ public class Group7_BS extends OfferingStrategy {
 			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
+		
+		getAverageDiffLastNBids (5);
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -181,7 +183,6 @@ public class Group7_BS extends OfferingStrategy {
 			
 			/* Opponent modelling by Bas */
 					
-					
 			
 			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 			
@@ -192,6 +193,9 @@ public class Group7_BS extends OfferingStrategy {
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
+				if(lastOpponentBids.size() > 10)
+					difference = getAverageDiffLastNBids(10);
+				else
 				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				//Log.dln("Difference: " + difference);
 				double nextBidUtil;
@@ -199,11 +203,13 @@ public class Group7_BS extends OfferingStrategy {
 				//The opponent is approaching us in utility
 				if (difference>0)
 					nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-				
-				//The opponent is going away from us in utility
+					
+				//The opponent is distancing from us in utility
 				else
 					nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
 				
+				//If there has been a better bid of the opponent, don't go below
+				nextBidUtil = Math.max(nextBidUtil, bestBid);
 				
 				/* Decide bid closest to optimal frontier */				
 				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
@@ -211,14 +217,14 @@ public class Group7_BS extends OfferingStrategy {
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
 
-
 				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
 
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
 				nextBid = outcomespace.getBidNearUtility(nextBidUtil); 
-				} else { // do an intelligent bid since we have choiches!
+				} 
+				else { // do an intelligent bid since we have choices!
 				
 					Double sizeList = new Double(bidsInRange.size());
 					Log.vln("Number of bids found that are in range:" + sizeList.toString());
@@ -231,8 +237,7 @@ public class Group7_BS extends OfferingStrategy {
 					nextBid = bidsInRange.get(0);
 				}
 				
-				
-				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
+				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponent likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				Log.s("("+difference + "," + nextBidUtil+"),");
 				// Log.inLine(p(time) +", ");
@@ -396,7 +401,7 @@ public class Group7_BS extends OfferingStrategy {
 		// Set upper bound to 1 is exceeds
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
 		
-		Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
+		//Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
 		
 		return r;
 	}
@@ -409,24 +414,90 @@ public class Group7_BS extends OfferingStrategy {
 		return false;
 	}
 	
+	/**
+	 * This method returns the average difference over the last n bids.
+	 * Can be used to see the behavior the agent over time.
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public double getAverageDiffLastNBids (int n) {
+		
+		if (n > negotiationSession.getOpponentBidHistory().size()) {
+			// Not enough bids in history!
+			return 0.0;
+		}
+		
+		// Save values
+		double[] vals = new double[n];
+		
+		double avg = 0;
+		
+		// Get list of opponent bids sorted on time
+		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+		
+		// TODO: Smooth the values
+		
+		for (int i = 0; i < n; i++) {
+			BidDetails bd = h.get(i);
+			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
+			vals[i] = bd.getMyUndiscountedUtil();
+			avg += vals[i];
+		}
+		
+		avg = avg/n;
+		
+		double[] smooth = new double[n];
+		
+		for (int i = 0; i < n; i++) {
+			smooth[i] = applyConvolution(vals, i);
+			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
+		}
+		
+		
+		//Log.rln("Average concede over last " + n + " bids = " + avg);
+		
+		
+		
+		return avg;
+	}
 	
 	/**
-	 * 	- Opdelen in drie fases op basis van tijd (en later ook van discount)
-	 *  - Met hoge biedeingen beginnen in eerste fase (+90%)
-	 *  - De reactie van hoge biedingen gebruiken om strategie/preference van opponent te bepalen
-	 *  
-	 *  - Combineren van twee strategien:
-	 *  	- Conceder --> Hard-Headed
-	 *  	- Hard-Headed --> Tit-for-That
+	 * input = double array containing values to be smoothed
+	 * x = location where to apply smooth
+	 * k = kernel
 	 * 
-	 * 	- Fase 1: hoge biedingen 90%
-	 *  - Fase 2: afhankelijk van strategy HH/TfT
-	 *  - Fase 3: acceptance strategy
-	 *  
-	 *  Nash Point schatten a.d.h. preference profile
-	 *  Paar functies (sin/exp) implementeren en kijken hoe je de OS fuckt
-	 *  
-	 *  Runnen: saven in Eclipse, class file in Genius laden (TomV maakt XML)
-	 *  
+	 * @param input
+	 * @param x
+	 * @param y
+	 * @param k
+	 * @param kernelWidth
+	 * @param kernelHeight
+	 * @return
 	 */
+	public double applyConvolution(double[] input, int x) {
+		
+		// Smoothing kernel for convolution
+		double[] k = {1.0/5.0, 3.0/5.0, 1.0/5.0};
+		
+		// Build double array
+		double[] toConvolve = new double[input.length+2];
+		toConvolve[0] = input[0];
+		for (int j = 0; j < input.length; j++) {
+			toConvolve[j+1] = input[j];
+		}
+		toConvolve[input.length+1] = input[input.length-1];
+	
+		double output = 0;	
+		
+		// Smooth the function
+		for (int i = -1; i < k.length-2; i++) {
+			output = output + toConvolve[x+i+1]*k[i+1];
+			
+			//output = output + (toConvolve[x+i] * k[i+1]);
+		}
+		
+		return output;
+	}
+	
 }
