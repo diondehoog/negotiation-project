@@ -198,11 +198,10 @@ public class Group7_BS extends OfferingStrategy {
 				
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
-<<<<<<< HEAD
-//				System.out.println("I want a utility of: " + temp.toString() + " range: " + range2);
-=======
+
+
 				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
->>>>>>> 51158fc92de45b18846f3abfd191716d042c0277
+
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
