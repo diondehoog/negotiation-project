@@ -55,8 +55,8 @@ public class Group7_BS extends OfferingStrategy {
 	BidHistory biddingHistory;
 	
 	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
-	double tft1 = 1/2;
-	double tft2 = 3/4;
+	private double tft1 = 0.5;
+	private double tft2 = 0.75;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -193,7 +193,13 @@ public class Group7_BS extends OfferingStrategy {
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
-				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				double difference;
+				
+				//if(lastOpponentBids.size() > 10)
+				//	difference = getAverageDiffLastNBids(10);
+				//else
+					difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				
 				double nextBidUtil;
 				
 				//The opponent is approaching us in utility
@@ -304,7 +310,8 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
 		Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
-		return pt;
+		//return pt;
+		return 0;
 	}
 	
 	public BidDetails getRandomBidFirstPhase () {
