@@ -1,11 +1,12 @@
 package negotiator.group7;
 
 import java.util.HashMap;
+
 import negotiator.Bid;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
-import negotiator.boaframework.opponentmodel.BayesianModel;
 import negotiator.boaframework.opponentmodel.NashFrequencyModel;
+import negotiator.boaframework.opponentmodel.ScalableBayesianModel;
 import negotiator.issue.Issue;
 import negotiator.utility.UtilitySpace;
 
@@ -59,7 +60,7 @@ public class Group7_OM extends OpponentModel {
 		{
 			curOM = new NashFrequencyModel();
 		} else {
-			curOM = new BayesianModel();
+			curOM = new ScalableBayesianModel();
 		}
 		try {
 			curOM.init(negotiationSession, parameters);
