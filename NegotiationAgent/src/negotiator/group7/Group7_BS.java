@@ -140,7 +140,7 @@ public class Group7_BS extends OfferingStrategy {
 		 */
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
-		
+			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 
@@ -174,8 +174,12 @@ public class Group7_BS extends OfferingStrategy {
 			
 			/* Opponent modelling by Bas */
 					
+					
+			
 			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 			
+			
+			double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 			
 			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
@@ -228,11 +232,15 @@ public class Group7_BS extends OfferingStrategy {
 			else{
 				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
 			}
-			return nextBid;
+			if (nextBid.getMyUndiscountedUtil()>bestBid)
+				return nextBid;
+			else
+				return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
 			
 		} else if (curPhase == 3) {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
+			
 			
 			
 			// For now, we just return a random bid...
