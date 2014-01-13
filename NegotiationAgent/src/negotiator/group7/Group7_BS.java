@@ -117,7 +117,7 @@ public class Group7_BS extends OfferingStrategy {
 		double time = negotiationSession.getTime();
 		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
 		
-		System.out.println("openingBid = " + openingBid.toString());
+		Log.debugNewLine("openingBid = " + openingBid.toString());
 		return openingBid;
 		//return determineNextBid();
 	}
@@ -151,7 +151,7 @@ public class Group7_BS extends OfferingStrategy {
 			
 			/*while (true) {
 				BidDetails bd = getRandomBid(randBidRange);
-				System.out.println("Generated random bid within range: " + bd.getMyUndiscountedUtil());
+				Log.newLine("Generated random bid within range: " + bd.getMyUndiscountedUtil());
 				
 				if (!isAlreadyOffered(bd)) {
 					// Add selected bid to history
@@ -161,7 +161,7 @@ public class Group7_BS extends OfferingStrategy {
 					return bd; 
 				} else {
 					// Bid was already offered, generate new one...
-					System.out.println("Generating NEW random bid since current was already offered!");
+					Log.newLine("Generating NEW random bid since current was already offered!");
 				}
 			}*/
 			
@@ -193,7 +193,7 @@ public class Group7_BS extends OfferingStrategy {
 				
 				Double temp = new Double(nextBidUtil);
 				Double range2 = new Double(phase2range);
-				System.out.println("I want an utility of: " + temp.toString() + " range: " + range2);
+				Log.debugNewLine("I want an utility of: " + temp.toString() + " range: " + range2);
 				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
@@ -201,7 +201,7 @@ public class Group7_BS extends OfferingStrategy {
 				} else { // do an intelligent bid since we have choiches!
 				
 					Double sizeList = new Double(bidsInRange.size());
-					System.out.println("Number of bids found that are in range:" + sizeList.toString());
+					Log.debugNewLine("Number of bids found that are in range:" + sizeList.toString());
 					
 					OpponentBidCompare comparebids = new OpponentBidCompare();
 					comparebids.setOpponentModel(opponentModel);
@@ -214,8 +214,8 @@ public class Group7_BS extends OfferingStrategy {
 				
 				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
-				System.out.print("("+difference + "," + nextBidUtil+"),");
-				// System.out.print(p(time) +", ");
+				Log.debugInLine("("+difference + "," + nextBidUtil+"),");
+				// Log.inLine(p(time) +", ");
 			}
 			else{
 				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
@@ -288,20 +288,20 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public BidDetails getRandomBid (Range r) {
 		
-//		System.out.println("################################################");
-//		System.out.println("Generating random bids within range [" + lb + ", " + ub + "]");
+//		Log.newLine.out.println("################################################");
+//		Log.newLine("Generating random bids within range [" + lb + ", " + ub + "]");
 
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		
 		// Just for testing, print all bids in range
 		//for (BidDetails b : bidsInRange) {
-		//	System.out.println("Found bid: " + b.getMyUndiscountedUtil());
+		//	Log.newLine("Found bid: " + b.getMyUndiscountedUtil());
 		//}
 		
 		int numBids = bidsInRange.size(); // Number of found bids
 		BidDetails randBid;
 		
-//		System.out.println("Found " + numBids + " within range.");
+//		Log.newLine("Found " + numBids + " within range.");
 		
 		if (numBids > 0) {
 			// One or more bids within range are found.
@@ -309,17 +309,17 @@ public class Group7_BS extends OfferingStrategy {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			//System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+			//Log.newLine("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
 			
 		} else {
 			// No bids within range are found, now we selected the bid that is closest 
 			// to the UPPER bound of the given range.
 			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(r.getUpperbound());
 			
-			//System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
+			//Log.newLine("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
 		}
 		
-		//		System.out.println("################################################");
+		//		Log.newLine("################################################");
 		return randBid;
 		
 	}
@@ -359,7 +359,7 @@ public class Group7_BS extends OfferingStrategy {
 		// Set upper bound to 1 is exceeds
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
 		
-		System.out.println("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
+		Log.debugNewLine("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
 		
 		return r;
 	}
