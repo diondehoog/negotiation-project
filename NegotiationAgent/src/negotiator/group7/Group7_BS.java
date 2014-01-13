@@ -319,12 +319,14 @@ public class Group7_BS extends OfferingStrategy {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			System.out.println("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
+			System.out.println("Selected random bid with utility: " + randBid.getMyUndiscountedUtil());
 			
 		} else {
-			// No bids within range are found, finds the closest one to the given range.
-			// TODO: if no bids within range are found, then found the closest one...
-			randBid = null;
+			// No bids within range are found, now we selected the bid that is closest 
+			// to the UPPER bound of the given range.
+			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(ub);
+			
+			System.out.println("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
 		}
 		
 		System.out.println("################################################");
