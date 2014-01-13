@@ -265,7 +265,7 @@ public class Group7_BS extends OfferingStrategy {
 			return k;
 		if (t < this.phaseBoundary[0])
 			return 1;
-		if (t < this.phaseBoundary[1])
+		if (t > this.phaseBoundary[1])
 			return 1;
 		
 		// scale t
