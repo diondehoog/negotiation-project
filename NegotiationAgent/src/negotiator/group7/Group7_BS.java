@@ -1,20 +1,16 @@
 package negotiator.group7;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import misc.Range;
-import negotiator.Bid;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
 import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
-import negotiator.boaframework.OutcomeSpace;
 import negotiator.boaframework.SortedOutcomeSpace;
-import negotiator.boaframework.opponentmodel.NoModel;
 
 /**
  * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
@@ -140,124 +136,46 @@ public class Group7_BS extends OfferingStrategy {
 		System.out.println("Generating random bids within range [0.9, 1.0]...");
 		
 		if (curPhase == 1) {
-			// First negotiation phase.
+			// First negotiation phase (implemented by Tom)
 			// During the first phase we select random bids.
-			
 			return getRandomBid(0.9, 1.0);
+			
+		} else if (curPhase == 2) {
+			// Second negotiation phase (implemented by Arnold)
+			
+			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
+			//Calculate difference between last bid and before last bid
+			if (lastOpponentBids.size() > 0){
+				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				double nextBidUtil;
+				//The opponent is approaching us in utility
+				if (difference>0)
+					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+				//The opponent is going away from us in utility
+				else
+					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+				
+				nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
+				System.out.print("("+difference + "," + nextBidUtil+"),");
+				// System.out.print(p(time) +", ");
+			}
+			else{
+				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+			}
+			return nextBid;
+			
+		} else if (curPhase == 3) {
+			// Final negotiation phase
+			// TODO: implemented this based on Acceptance Strategy
+			
+			// For now, we just return a random bid...
+			return getRandomBid(0.2, 0.6);
+			
 		}
 		
-		
-//		System.out.println("time is: " + time);
-//		
-//		// We want to find the nearest bid to this goal
-//		double utilityGoal;
-//		
-//		// Do we have an opponent model?
-//		boolean useOM = !(opponentModel instanceof NoModel);
-//		
-//		// Based on the normalized time we determine in which 
-//		// negotiation phase we are currently. Depending on which
-//		// phase we are the bid generation differs.
-
-		
-		
-//		if (time < phaseBoundary[0]) {
-		// Negotiation Phase 1	
-//			
-//		} 
-//		
-
-		
-		
-//		else if (time < phaseBoundary[1]) {
-		// Negotiation Phase 2
-//			// Calculate the utility goal by using p(t)
-//			utilityGoal = p(time);
-//			
-//			if(!useOM) {
-//				// Opponent model NOT available
-//				// Use to utilityGoal to get the nearest bid in the outcome space
-//				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-//			} else {
-//				// Opponent Model IS available
-//				try {
-				
-					//int opponentCategory = ((Group7_OMS) omStrategy).getOpponentModel();
-								
-					// Base the next bid on the OM and outcome space
-									
-					//Opponent is Conceder: act tit for tat
-//					if(opponentCategory == 1){
-						List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-						Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
-						//Calculate difference between last bid and before last bid
-						if (lastOpponentBids.size() > 0){
-							double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
-							double nextBidUtil;
-							//The opponent is approaching us in utility
-							if (difference>0)
-								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
-							//The opponent is going away from us in utility
-							else
-								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
-							
-							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
-							System.out.print("("+difference + "," + nextBidUtil+"),");
-//							System.out.print(p(time) +", ");
-						}
-						else{
-							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
-						}
-						return nextBid;
-//					} 
-//				
-//					//Opponent is Hardheaded: act hard headed
-//					if(opponentCategory == 2){
-//					
-//					}
-//				
-//					else{
-//						nextBid = omStrategy.getBid(outcomespace, utilityGoal);
-//					}
-//				
-//				return nextBid;
-//				
-//				}	catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		
-
-		
-		
-//		else{
-			//last negotiation phase
-//			// Calculate the utility goal by using p(t)
-//			utilityGoal = p(time);
-//		
-//			// System.out.println("[e=" + e + ", Pmin = " + BilateralAgent.round2(Pmin) + "] t = " + 
-//			//					  BilateralAgent.round2(time) + ". Aiming for " + utilityGoal);
-//		
-//			// if there is no opponent model available
-//			if (opponentModel instanceof NoModel) {
-//				// Opponent model NOT available
-//				// Use to utilityGoal to get the nearest bid in the outcome space
-//				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-//			} else {
-//				// Opponent Model IS available
-//				// Base the next bid on the OM and outcome space
-//			
-//				nextBid = omStrategy.getBid(outcomespace, utilityGoal);
-//			}
-//			return nextBid;
-//		}
-//		
-//		//temporary!
-//		utilityGoal = p(time);
-//		nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(utilityGoal);
-//		return nextBid;
+		// Never used :-)
+		return getRandomBid(0.0, 1.0);
 	}
 	
 	/**
@@ -346,15 +264,16 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public int getNegotiationPhase () {
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
+		int p = 0;
 		
 		if (time < phaseBoundary[0]) 
-			curPhase = 1;
+			return 1;
 		else if (time >= phaseBoundary[0] && time < phaseBoundary[1])
-			curPhase = 2;
+			return 2;
 		else if (time >= phaseBoundary[1])
-			curPhase = 3; 
+			return 3;
 		
-		return curPhase;
+		return 0;
 	}
 	
 	
