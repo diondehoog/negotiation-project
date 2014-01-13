@@ -69,7 +69,6 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
-		System.out.println("Hij komt hier langs en daarna crashed hij");
 		// All the parameters are given as HashMap<String,Double>
 		
 		// If there is no concession speed set up, it is set to the default 0
@@ -109,10 +108,10 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
-		
 		double time = negotiationSession.getTime();
-		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
 		
+		System.out.println("openingBid = " + openingBid.toString());
 		return openingBid;
 		//return determineNextBid();
 	}
@@ -146,13 +145,19 @@ public class Group7_BS extends OfferingStrategy {
 //		// Based on the normalized time we determine in which 
 //		// negotiation phase we are currently. Depending on which
 //		// phase we are the bid generation differs.
+
+		
+		
 //		if (time < phaseBoundary[0]) {
-//			// Negotiation Phase 1	
+		// Negotiation Phase 1	
 //			
 //		} 
 //		
+
+		
+		
 //		else if (time < phaseBoundary[1]) {
-//		// Negotiation Phase 2
+		// Negotiation Phase 2
 //			// Calculate the utility goal by using p(t)
 //			utilityGoal = p(time);
 //			
@@ -174,7 +179,6 @@ public class Group7_BS extends OfferingStrategy {
 						Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 						//Calculate difference between last bid and before last bid
 						if (lastOpponentBids.size() > 0){
-							System.out.println("bidsize > 0");
 							double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 							double nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
@@ -186,7 +190,7 @@ public class Group7_BS extends OfferingStrategy {
 						return nextBid;
 //					} 
 //				
-//						//Opponent is Hardheaded: act hard headed
+//					//Opponent is Hardheaded: act hard headed
 //					if(opponentCategory == 2){
 //					
 //					}
@@ -204,8 +208,11 @@ public class Group7_BS extends OfferingStrategy {
 //			}
 //		}
 //		
+
+		
+		
 //		else{
-//			//last negotiation phase
+			//last negotiation phase
 //			// Calculate the utility goal by using p(t)
 //			utilityGoal = p(time);
 //		
