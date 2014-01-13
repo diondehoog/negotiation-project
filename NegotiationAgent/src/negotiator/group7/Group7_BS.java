@@ -94,7 +94,6 @@ public class Group7_BS extends OfferingStrategy {
 		}
 		
 		this.opponentModel = model;
-		this.omStrategy = oms;
 			
 	}
 
@@ -156,7 +155,8 @@ public class Group7_BS extends OfferingStrategy {
 				else
 					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
 				
-				nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
+				nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
+				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				System.out.print("("+difference + "," + nextBidUtil+"),");
 				// System.out.print(p(time) +", ");
 			}
