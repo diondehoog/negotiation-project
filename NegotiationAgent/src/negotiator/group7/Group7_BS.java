@@ -186,6 +186,7 @@ public class Group7_BS extends OfferingStrategy {
 			//Calculate difference between last bid and before last bid
 			if (lastOpponentBids.size() > 0){
 				double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
+				//Log.dln("Difference: " + difference);
 				double nextBidUtil;
 				
 				//The opponent is approaching us in utility
@@ -279,7 +280,7 @@ public class Group7_BS extends OfferingStrategy {
 		// scale t
 		double torig = t;
 		t = (t - this.phaseBoundary[0]) / (this.phaseBoundary[1] -  this.phaseBoundary[0]);
-		Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
+		//Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
 		
 		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
 		return ft;
@@ -294,7 +295,7 @@ public class Group7_BS extends OfferingStrategy {
 	public double p(double t) {
 		
 		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
-		Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
+		//Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
 		return pt;
 	}
 	
