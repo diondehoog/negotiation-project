@@ -193,6 +193,8 @@ public class Group7_BS extends OfferingStrategy {
 				else
 					nextBidUtil = Math.max(lastOwnUtil-(difference/tft2),p(time));
 				
+				
+				/* Decide bid closest to optimal frontier */				
 				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
 				
 				Double temp = new Double(nextBidUtil);
