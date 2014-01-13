@@ -53,27 +53,6 @@ public class Group7_BS extends OfferingStrategy {
 	private int curPhase = 1;
 	
 	/**
-	 * Empty constructor used for reflexion. Note this constructor assumes that init
-	 * is called next.
-	 */
-//	public Group7_BS(){}
-//	
-//	public Group7_BS(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, double e, double k, double max, double min){
-//		System.out.println("Deze functie wordt gebruikt");
-//		this.e = e;		// Concession factor
-//		this.k = k;		
-//		this.Pmax = max;	// Max target utility
-//		this.Pmin = min;	// Min target utility
-//		
-//		this.negotiationSession = negoSession;
-//		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
-//		negotiationSession.setOutcomeSpace(outcomespace);
-//		
-//		this.opponentModel = model;	// Opponent model
-//		this.omStrategy = oms;		// Opponent strategy
-//	}
-	
-	/**
 	 * Method which initializes the agent by setting all parameters.
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
