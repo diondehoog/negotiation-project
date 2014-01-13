@@ -149,23 +149,30 @@ public class Group7_BS extends OfferingStrategy {
 			// During the first phase we select random bids.
 			Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
 			
-			/*while (true) {
-				BidDetails bd = getRandomBid(randBidRange);
+			/* Code below checks if offer was already used... 
+			BidDetails bd = null;
+			boolean foundOffer = false;
+			int iterations = 0;
+			
+			// Iterate until we found offer that was not offered before...
+			while (!foundOffer && iterations < 5) {
+				bd = getRandomBid(randBidRange);
 				Log.newLine("Generated random bid within range: " + bd.getMyUndiscountedUtil());
 				
-				if (!isAlreadyOffered(bd)) {
-					// Add selected bid to history
-					biddingHistory.add(bd);
-					
-					// Return the random bid
-					return bd; 
-				} else {
+				if (isAlreadyOffered(bd)) {
 					// Bid was already offered, generate new one...
-					Log.newLine("Generating NEW random bid since current was already offered!");
+					Log.rln("Generating NEW random bid since current was already offered!");
+				} else {
+					// We found a new available offer :-)
+					foundOffer = true;
 				}
-			}*/
+				
+				iterations++;
+			} */
 			
 			BidDetails bd = getRandomBid(randBidRange);
+			biddingHistory.add(bd);
+			
 			return bd;
 			
 			

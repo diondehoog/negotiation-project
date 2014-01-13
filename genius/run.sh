@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 FOLDER=$CURDIR/negotiator
 FOLDER2=$CURDIR/negotiator/group7
