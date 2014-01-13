@@ -1,6 +1,7 @@
 .metadata/
 genius/log/
 genius/negotiator/
+genius/previousTournament
 NegotiationAgent/bin/
 NegotiationAgent/report/*.pdf
 *.bbl

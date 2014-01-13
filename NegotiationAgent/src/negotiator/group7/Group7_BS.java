@@ -38,12 +38,13 @@ public class Group7_BS extends OfferingStrategy {
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
-	private double e;
+	private double e = 0.0;
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.2, 0.8};
+	private double   phase1LowerBound = 0.8;
 	
 	/**
 	 * Empty constructor used for reflexion. Note this constructor assumes that init
@@ -72,16 +73,22 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
-		// If there is no concession speed set up, it is set to the default 0
+		if (parameters.get("phase2") != null)
+			phaseBoundary[0] = parameters.get("phase2");
+		
+		if (parameters.get("phase3") != null)
+			phaseBoundary[1] = parameters.get("phase3");
+		
+		if (parameters.get("phase1lowerbound") != null)
+			phase1LowerBound = parameters.get("phase1lowerbound");
+		
 		if (parameters.get("e") == null)
-			parameters.put("e", 0.0);
+			e = parameters.get("e");
 		
 			this.negotiationSession = negoSession;
 			
 			outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
 			negotiationSession.setOutcomeSpace(outcomespace);
-			
-			this.e = parameters.get("e");
 			
 			// Check is k is given, if not, set k=0 which means start with a bid with maximum utility
 			if (parameters.get("k") != null)
@@ -109,10 +116,10 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
-		
 		double time = negotiationSession.getTime();
-		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9*p(time));
 		
+		System.out.println("openingBid = " + openingBid.toString());
 		return openingBid;
 		//return determineNextBid();
 	}
@@ -150,13 +157,19 @@ public class Group7_BS extends OfferingStrategy {
 //		// Based on the normalized time we determine in which 
 //		// negotiation phase we are currently. Depending on which
 //		// phase we are the bid generation differs.
+
+		
+		
 //		if (time < phaseBoundary[0]) {
-//			// Negotiation Phase 1	
+		// Negotiation Phase 1	
 //			
 //		} 
 //		
+
+		
+		
 //		else if (time < phaseBoundary[1]) {
-//		// Negotiation Phase 2
+		// Negotiation Phase 2
 //			// Calculate the utility goal by using p(t)
 //			utilityGoal = p(time);
 //			
@@ -178,19 +191,25 @@ public class Group7_BS extends OfferingStrategy {
 						Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 						//Calculate difference between last bid and before last bid
 						if (lastOpponentBids.size() > 0){
-							System.out.println("bidsize > 0");
 							double difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
-							double nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+							double nextBidUtil;
+							//The opponent is approaching us in utility
+							if (difference>0)
+								nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+							//The opponent is going away from us in utility
+							else
+								nextBidUtil = Math.max(lastOwnUtil+(difference),p(time));
+							
 							nextBid = omStrategy.getBid(outcomespace, nextBidUtil);
+							System.out.print("("+difference + "," + nextBidUtil+"),");
 						}
 						else{
-							System.out.println("bidsize not > 0");
 							nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
 						}
 						return nextBid;
 //					} 
 //				
-//						//Opponent is Hardheaded: act hard headed
+//					//Opponent is Hardheaded: act hard headed
 //					if(opponentCategory == 2){
 //					
 //					}
@@ -208,8 +227,11 @@ public class Group7_BS extends OfferingStrategy {
 //			}
 //		}
 //		
+
+		
+		
 //		else{
-//			//last negotiation phase
+			//last negotiation phase
 //			// Calculate the utility goal by using p(t)
 //			utilityGoal = p(time);
 //		
