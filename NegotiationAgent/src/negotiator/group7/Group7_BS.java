@@ -154,6 +154,7 @@ public class Group7_BS extends OfferingStrategy {
 				//The opponent is going away from us in utility
 				else
 					nextBidUtil = Math.max(lastOwnUtil+(difference/2),p(time));
+				
 				nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponent likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				System.out.print("("+difference + "," + nextBidUtil+"),");
