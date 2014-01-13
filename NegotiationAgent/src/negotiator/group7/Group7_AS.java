@@ -3,6 +3,7 @@ package negotiator.group7;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import negotiator.BidHistory;
 import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
@@ -167,24 +168,25 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 		previousTime = time;
 		int bidsLeft = (int) ((1.0 - time) / (averageDeltaTime + 0.00001));
-		
-		Log.hln("Guessed Bids Left: " + bidsLeft + "; now: " + counter + "; total guessed: " + (counter + bidsLeft));
+
 //		Actions a = super.determineAcceptability();
-		double hisLast = negotiationSession.getOpponentBidHistory().getLastBidDetails().getMyUndiscountedUtil();
-		double hisBest = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
+		BidHistory bh = negotiationSession.getOpponentBidHistory();
+		double hisLast = bh.getHistory().get(0).getMyUndiscountedUtil();
+		double hisBest = bh.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
 		double ourWorstFixed = Math.max(ourWorst, 1 - time);
+
 		if (hisLast > 0.85) {
-			Log.hln("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
+			Log.newLine("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
 			return Actions.Accept;
-		} else if (hisBest == hisLast && bidsLeft < 10) {
-			Log.hln("~~~~~~~~~~~ hisBest == hisLast && time > 0.97 ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
+		} else if (hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast) {
+			Log.newLine("~~~~~~~~~~~ hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
 			return Actions.Accept;
 		} else if (bidsLeft < 3) {
-			Log.hln("~~~~~~~~~~~ bidsLeft < 2");
+			Log.newLine("~~~~~~~~~~~ bidsLeft < 3");
 			return Actions.Accept;
-		} else if (hisLast > ourWorstFixed) {
-			Log.hln("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
+		} else if (hisLast > ourWorstFixed - 0.05) {
+			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed + 0.05 ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
 			return Actions.Accept;
 		}
 		return Actions.Reject;
