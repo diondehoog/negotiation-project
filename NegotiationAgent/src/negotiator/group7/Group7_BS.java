@@ -143,6 +143,8 @@ public class Group7_BS extends OfferingStrategy {
 			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
+		
+		getAverageDiffLastNBids (5);
 
 		if (curPhase == 1) {
 			// First negotiation phase (implemented by Tom)
@@ -406,6 +408,44 @@ public class Group7_BS extends OfferingStrategy {
 		if (historyList.contains(bd)) return true;
 		
 		return false;
+	}
+	
+	/**
+	 * This method returns the average difference over the last n bids.
+	 * Can be used to see the behavior the agent over time.
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public double getAverageDiffLastNBids (int n) {
+		
+		if (n > negotiationSession.getOpponentBidHistory().size()) {
+			// Not enough bids in history!
+			return 0.0;
+		}
+		
+		// Save values
+		double[] vals = new double[n];
+		
+		double avg = 0;
+		
+		// Get list of opponent bids sorted on time
+		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
+		
+		// TODO: Smooth the values
+		
+		for (int i = 0; i < n; i++) {
+			BidDetails bd = h.get(i);
+			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
+			vals[i] = bd.getMyUndiscountedUtil();
+			avg += vals[i];
+		}
+		
+		avg = avg/n;
+		
+		Log.rln("Average concede over last " + n + " bids = " + avg);
+		
+		return avg;
 	}
 	
 	
