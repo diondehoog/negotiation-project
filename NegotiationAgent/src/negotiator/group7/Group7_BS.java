@@ -181,7 +181,6 @@ public class Group7_BS extends OfferingStrategy {
 			
 			/* Opponent modelling by Bas */
 					
-					
 			
 			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 			
@@ -198,11 +197,13 @@ public class Group7_BS extends OfferingStrategy {
 				//The opponent is approaching us in utility
 				if (difference>0)
 					nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-				
-				//The opponent is going away from us in utility
+					
+				//The opponent is distancing from us in utility
 				else
 					nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
 				
+				//If there has been a better bid of the opponent, don't go below
+				nextBidUtil = Math.max(nextBidUtil, bestBid);
 				
 				/* Decide bid closest to optimal frontier */				
 				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
@@ -217,7 +218,8 @@ public class Group7_BS extends OfferingStrategy {
 
 				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
 				nextBid = outcomespace.getBidNearUtility(nextBidUtil); 
-				} else { // do an intelligent bid since we have choiches!
+				} 
+				else { // do an intelligent bid since we have choices!
 				
 					Double sizeList = new Double(bidsInRange.size());
 					Log.vln("Number of bids found that are in range:" + sizeList.toString());
@@ -230,8 +232,7 @@ public class Group7_BS extends OfferingStrategy {
 					nextBid = bidsInRange.get(0);
 				}
 				
-				
-				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponenet likes using OM
+				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponent likes using OM
 				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
 				Log.s("("+difference + "," + nextBidUtil+"),");
 				// Log.inLine(p(time) +", ");
