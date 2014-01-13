@@ -42,7 +42,7 @@ public class Group7_BS extends OfferingStrategy {
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.1, 0.8};
+	private double[] phaseBoundary = {0.4, 1};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
@@ -55,8 +55,8 @@ public class Group7_BS extends OfferingStrategy {
 	BidHistory biddingHistory;
 	
 	/** Tit-for-tat parameters: 1/tft1 is amount of approaching, 1/tft2 is amount of distancing*/
-	double tft1 = 2;
-	double tft2 = 4/3;
+	double tft1 = 1;
+	double tft2 = 1;
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -140,7 +140,7 @@ public class Group7_BS extends OfferingStrategy {
 		 */
 		
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
-		
+			
 		// Determine current negotiation phase
 		curPhase = getNegotiationPhase();
 
@@ -176,13 +176,17 @@ public class Group7_BS extends OfferingStrategy {
 			return bd;
 			
 			
-		} else if (curPhase == 2) {
+		} else if (curPhase >= 2) {
 			// Second negotiation phase (implemented by Arnold)
 			
 			/* Opponent modelling by Bas */
 					
+					
+			
 			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 			
+			
+			double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 			
 			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
 			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
@@ -235,20 +239,24 @@ public class Group7_BS extends OfferingStrategy {
 			else{
 				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
 			}
-			return nextBid;
-			
-		} else if (curPhase == 3) {
+			if (nextBid.getMyUndiscountedUtil()>bestBid)
+				return nextBid;
+			else
+				return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
+		}
+		/*} else if (curPhase == 3) {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
+			
 			
 			
 			// For now, we just return a random bid...
 			return getRandomBid(0.4, 0.6);
 			
-		}
+		}*/
 		
 		// Never used :-)
-		return getRandomBid(0.0, 1.0);
+		return getRandomBid(0.9, 1.0);
 	}
 	
 	/**
@@ -272,8 +280,8 @@ public class Group7_BS extends OfferingStrategy {
 			return k;
 		if (t < this.phaseBoundary[0])
 			return 1;
-		if (t < this.phaseBoundary[1])
-			return 0;
+		if (t > this.phaseBoundary[1])
+			return 1;
 		
 		// scale t
 		double torig = t;
@@ -291,7 +299,10 @@ public class Group7_BS extends OfferingStrategy {
 	 * @return double
 	 */
 	public double p(double t) {
-		return phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
+		
+		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
+		Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
+		return pt;
 	}
 	
 	public BidDetails getRandomBidFirstPhase () {
