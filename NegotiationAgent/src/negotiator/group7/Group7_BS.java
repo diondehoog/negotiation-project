@@ -169,7 +169,7 @@ public class Group7_BS extends OfferingStrategy {
 			return bd;
 			
 			
-		} else if (curPhase == 2) {
+		} else if (curPhase >= 2) {
 			// Second negotiation phase (implemented by Arnold)
 			
 			/* Opponent modelling by Bas */
@@ -236,8 +236,8 @@ public class Group7_BS extends OfferingStrategy {
 				return nextBid;
 			else
 				return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
-			
-		} else if (curPhase == 3) {
+		}
+		/*} else if (curPhase == 3) {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
 			
@@ -246,10 +246,10 @@ public class Group7_BS extends OfferingStrategy {
 			// For now, we just return a random bid...
 			return getRandomBid(0.4, 0.6);
 			
-		}
+		}*/
 		
 		// Never used :-)
-		return getRandomBid(0.0, 1.0);
+		return getRandomBid(0.9, 1.0);
 	}
 	
 	/**
