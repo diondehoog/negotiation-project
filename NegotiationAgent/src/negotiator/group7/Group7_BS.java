@@ -195,9 +195,9 @@ public class Group7_BS extends OfferingStrategy {
 			if (lastOpponentBids.size() > 0){
 				double difference;
 				
-				//if(lastOpponentBids.size() > 10)
-				//	difference = getAverageDiffLastNBids(10);
-				//else
+				if(lastOpponentBids.size() > 10)
+					difference = getAverageDiffLastNBids(10);
+				else
 					difference = lastOpponentBids.get(0).getMyUndiscountedUtil() - lastOpponentBids.get(1).getMyUndiscountedUtil();
 				
 				double nextBidUtil;
@@ -310,8 +310,7 @@ public class Group7_BS extends OfferingStrategy {
 		
 		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
 		Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
-		//return pt;
-		return 0;
+		return pt;
 	}
 	
 	public BidDetails getRandomBidFirstPhase () {
