@@ -57,7 +57,7 @@ public class OpponentTypeEstimator {
 	
 	private static double Concedingness(double[] enemyUtils) {
 		//TODO: Use Average filter and then guess the derivative
-		return 0;
+		return 0; // Ik ben jarig
 	}
 	
 
