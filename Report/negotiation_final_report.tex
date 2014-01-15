@@ -111,6 +111,20 @@ In this report we describe the process of creating an agent for automated negoti
 \todo{``a high-level description of the agent and its structure, including the main Java methods(mention these explicitly!) used in the negotiating agent that have been implemented in the source code.''
 I suggest we name most methods in the subsection about the BOA components}
 
+\subsection{PEAS Description}
+
+The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adapt their notation.
+
+\begin{table}[H]
+    \begin{tabular}{|p{1.8cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+    \textbf{Agent} & \textbf{Performance \mbox{Measure}} & \textbf{Environment} & \textbf{Actuators} & \textbf{Sensors} \\
+    \hline
+    OurAgent & Own discounted utility at the end of the negotiation session & Negotiation space defined by Genius & Java classes that offer new bids to the opponent and the possibility to \mbox{accept/reject} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
+    \hline
+    \end{tabular}
+\end{table}
+
 Example of java code inclusion:
 \begin{lstlisting}
 public Action chooseAction () { Action action = null;
