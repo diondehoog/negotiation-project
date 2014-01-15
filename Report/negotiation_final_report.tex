@@ -20,11 +20,11 @@
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
-\newcommand{\authortr}{Tom Runia (?)}
+\newcommand{\authortr}{Tom Runia (1517996)}
 \newcommand{\authoras}{Arnold Schutter (?)}
 \newcommand{\authortv}{Tom Viering (4333055)}
 \newcommand{\maintitle}{IN4010: Negotiation Project}
-\newcommand{\subtitle}{Group 7 Final Report}
+\newcommand{\subtitle}{Group 7 - BOAconstructor}
 
 \title{\maintitle\\\subtitle}
 \author{\authorbd\\\authoroh\\\authortr\\\authoras\\\authortv}
@@ -92,18 +92,16 @@
 \begin{document}
 \maketitle
 
-
 \section{Introduction}
 \label{sec:introduction}
 A relatively new and evolving branch of Artificial Intelligence is automated negotiation. In automated negotiation, two or more agents negotiate about a multi-issue problem in order to find a solution that maximizes their utility. The utilities for each possible bid are determined using a human-defined preference profile, which consists of weights for each of the issues and a utility for each possible value of the issues. 
 
 In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. \Autoref{sec:questions} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
 
-\newpage
-\tableofcontents
-\newpage
-
-
+% Temporarily disabled table of contents
+%\newpage
+%\tableofcontents
+%\newpage
 
 \section{Strategy}
 \label{sec:strategy}
@@ -145,38 +143,30 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \end{description}
 
-\subsection{Example Code}
-
-
-Example of java code inclusion:
-\begin{lstlisting}
-public Action chooseAction () { Action action = null;
-  try {
-    if (actionOfPartner == null) {
-      action = chooseRandomBidAction ();
-    }
-    if (actionOfPartner instanceof Offer) {
-      Bid partnerBid = ((Offer) actionOfPartner).getBid();
-    }
-  } catch
-    e.printStackTrace();
-    action = new Accept(getAgentID()); // best guess if things go wrong.
-  }
-  return action; 
-}
-\end{lstlisting}
-
 \todo{In the subchapters per boa component, go into more detail about the strategy. We should include ``an explanation of the negotiation strategy, decision function for accepting offers, any important preparatory steps, and heuristics that the agent uses to decide what to do next, including the factors that have been selected and their combination into these functions.''.
 I'd suggest we mention java method names here and not in the high level description}
 
-\subsection{Acceptance Strategy}
-\label{sec:strategyAS}
-
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
+In this section we discuss the bidding strategy implementation of our negotiation agent.
+
+\subsubsection{Opening Bid}
+Our agent starts by offering a bid with utility 0.9. \todo{Fix this}
+
+\subsection{First Phase}
+In the first phase of the negotiation session our agents performs some kind of offering random bids to the opponent.
+
+\subsection{Second Phase}
+
+\subsection{Third Phase}
+
+
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
+
+\subsection{Acceptance Strategy}
+\label{sec:strategyAS}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
@@ -199,12 +189,29 @@ I'd suggest we mention java method names here and not in the high level descript
 \section{Conclusion}
 \label{sec:conclusion}
 \todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.}
-As a conclusion I'd like to cite: \cite{baarslag2012decoupling}
+As a conclusion I'd like to cite: \cite{baarslag2012decoupling}...
+
+\subsection{Example Code}
+Example of java code inclusion:
+
+\begin{lstlisting}
+public Action chooseAction () { Action action = null;
+  try {
+    if (actionOfPartner == null) {
+      action = chooseRandomBidAction ();
+    }
+    if (actionOfPartner instanceof Offer) {
+      Bid partnerBid = ((Offer) actionOfPartner).getBid();
+    }
+  } catch
+    e.printStackTrace();
+    action = new Accept(getAgentID()); // best guess if things go wrong.
+  }
+  return action; 
+}
+\end{lstlisting}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
-
-\newpage
-\section*{Appendix}
 
 \end{document}
