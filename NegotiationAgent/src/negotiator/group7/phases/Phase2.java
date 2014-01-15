@@ -119,7 +119,12 @@ public class Phase2 extends Phase{
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
 			//Calculate linear interpolation
+			//[first = ours], [second = opponents]
 			double[] newKalaiPoint = {0.0, 0.0};
+			//new Kalai Point for us
+			newKalaiPoint[0] = lastWantedUtil + relDist*(distances[0]-lastWantedUtil);
+			//new Kalai Point for opponents
+			newKalaiPoint[1] = 
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
