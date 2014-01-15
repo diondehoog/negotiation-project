@@ -30,6 +30,7 @@ public class Phase2 extends Phase{
 	private double[] phaseBoundary;
 	private double   phase2LowerBound;
 	private double   phase2range;
+	private double   lastWantedUtil = 1;
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
@@ -73,21 +74,22 @@ public class Phase2 extends Phase{
 		if (lastOpponentBids.size() > 0){
 			
 			difference = getAverageDiffLastNBids(2);
+			Log.dln("Difference: " + String.format("%5f", difference) + ", lastWantedUtil: " + String.format("%5f", this.lastWantedUtil));
 
 			double nextBidUtil;
 			
 			//The opponent is approaching us in utility
 			if (difference>0)
 				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-				nextBidUtil = lastOwnUtil-(difference*tft1);
+				nextBidUtil = lastWantedUtil-(difference*tft1);
 			
 			//The opponent is distancing from us in utility
 			else
 				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
-				nextBidUtil = lastOwnUtil-(difference*tft2);
+				nextBidUtil = lastWantedUtil-(difference*tft2);
 			
-			
-			
+			nextBidUtil = Math.min(nextBidUtil, 1);
+			lastWantedUtil = nextBidUtil;
 			
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
@@ -95,7 +97,7 @@ public class Phase2 extends Phase{
 			//Log.dln("nextBidUtil = " + nextBidUtil);
 			
 			/* Decide bid closest to optimal frontier */				
-			Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
+			/*Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
 			
 			Double temp = new Double(nextBidUtil);
 			Double range2 = new Double(phase2range);
@@ -105,7 +107,9 @@ public class Phase2 extends Phase{
 			List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
 			if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
-				nextBid =  outcomespace.getBidNearUtility(nextBidUtil); 
+			*/
+				nextBid =  outcomespace.getBidNearUtility(nextBidUtil);
+				/*
 			} else {
 				Double sizeList = new Double(bidsInRange.size());
 				Log.vln("Number of bids found that are in range:" + sizeList.toString());
@@ -122,12 +126,14 @@ public class Phase2 extends Phase{
 				double newDifference = nextBid.getMyUndiscountedUtil()-lastOwnUtil;
 				if (difference !=0)
 					Log.sln("difference!=0: ("+difference+","+newDifference+")");
-			}
+			}*/
 		}
 		else{
-			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
+			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(1);
 		}
 //		if (nextBid.getMyUndiscountedUtil()>bestBid)
+		
+		
 			return nextBid;
 //		else
 //			return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
@@ -213,7 +219,7 @@ public class Phase2 extends Phase{
 			avg += vals[i];
 		}
 		
-		avg = avg/((double)n);
+		avg = avg/((double)n-1.0);
 		
 		
 		Log.sln("Average concede over last " + n + " bids = " + avg);
