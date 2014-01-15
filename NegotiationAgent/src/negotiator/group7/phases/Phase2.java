@@ -1,9 +1,11 @@
 package negotiator.group7.phases;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import misc.Range;
+import negotiator.Bid;
 import negotiator.analysis.BidPoint;
 import negotiator.analysis.BidSpace;
 import negotiator.bidding.BidDetails;
@@ -39,6 +41,9 @@ public class Phase2 extends Phase{
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
+	/** ArrayList for saving bid spaces */
+	private ArrayList<BidSpace> bidSpaces;
+	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 			double tft1, double tft2, double k, double e, 
 			double[] phaseBoundary, double phase2LowerBound, double phase2range,
@@ -52,6 +57,8 @@ public class Phase2 extends Phase{
 		this.phase2LowerBound = phase2LowerBound;
 		this.phase2range = phase2range;
 		this.outcomespace = outcomespace;
+		
+		bidSpaces = new ArrayList<BidSpace>();
 	}
 	
 	@Override
@@ -68,7 +75,8 @@ public class Phase2 extends Phase{
 		
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
-		estimateDistance();
+		BidDetails lastBid = negotiationSession.getOwnBidHistory().getLastBidDetails();
+		getDistToKalaiSmorodinsky(lastBid);
 		
 //		double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 
@@ -264,7 +272,9 @@ public class Phase2 extends Phase{
 		return avg;
 	}
 	
-	public double estimateDistance () {
+	public double[] getDistToKalaiSmorodinsky (BidDetails input) {
+		
+		double[] distances = {0.0, 0.0};
 		
 		// Fetch two utility spaces to estimate Kalai-Smorodinsky
 		UtilitySpace spaceOurs = 		negotiationSession.getUtilitySpace();
@@ -281,18 +291,22 @@ public class Phase2 extends Phase{
 			// BidSpace build from ours/opponents 
 			bs = new BidSpace(spaceOurs, spaceOpponent);
 			
+			// Save current bid space in array list
+			bidSpaces.add(bs);
+			
 			// Calculate Kalai-Smorodinsky
 			BidPoint ks = bs.getKalaiSmorodinsky();
 			
-			Log.rln("KS for agent A = " + ks.getUtilityA());
-			Log.rln("KS for agent B = " + ks.getUtilityB());
+			// Calculate the two distances to the KS
+			distances[0] = ks.getUtilityA()-input.getMyUndiscountedUtil();
+			distances[1] = ks.getUtilityB()-opponentModel.getBidEvaluation(input.getBid());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return 0.0;
+		// If an exception is caught, distances = [0.0, 0.0] is returned
+		return distances;
 	}
 	
 
