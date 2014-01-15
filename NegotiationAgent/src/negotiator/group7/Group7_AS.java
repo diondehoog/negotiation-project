@@ -1,6 +1,5 @@
 package negotiator.group7;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import negotiator.BidHistory;
@@ -8,43 +7,6 @@ import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OfferingStrategy;
-import negotiator.boaframework.OutcomeTuple;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentFSEGA;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentK;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentSmith;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_IAMHaggler2010;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_IAMcrazyHaggler;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_Nozomi;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_Yushu;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_AgentK2;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_BRAMAgent;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_Gahboninho;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_HardHeaded;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_IAMHaggler2011;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_NiceTitForTat;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_TheNegotiator;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_AgentLG;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_AgentMR;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_BRAMAgent2;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_CUHKAgent;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_OMACagent;
-import negotiator.boaframework.acceptanceconditions.other.AC_ABMP;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiAvg;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiBestAvg;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiBestAvgDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMax;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMaxInWindow;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMaxInWindowDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiProb;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiProbDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_Const;
-import negotiator.boaframework.acceptanceconditions.other.AC_ConstDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_False;
-import negotiator.boaframework.acceptanceconditions.other.AC_Gap;
-import negotiator.boaframework.acceptanceconditions.other.AC_Next;
-import negotiator.boaframework.acceptanceconditions.other.AC_Previous;
-import negotiator.boaframework.acceptanceconditions.other.AC_Time;
-import negotiator.boaframework.acceptanceconditions.other.Multi_AcceptanceCondition;
 
 /**
  * Checking all different acceptance strategies
