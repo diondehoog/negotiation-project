@@ -128,10 +128,10 @@ public class Phase2 extends Phase{
 			//Calculate the relative distance the opponent went to the Kalai point
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
-			BidPoint ks = getKalaiSmorodinsky();
+			BidPoint ks = getKalaiSmorodisky();
 			
 			
-			ks.getDistance(negotiationSession.getOpponentBidHistory().getLastBidDetails().getBid());
+			//ks.getDistance(negotiationSession.getOpponentBidHistory().getLastBidDetails().getBid());
 			double OwnKalai = ks.getUtilityA();
 			double OppKalai = ks.getUtilityB();
 			
