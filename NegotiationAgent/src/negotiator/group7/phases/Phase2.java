@@ -36,6 +36,7 @@ public class Phase2 extends Phase{
 	private double   phase2LowerBound;
 	private double   phase2range;
 	private double   lastWantedUtil = 1;
+	private double   lastWantedUtilOpp = 0;
 	private double 	 lastDistance2Kalai = 0;
 	
 	/** Outcome space */
@@ -78,7 +79,6 @@ public class Phase2 extends Phase{
 		// Second negotiation phase (implemented by Arnold)
 		double time = negotiationSession.getTime();
 		BidDetails nextBid;
-		
 		/* Opponent modelling by Bas */
 		//OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
 		//Log.dln("EstimatedOpponentType: " + type.toString());
@@ -97,7 +97,7 @@ public class Phase2 extends Phase{
 
 		double difference;
 		List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-		Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
+		//Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
 		//Calculate difference between last bid and before last bid
 		if (lastOpponentBids.size() > 0){
 			
@@ -118,6 +118,9 @@ public class Phase2 extends Phase{
 			
 			nextBidUtil = Math.min(nextBidUtil, 1);
 
+			
+			/* Calculate new Bid relative to Kalai Smorodinsky point */
+			
 			double prevDistance2Kalai = lastDistance2Kalai;
 			double[] distances = getDistToKalaiSmorodinsky(negotiationSession.getOpponentBidHistory().getLastBidDetails());
 				 
@@ -125,13 +128,23 @@ public class Phase2 extends Phase{
 			//Calculate the relative distance the opponent went to the Kalai point
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
+			BidPoint ks = getKalaiSmorodinsky();
+			
+			
+			ks.getDistance(negotiationSession.getOpponentBidHistory().getLastBidDetails().getBid());
+			double OwnKalai = ks.getUtilityA();
+			double OppKalai = ks.getUtilityB();
+			
 			//Calculate linear interpolation
-			//[first = ours], [second = opponents]
-			double[] newKalaiPoint = {0.0, 0.0};
-			//new Kalai Point for us
-			newKalaiPoint[0] = lastWantedUtil + relDist*(distances[0]-lastWantedUtil);
-			//new Kalai Point for opponents
-			//newKalaiPoint[1] = 
+			//[first = our Util], [second = opponent Util]
+			double[] newBidPoint = {1.0, 0.0};
+			//new Bid Point for us
+			newBidPoint[0] = lastWantedUtil + relDist*(OwnKalai-lastWantedUtil);
+			//new Bid Point for opponent
+			newBidPoint[1] = lastWantedUtilOpp + relDist*(OppKalai-lastWantedUtilOpp);
+			
+			
+			
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
@@ -142,6 +155,7 @@ public class Phase2 extends Phase{
 			
 			//Set the lastWantedUtil for the Util we want now
 			lastWantedUtil = nextBidUtil;
+			lastWantedUtilOpp = opponentModel.getBidEvaluation(nextBid.getBid());
 		}
 		
 		else{
