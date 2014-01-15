@@ -34,6 +34,7 @@ public class Phase2 extends Phase{
 	private double   phase2LowerBound;
 	private double   phase2range;
 	private double   lastWantedUtil = 1;
+	private double 	 lastDistance2Kalai = 0;
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
@@ -93,7 +94,13 @@ public class Phase2 extends Phase{
 				nextBidUtil = lastWantedUtil-(difference*tft2);
 			
 			nextBidUtil = Math.min(nextBidUtil, 1);
-			lastWantedUtil = nextBidUtil;
+
+			double prevDistance2Kalai = lastDistance2Kalai;
+			lastDistance2Kalai = distance2Kalai(negotiationSession.getOpponentBidHistory().getLastBidDetails());
+			
+			//Calculate the relative distance the opponent went to the Kalai point
+			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
+			
 			
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
@@ -102,6 +109,9 @@ public class Phase2 extends Phase{
 			
 			/* Decide bid closest to optimal frontier */				
 			nextBid = close2Pareto(nextBidUtil);
+			
+			//Set the lastWantedUtil for the Util we want now
+			lastWantedUtil = nextBidUtil;
 		}
 		
 		else{
