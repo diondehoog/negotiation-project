@@ -149,7 +149,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		
 		// TODO: let accept curve approach the NASH!!
 
-		Log.hln("acceptCurve: " + acceptCurve);
+		//Log.hln("acceptCurve: " + acceptCurve);
 
 		if (hisLast > acceptCurve) {
 			Log.newLine("~~~~~~~~~~~ hisLast > acceptCurve ==> hislast: " + hisLast + "; acceptCurve: " + acceptCurve);
