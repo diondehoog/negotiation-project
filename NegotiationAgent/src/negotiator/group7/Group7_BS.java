@@ -16,6 +16,10 @@ import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.boaframework.opponentmodel.tools.UtilitySpaceAdapter;
+import negotiator.group7.phases.Phase;
+import negotiator.group7.phases.Phase1;
+import negotiator.group7.phases.Phase2;
+import negotiator.group7.phases.Phase3;
 import negotiator.utility.UtilitySpace;
 
 /**
@@ -54,13 +58,10 @@ public class Group7_BS extends OfferingStrategy {
 
 	
 	/** Keep track of the current phase */
-	private int curPhase = 1;
-
-	/** Initialize bid history */
-	BidHistory biddingHistory;
+	private int curPhase = 0;
 	
 	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
-	double tft1 = 0.5;
+	double tft1 = 0.2;
 	double tft2 = 0.75;
 	
 	/** Pareto frontier needs bidspace and utility space to be computed */
@@ -70,6 +71,8 @@ public class Group7_BS extends OfferingStrategy {
 	private int bidNum = 0; // current bid number
 	private int recomputePar = 500; // after every 500 bids recompute the pareto frontier
 	private BidDetails nash; // nash product
+	
+	private Phase phase;
 	
 	
 	/**
@@ -122,11 +125,7 @@ public class Group7_BS extends OfferingStrategy {
 		}
 		
 		this.opponentModel = model;
-		this.omStrategy = oms;
-		
-		// Initialize bidding history
-		biddingHistory = new BidHistory();
-		
+		this.omStrategy = oms;		
 	}
 
 	@Override
@@ -171,114 +170,29 @@ public class Group7_BS extends OfferingStrategy {
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
 			
 		// Determine current negotiation phase
-		curPhase = getNegotiationPhase();
-
-		
-		if (curPhase == 1) {
-			// First negotiation phase (implemented by Tom)
-			// During the first phase we select random bids.
-			Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
-			
-			/* Code below checks if offer was already used... 
-			BidDetails bd = null;
-			boolean foundOffer = false;
-			int iterations = 0;
-			
-			// Iterate until we found offer that was not offered before...
-			while (!foundOffer && iterations < 5) {
-				bd = getRandomBid(randBidRange);
-				Log.newLine("Generated random bid within range: " + bd.getMyUndiscountedUtil());
-				
-				if (isAlreadyOffered(bd)) {
-					// Bid was already offered, generate new one...
-					Log.rln("Generating NEW random bid since current was already offered!");
-				} else {
-					// We found a new available offer :-)
-					foundOffer = true;
-				}
-				
-				iterations++;
-			} */
-			
-			BidDetails bd = getRandomBid(randBidRange);
-			biddingHistory.add(bd);
-			
-			return bd;
-			
-			
-		} else if (curPhase >= 2) {
-			// Second negotiation phase (implemented by Arnold)
-			
-			/* Opponent modelling by Bas */
-					
-			
-			//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
-			
-			
-			double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
- 
-			double difference;
-			List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-			Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
-			//Calculate difference between last bid and before last bid
-			if (lastOpponentBids.size() > 0){
-				
-				difference = getAverageDiffLastNBids(10);
-
-				double nextBidUtil;
-				
-				//The opponent is approaching us in utility
-				if (difference>0)
-					nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-					
-				//The opponent is distancing from us in utility
-				else
-					nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
-				
-				//If there has been a better bid of the opponent, don't go below
-				nextBidUtil = Math.max(nextBidUtil, bestBid);
-				
-				/* Decide bid closest to optimal frontier */				
-				Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
-				
-				Double temp = new Double(nextBidUtil);
-				Double range2 = new Double(phase2range);
-
-				Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
-
-				List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-
-				if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
-				nextBid = outcomespace.getBidNearUtility(nextBidUtil); 
-				} 
-				else { // do an intelligent bid since we have choices!
-				
-					Double sizeList = new Double(bidsInRange.size());
-					Log.vln("Number of bids found that are in range:" + sizeList.toString());
-					
-					OpponentBidCompare comparebids = new OpponentBidCompare();
-					comparebids.setOpponentModel(opponentModel);
-					
-					Collections.sort(bidsInRange, comparebids);
-					
-					Log.vln("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()));
-					Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
-					nextBid = bidsInRange.get(0);
-				}
-				
-				//nextBid = outcomespace.getBidNearUtility(nextBidUtil); // TODO: find bid that opponent likes using OM
-				//nextBid = opponentModel.getBid(outcomespace, nextBidUtil);
-				Log.s("("+difference + "," + nextBidUtil+"),");
-				// Log.inLine(p(time) +", ");
-			}
-			else{
-				nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
-			}
-			if (nextBid.getMyUndiscountedUtil()>bestBid)
-				return nextBid;
-			else
-				return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
+		int newPhase = getNegotiationPhase();
+		if (newPhase != curPhase)
+		{
+			Log.dln("Switching to phase " + newPhase);
+			if (newPhase == 1)
+				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], this.phase1LowerBound, this.phase1UpperBound);
+			if (newPhase == 2)
+				this.phase = new Phase2(this.negotiationSession, this.opponentModel, this.phaseBoundary[0], this.phaseBoundary[1], 
+						tft1, tft2, this.k, this.e, this.phaseBoundary, this.phase2LowerBound, this.phase2range,
+						this.outcomespace);
+			if (newPhase == 3)
+				this.phase = new Phase3(this.negotiationSession, this.opponentModel, this.phaseBoundary[1], 1.0);
+			curPhase = newPhase;
 		}
+		// Prevent NullPointer exceptions
+		if (this.phase == null)
+		{
+			this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], 
+					this.phase1LowerBound, this.phase1UpperBound);
+			Log.newLine("Error: Phase is null. Initialized new phase1...");
+		}
+		return this.phase.determineNextBid();
+
 		/*} else if (curPhase == 3) {
 			// Final negotiation phase
 			// TODO: implemented this based on Acceptance Strategy
@@ -289,9 +203,6 @@ public class Group7_BS extends OfferingStrategy {
 			return getRandomBid(0.4, 0.6);
 			
 		}*/
-		
-		// Never used :-)
-		return getRandomBid(0.9, 1.0);
 	}
 	
 	public void computeNash() {
@@ -341,112 +252,6 @@ public class Group7_BS extends OfferingStrategy {
 	}
 	
 	/**
-	 * From [1]:
-	 * 
-	 * A wide range of time dependent functions can be defined by varying the way in
-	 * which f(t) is computed. However, functions must ensure that 0 <= f(t) <= 1,
-	 * f(0) = k, and f(1) = 1.
-	 * 
-	 * That is, the offer will always be between the value range, 
-	 * at the beginning it will give the initial constant and when the deadline is reached, it
-	 * will offer the reservation value.
-	 * 
-	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
-	 * For e = 1 it will behave as a linear agent
-	 * For e > 1 it will behave as a conceder (it will give low utilities faster than linear)                 
-	 */
-	public double f(double t)
-	{
-		if (e == 0)
-			return k;
-		if (t < this.phaseBoundary[0])
-			return 1;
-		if (t > this.phaseBoundary[1])
-			return 1;
-		
-		// scale t
-		double torig = t;
-		t = (t - this.phaseBoundary[0]) / (this.phaseBoundary[1] -  this.phaseBoundary[0]);
-		//Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
-		
-		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
-		return ft;
-	}
-
-	/**
-	 * Makes sure the target utility with in the acceptable range according to the domain
-	 * Goes from Pmax to Pmin!
-	 * @param t
-	 * @return double
-	 */
-	public double p(double t) {
-		
-		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
-		//Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
-		return pt;
-	}
-	
-	public BidDetails getRandomBidFirstPhase () {
-		
-		Random randgen = new Random();
-		// Generate random number between 0.9 and 1.
-		double utilGoal = 0.9+(randgen.nextInt(1)/100);
-		
-		BidDetails bd = negotiationSession.getOutcomeSpace().getBidNearUtility(utilGoal);
-		return bd;
-		
-	}
-	
-	/**
-	 * Returns a random bid within the range [lb, ub]
-	 * 
-	 * @param lb
-	 * @param ub
-	 */
-	public BidDetails getRandomBid (Range r) {
-		
-//		Log.newLine.out.println("################################################");
-//		Log.newLine("Generating random bids within range [" + lb + ", " + ub + "]");
-
-		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-		
-		// Just for testing, print all bids in range
-		//for (BidDetails b : bidsInRange) {
-		//	Log.newLine("Found bid: " + b.getMyUndiscountedUtil());
-		//}
-		
-		int numBids = bidsInRange.size(); // Number of found bids
-		BidDetails randBid;
-		
-//		Log.newLine("Found " + numBids + " within range.");
-		
-		if (numBids > 0) {
-			// One or more bids within range are found.
-			// Select a random bid and return it.
-			Random randgen = new Random();
-			randBid = bidsInRange.get(randgen.nextInt(numBids));
-			
-			//Log.newLine("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
-			
-		} else {
-			// No bids within range are found, now we selected the bid that is closest 
-			// to the UPPER bound of the given range.
-			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(r.getUpperbound());
-			
-			//Log.newLine("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
-		}
-		
-		//		Log.newLine("################################################");
-		return randBid;
-		
-	}
-	
-	public BidDetails getRandomBid (double lb, double ub) {
-		Range r = new Range(lb, ub);
-		return getRandomBid(r);
-	}
-	
-	/**
 	 * Returns the current phase of the negotiation session
 	 * based on the elapsed time. Phases are 1, 2 or 3.
 	 * 
@@ -466,83 +271,13 @@ public class Group7_BS extends OfferingStrategy {
 		return 0;
 	}
 	
-	public Range getRangeFunctionFirstPhase (double t, double margin) {
-
-		double normTime = t/phaseBoundary[0]; // Normalized time
-		
-		double val = 1-(normTime/10);
-		Range r = new Range(val-margin, val+margin);
-		
-		// Set upper bound to 1 is exceeds
-		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
-		
-		//Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
-		
-		return r;
-	}
-	
-	public boolean isAlreadyOffered (BidDetails bd) {
-		
-		List<BidDetails> historyList = biddingHistory.getHistory();
-		if (historyList.contains(bd)) return true;
-		
-		return false;
-	}
-	
-	/**
-	 * This method returns the average difference over the last n bids.
-	 * Can be used to see the behavior the agent over time.
-	 * 
-	 * @param n
-	 * @return
-	 */
-	public double getAverageDiffLastNBids (int n) {
-		
-		// Get list of opponent bids sorted on time
-		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-
-		if (n > negotiationSession.getOpponentBidHistory().size()) {
-			// Not enough bids in history! n is set to the size-1
-			n = negotiationSession.getOpponentBidHistory().size()-1;
-		}
-		
-		// Save values
-		double[] vals = new double[n];
-		
-		double avg = 0;
-		
-		// TODO: Smooth the values
-		
-		for (int i = 0; i < n-1; i++) {
-			//BidDetails bd = h.get(i);
-			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
-			vals[i] = h.get(i).getMyUndiscountedUtil()-h.get(i+1).getMyUndiscountedUtil();
-			avg += vals[i];
-		}
-		
-		avg = avg/n;
-		
-		Log.rln("Average concede over last " + n + " bids = " + avg);
-		Log.sln("Average concede over last " + n + " bids = " + avg);
-
-		double[] smooth = new double[n];
-		
-		Log.rln("###################################");
-		
-		// Smoothing kernel 
-		double[] kernel = {1.0/6.0, 4.0/6.0, 1.0/6.0};
-		
-		for (int i = 0; i < n; i++) {
-			smooth[i] = Convolution.apply(vals, i, kernel);
-			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
-		}
-		
-		
-		//Log.rln("Average concede over last " + n + " bids = " + avg);
-		
-				
-		return avg;
-	}
+//	public boolean isAlreadyOffered(BidDetails bd) {
+//		
+//		List<BidDetails> historyList = biddingHistory.getHistory();
+//		if (historyList.contains(bd)) return true;
+//		
+//		return false;
+//	}
 	
 
 	

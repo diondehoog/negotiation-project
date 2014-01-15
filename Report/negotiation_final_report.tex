@@ -118,7 +118,30 @@ The first step in designing an agent is to specify the environment as fully as p
     OurAgent & Own discounted utility at the end of the negotiation session & Negotiation space defined by Genius & Java classes that offer new bids to the opponent and the possibility to \mbox{accept/reject} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
     \hline
     \end{tabular}
+    
+    \caption{PEAS decription for our negotiation agent \label{table:peas-description}}
 \end{table}
+
+Table~\ref{table:peas-description} displays the PEAS descrition for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. \todo{Check the PEAS description I came up with and finish the additional description} 
+
+\subsection{BOA Framework}
+
+Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model}, \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of seperating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual compontents and analyze the interaction between the components. Below we provide a small description for the three required components.
+
+\begin{description}
+  \item[Bidding Strategy] \hfill \\
+  The bidding strategy is arguably the most important compontent. Its goal is to determine the next bid that is offered to the oponent. In determining the next bid the agent can interact with the opponent model to provice a suitable offer. Sometimes the negotiation sessions is split up in multiple phases and each of the phases uses a different bidding strategy.
+
+  \item[Opponent Model] \hfill \\
+  Learning the opponents behavior is essential in a good negotiation session. It allows for adapting to the way the other party provides its bids. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
+
+  \item[Acceptance Strategy] \hfill \\
+  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
+
+\end{description}
+
+\subsection{Example Code}
+
 
 Example of java code inclusion:
 \begin{lstlisting}

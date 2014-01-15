@@ -1,6 +1,5 @@
 package negotiator.group7;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import negotiator.BidHistory;
@@ -8,43 +7,6 @@ import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OfferingStrategy;
-import negotiator.boaframework.OutcomeTuple;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentFSEGA;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentK;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_AgentSmith;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_IAMHaggler2010;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_IAMcrazyHaggler;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_Nozomi;
-import negotiator.boaframework.acceptanceconditions.anac2010.AC_Yushu;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_AgentK2;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_BRAMAgent;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_Gahboninho;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_HardHeaded;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_IAMHaggler2011;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_NiceTitForTat;
-import negotiator.boaframework.acceptanceconditions.anac2011.AC_TheNegotiator;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_AgentLG;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_AgentMR;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_BRAMAgent2;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_CUHKAgent;
-import negotiator.boaframework.acceptanceconditions.anac2012.AC_OMACagent;
-import negotiator.boaframework.acceptanceconditions.other.AC_ABMP;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiAvg;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiBestAvg;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiBestAvgDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMax;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMaxInWindow;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiMaxInWindowDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiProb;
-import negotiator.boaframework.acceptanceconditions.other.AC_CombiProbDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_Const;
-import negotiator.boaframework.acceptanceconditions.other.AC_ConstDiscounted;
-import negotiator.boaframework.acceptanceconditions.other.AC_False;
-import negotiator.boaframework.acceptanceconditions.other.AC_Gap;
-import negotiator.boaframework.acceptanceconditions.other.AC_Next;
-import negotiator.boaframework.acceptanceconditions.other.AC_Previous;
-import negotiator.boaframework.acceptanceconditions.other.AC_Time;
-import negotiator.boaframework.acceptanceconditions.other.Multi_AcceptanceCondition;
 
 /**
  * Checking all different acceptance strategies
@@ -144,9 +106,14 @@ public class Group7_AS extends AcceptanceStrategy {
 		//ACList.add(new AC_MAC()); // this is the class that we extend..
 	}
 
-	double averageDeltaTime = 0;
+	static double averageDeltaTime = 0;
+	static double time = 0;
 	double previousTime = 0;
 	int counter = 0;
+	
+	public static int GetGuessedBidsLeft() {
+		return (int) ((1.0 - time) / (averageDeltaTime + 0.00001)); // avoiding division by zero :P
+	}
 	
 	public Actions determineAcceptability() {
 		if (negotiationSession == null) return Actions.Reject;
@@ -157,7 +124,7 @@ public class Group7_AS extends AcceptanceStrategy {
 
 		// Averaging execution time
 		counter++;
-		double time = negotiationSession.getTime();
+		time = negotiationSession.getTime();
 		double dt = time - previousTime;
 		if (previousTime != 0) {
 			if (averageDeltaTime == 0) {
@@ -167,28 +134,37 @@ public class Group7_AS extends AcceptanceStrategy {
 			}
 		}
 		previousTime = time;
-		int bidsLeft = (int) ((1.0 - time) / (averageDeltaTime + 0.00001));
+		int bidsLeft = GetGuessedBidsLeft();
+		int totalBids = counter + bidsLeft;
 
 //		Actions a = super.determineAcceptability();
 		BidHistory bh = negotiationSession.getOpponentBidHistory();
 		double hisLast = bh.getHistory().get(0).getMyUndiscountedUtil();
 		double hisBest = bh.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
-		double ourWorstFixed = Math.max(ourWorst, 1 - time);
+		double ourWorstFixed = Math.max(ourWorst, (1 - time) * 0.5 + 0.5);
+		
+		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
+		double acceptCurve = 0.95 * Math.pow((double)bidsLeft/(double)totalBids, 0.025);
+		
+		// TODO: let accept curve approach the NASH!!
 
-		if (hisLast > 0.85) {
-			Log.newLine("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
+		//Log.hln("acceptCurve: " + acceptCurve);
+
+		if (hisLast > acceptCurve) {
+			Log.newLine("~~~~~~~~~~~ hisLast > acceptCurve ==> hislast: " + hisLast + "; acceptCurve: " + acceptCurve);
+			// Here we simply accept anything above the accept curve
 			return Actions.Accept;
-		} else if (hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast) {
-			Log.newLine("~~~~~~~~~~~ hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
-			return Actions.Accept;
-		} else if (bidsLeft < 3) {
-			Log.newLine("~~~~~~~~~~~ bidsLeft < 3");
+		} /*else if (bidsLeft < 4 && hisLast == hisBest) {
+			Log.newLine("~~~~~~~~~~~ bidsLeft < 4");
+			// Here we accept anything, once only 4 bids are left
 			return Actions.Accept;
 		} else if (hisLast > ourWorstFixed) {
 			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
+			// If he bids higher than our worst, we will simply accept right away
+			// and since we don't go down with our utility that quickly, this should work fine
 			return Actions.Accept;
-		}
+		}*/
 		return Actions.Reject;
 	}
 }
