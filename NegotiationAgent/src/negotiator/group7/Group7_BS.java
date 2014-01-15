@@ -533,7 +533,7 @@ public class Group7_BS extends OfferingStrategy {
 		double[] kernel = {1.0/6.0, 4.0/6.0, 1.0/6.0};
 		
 		for (int i = 0; i < n; i++) {
-			smooth[i] = applyConvolution(vals, i, kernel);
+			smooth[i] = Convolution.apply(vals, i, kernel);
 			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
 		}
 		
@@ -544,32 +544,6 @@ public class Group7_BS extends OfferingStrategy {
 		return avg;
 	}
 	
-	/**
-	 * Applies convolution kernel k to input array at position x
-	 * 
-	 * input = 	Double array containing values to be smoothed
-	 * x = 		Location where to apply smooth
-	 * k = 		Kernel
-	 *
-	 * @return
-	 */
-	public double applyConvolution(double[] input, int x, double[] k) {
-		
-		// Build double array with end values repeated
-		double[] toConvolve = new double[input.length+2];
-		toConvolve[0] = input[0];
-		for (int j = 0; j < input.length; j++) {
-			toConvolve[j+1] = input[j];
-		}
-		toConvolve[input.length+1] = input[input.length-1];
-	
-		double output = 0;	
 
-		for (int i = 0; i < k.length; i++) {
-			output = output + (toConvolve[x+i]*k[i]);
-		}
-		
-		return output;
-	}
 	
 }
