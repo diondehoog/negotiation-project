@@ -15,21 +15,6 @@ import negotiator.utility.Evaluator;
 import negotiator.utility.EvaluatorDiscrete;
 import negotiator.utility.UtilitySpace;
 
-/**
- * BOA framework implementation of the HardHeaded Frequecy Model.
- * My main contribution to this model is that I fixed a bug in the mainbranch
- * which resulted in an equal preference of each bid in the ANAC 2011 competition.
- * Effectively, the corrupt model resulted in the offering of a random bid in the ANAC 2011.
- * 
- * Default: learning coef l = 0.2; learnValueAddition v = 1.0
- * 
- * Adapted by Mark Hendrikx to be compatible with the BOA framework.
- *
- * Tim Baarslag, Koen Hindriks, Mark Hendrikx, Alex Dirkzwager and Catholijn M. Jonker.
- * Decoupling Negotiating Agents to Explore the Space of Negotiation Strategies
- * 
- * @author Mark Hendrikx
- */
 public class Group7_FrequencyOM extends OpponentModel {
 
 
@@ -126,7 +111,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		// The total sum of weights before normalization.
 		double totalSum = 1D + goldenValue * (double)numberOfUnchanged;
 		// The maximum possible weight
-		double maximumWeight = 1D - ((double)amountOfIssues) * goldenValue / totalSum; 
+		double maximumWeight = 1D - learnCoef / totalSum; 
 		
 		
 		
