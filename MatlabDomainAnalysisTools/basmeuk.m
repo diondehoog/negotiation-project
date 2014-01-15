@@ -18,3 +18,12 @@ for k = 1:length(itemNames)
     issue = itemNames{k};
     fprintf('The best option for %s is %s\n', issueNames{k}, issue{optItems(k)});
 end
+
+%%
+other = dlmread('~/workspace/Log/20140115124745_OtherHistory.txt', ';');
+own = dlmread('~/workspace/Log/20140115124749_OwnHistory.txt', ';');
+
+plot(other);
+otherAvg = conv(other, ones(20, 1) ./ 20, 'valid');
+plot(otherAvg);
+sum(conv(otherAvg, [1 -1], 'valid'))

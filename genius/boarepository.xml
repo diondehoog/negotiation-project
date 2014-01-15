@@ -53,6 +53,7 @@
 			<parameter name="l" default="0.2" description="The learning coefficient determines how quickly the issue weights are learned"/>
 		</opponentmodel>
 		<opponentmodel description="Group7_OM" classpath="negotiator.group7.Group7_OM"/>
+		<opponentmodel description="Logging Frequency Model" classpath="negotiator.group7.BidSaverFrequencyModel"/>
 		<opponentmodel description="No Model" classpath="negotiator.boaframework.opponentmodel.NoModel"/>
 	</opponentmodels>
 	<omstrategy>

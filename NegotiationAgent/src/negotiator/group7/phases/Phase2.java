@@ -11,6 +11,8 @@ import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.group7.Convolution;
 import negotiator.group7.Log;
 import negotiator.group7.OpponentBidCompare;
+import negotiator.group7.OpponentType;
+import negotiator.group7.OpponentTypeEstimator;
 
 public class Phase2 extends Phase{
 	private double tft1;
@@ -55,6 +57,8 @@ public class Phase2 extends Phase{
 		Log.dln("Determining next bid in phase 2");
 		
 		/* Opponent modelling by Bas */
+		OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
+		Log.dln("EstimatedOpponentType: " + type.toString());
 				
 		
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
@@ -83,7 +87,7 @@ public class Phase2 extends Phase{
 			//If there has been a better bid of the opponent, don't go below
 			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
-			Log.dln("nextBidUtil = " + nextBidUtil);
+			//Log.dln("nextBidUtil = " + nextBidUtil);
 			
 			/* Decide bid closest to optimal frontier */				
 			Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
