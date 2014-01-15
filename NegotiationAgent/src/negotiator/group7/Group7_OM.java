@@ -5,6 +5,7 @@ import java.util.HashMap;
 import negotiator.Bid;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
+import negotiator.boaframework.opponentmodel.HardHeadedFrequencyModel;
 import negotiator.boaframework.opponentmodel.NashFrequencyModel;
 import negotiator.boaframework.opponentmodel.ScalableBayesianModel;
 import negotiator.issue.Issue;
@@ -50,7 +51,7 @@ public class Group7_OM extends OpponentModel {
 	}
 	
 	private void initializeModel(){
-		opponentUtilitySpace = new UtilitySpace(negotiationSession.getUtilitySpace());
+		opponentUtilitySpace = new UtilitySpace(negotiationSession.getDomain());
 		biddingSpaceSize = opponentUtilitySpace.getDomain().getNumberOfPossibleBids();
 	}
 	
@@ -67,6 +68,8 @@ public class Group7_OM extends OpponentModel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		//setOpponentUtilitySpace(opponentUtilitySpace);
 	}
 	
 	@Override

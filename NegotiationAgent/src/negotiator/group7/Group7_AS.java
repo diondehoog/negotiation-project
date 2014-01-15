@@ -135,36 +135,36 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 		previousTime = time;
 		int bidsLeft = GetGuessedBidsLeft();
+		int totalBids = counter + bidsLeft;
 
 //		Actions a = super.determineAcceptability();
 		BidHistory bh = negotiationSession.getOpponentBidHistory();
 		double hisLast = bh.getHistory().get(0).getMyUndiscountedUtil();
 		double hisBest = bh.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
-		double ourWorstFixed = Math.max(ourWorst, 1 - time);
+		double ourWorstFixed = Math.max(ourWorst, (1 - time) * 0.5 + 0.5);
+		
+		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
+		double acceptCurve = 0.95 * Math.pow((double)bidsLeft/(double)totalBids, 0.025);
+		
+		// TODO: let accept curve approach the NASH!!
 
-		if (hisLast > 0.85) {
-			Log.newLine("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
-			// Here we simply accept anything above 0.85 without hesitation
+		Log.hln("acceptCurve: " + acceptCurve);
+
+		if (hisLast > acceptCurve) {
+			Log.newLine("~~~~~~~~~~~ hisLast > acceptCurve ==> hislast: " + hisLast + "; acceptCurve: " + acceptCurve);
+			// Here we simply accept anything above the accept curve
 			return Actions.Accept;
-		} else if (hisBest == hisLast && bidsLeft < 40 && (bidsLeft / 40) + 0.5f < hisLast) {
-			Log.newLine("~~~~~~~~~~~ hisBest == hisLast && bidsLeft < 40 && (bidsLeft / 40) + 0.5f < hisLast ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
-			// Ok this part seems weird but its simple:
-			// when we have only 40 bids left we will only accept his best
-			// but his best needs to be at least some value: bidsLeft/40 + 0.5
-			// so when 20 bids are left, we will accept bids higher than 0.75 iff he is 
-			// giving his best bid as of yet.
-			return Actions.Accept;
-		} else if (bidsLeft < 3) {
-			Log.newLine("~~~~~~~~~~~ bidsLeft < 3");
-			// Here we accept anything, once only 2 bids are left
+		} /*else if (bidsLeft < 4 && hisLast == hisBest) {
+			Log.newLine("~~~~~~~~~~~ bidsLeft < 4");
+			// Here we accept anything, once only 4 bids are left
 			return Actions.Accept;
 		} else if (hisLast > ourWorstFixed) {
 			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
 			// If he bids higher than our worst, we will simply accept right away
 			// and since we don't go down with our utility that quickly, this should work fine
 			return Actions.Accept;
-		}
+		}*/
 		return Actions.Reject;
 	}
 }
