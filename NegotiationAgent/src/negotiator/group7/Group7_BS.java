@@ -61,7 +61,7 @@ public class Group7_BS extends OfferingStrategy {
 	private int curPhase = 0;
 	
 	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
-	double tft1 = 0.5;
+	double tft1 = 0.2;
 	double tft2 = 0.75;
 	
 	/** Pareto frontier needs bidspace and utility space to be computed */
