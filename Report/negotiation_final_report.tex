@@ -21,11 +21,11 @@
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
-\newcommand{\authortr}{Tom Runia (?)}
+\newcommand{\authortr}{Tom Runia (1517996)}
 \newcommand{\authoras}{Arnold Schutter (?)}
 \newcommand{\authortv}{Tom Viering (4333055)}
 \newcommand{\maintitle}{IN4010: Negotiation Project}
-\newcommand{\subtitle}{Group 7 Final Report}
+\newcommand{\subtitle}{Group 7 - BOAconstructor}
 
 \title{\maintitle\\\subtitle}
 \author{\authorbd\\\authoroh\\\authortr\\\authoras\\\authortv}
@@ -92,7 +92,6 @@
 
 \begin{document}
 \maketitle
-
 
 \section{Introduction}
 \label{sec:introduction}
@@ -165,24 +164,30 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \end{description}
 
-\section{Strategy}
-\label{sec:strategy}
-
-\todo{``a high-level description of the agent and its structure, including the main Java methods(mention these explicitly!) used in the negotiating agent that have been implemented in the source code.''
-I suggest we name most methods in the subsection about the BOA components}
-
-
 \todo{In the subchapters per boa component, go into more detail about the strategy. We should include ``an explanation of the negotiation strategy, decision function for accepting offers, any important preparatory steps, and heuristics that the agent uses to decide what to do next, including the factors that have been selected and their combination into these functions.''.
 I'd suggest we mention java method names here and not in the high level description}
 
-\subsection{Acceptance Strategy}
-\label{sec:strategyAS}
-
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
+In this section we discuss the bidding strategy implementation of our negotiation agent.
+
+\subsubsection{Opening Bid}
+Our agent starts by offering a bid with utility 0.9. \todo{Fix this}
+
+\subsection{First Phase}
+In the first phase of the negotiation session our agents performs some kind of offering random bids to the opponent.
+
+\subsection{Second Phase}
+
+\subsection{Third Phase}
+
+
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
+
+\subsection{Acceptance Strategy}
+\label{sec:strategyAS}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
@@ -227,12 +232,29 @@ public Action chooseAction () { Action action = null;
 \section{Conclusion}
 \label{sec:conclusion}
 \todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.}
-As a conclusion I'd like to cite: \cite{baarslag2012decoupling}
+As a conclusion I'd like to cite: \cite{baarslag2012decoupling}...
+
+\subsection{Example Code}
+Example of java code inclusion:
+
+\begin{lstlisting}
+public Action chooseAction () { Action action = null;
+  try {
+    if (actionOfPartner == null) {
+      action = chooseRandomBidAction ();
+    }
+    if (actionOfPartner instanceof Offer) {
+      Bid partnerBid = ((Offer) actionOfPartner).getBid();
+    }
+  } catch
+    e.printStackTrace();
+    action = new Accept(getAgentID()); // best guess if things go wrong.
+  }
+  return action; 
+}
+\end{lstlisting}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
-
-\newpage
-\section*{Appendix}
 
 \end{document}
