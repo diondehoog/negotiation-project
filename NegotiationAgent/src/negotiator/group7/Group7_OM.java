@@ -20,7 +20,8 @@ public class Group7_OM extends OpponentModel {
 	/**
 	 * The maximum size of the bidding space for which we use Bayesian modelling
 	 */
-	private final static long biddingSpaceThreshold = 10000;
+	// For now, we only use frequency modeling
+	private final static long biddingSpaceThreshold = 0;
 	
 	private long biddingSpaceSize;
 	
