@@ -8,7 +8,15 @@ import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
 
 public class OpponentTypeEstimator {
+	public static final int filterSize = 10;
 	
+	/**
+	 * Returns the estimated opponent type, based on baseOnXBids bids. 
+	 * @param negSession NegotiationSession to use
+	 * @param om OpponentModel used to estimate opponents utilities
+	 * @param baseOnXBids Number of bids to base the estimate on
+	 * @return The estimated opponent type
+	 */
 	public static OpponentType EstimateType(NegotiationSession negSession, OpponentModel om, int baseOnXBids)
 	{
 		OurAndEnemyUtils oaeu = new OurAndEnemyUtils(negSession, om, baseOnXBids);
@@ -21,6 +29,7 @@ public class OpponentTypeEstimator {
 			return OpponentType.TitForTat;
 		else {
 			double conced = Concedingness(oppHUtils);
+			Log.dln("Concedingness = " + conced);
 			if (conced < 0.1)
 				return OpponentType.Conceder;
 			else
@@ -29,6 +38,13 @@ public class OpponentTypeEstimator {
 		
 	}
 	
+	/**
+	 * Estimates the concedingness of an opponent
+	 * @param negSession negotiationSession to base the concedingness on.
+	 * @param om Opponent model used to estimate the opponents utilities and therefore the concedingness.
+	 * @param baseOnXBids Number of bids to base the concedingness.
+	 * @return The estimated conedingness of the opponent
+	 */
 	public static double Concedingness(NegotiationSession negSession, OpponentModel om, int baseOnXBids)
 	{
 		OurAndEnemyUtils oaeu = new OurAndEnemyUtils(negSession, om, baseOnXBids);
@@ -57,7 +73,26 @@ public class OpponentTypeEstimator {
 	
 	private static double Concedingness(double[] enemyUtils) {
 		//TODO: Use Average filter and then guess the derivative
-		return 0; // Ik ben jarig
+		
+		// Create average filter kernel
+		double[] k = new double[filterSize];
+		double x = 1.0/filterSize;
+		for (int i = 0; i < filterSize; i++) {
+			k[i] = x;
+		}
+		try {
+			double[] output = Convolution.apply(enemyUtils, k, "valid");
+			double differencesSum = 0.0; 
+			for (int i = 1; i < output.length; i++) {
+				differencesSum += output[i] - output[i - 1];
+			}
+			return differencesSum / ((double)output.length);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return 0;
 	}
 	
 
