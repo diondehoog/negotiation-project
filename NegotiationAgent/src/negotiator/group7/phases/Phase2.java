@@ -47,6 +47,8 @@ public class Phase2 extends Phase{
 	private BidSpace bidSpace; 
 	private ArrayList<BidPoint> kalaiPoints;
 	
+	private ArrayList<Double> distOpponentBidsToKS = new ArrayList<Double>();
+	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 			double tft1, double tft2, double k, double e, 
 			double[] phaseBoundary, double phase2LowerBound, double phase2range,
@@ -80,98 +82,93 @@ public class Phase2 extends Phase{
 		
 		// Second negotiation phase (implemented by Arnold)
 		double time = negotiationSession.getTime();
-		BidDetails nextBid;
-		/* Opponent modelling by Bas */
-		//OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
-		//Log.dln("EstimatedOpponentType: " + type.toString());
-				
-		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
-		BidDetails bidA = negotiationSession.getOwnBidHistory().getLastBidDetails();
-		Double[] utils = {bidA.getMyUndiscountedUtil(), opponentModel.getBidEvaluation(bidA.getBid())};
-		BidPoint b = new BidPoint(bidA.getBid(), utils);
+		// By default return best current bid
+		BidDetails nextBid = negotiationSession.getOwnBidHistory().getBestBidDetails();
 		
-		//BidDetails bidB = opponentModel.getBidEvaluation(negotiationSession.getOpponentBidHistory().getLastBid());
+		// Last bid of the opponent
+		BidDetails bidB = negotiationSession.getOpponentBidHistory().getLastBidDetails();
+		// Calculate our utility and that of the opponent
+		Double[] utilities = {bidB.getMyUndiscountedUtil(), opponentModel.getBidEvaluation(bidB.getBid())};
+		// Create BidPoint using the opponents bid and the two utilities
+		BidPoint bidPointB = new BidPoint(bidB.getBid(), utilities);
 		
-		double ksA = getDistToKalaiSmorodinsky(b);
-		Log.rln("KS for our last bid = [" + ksA + "]");
-		//double[] ksB = getDistToKalaiSmorodinsky(bidB);
-		//Log.rln("KS for opponents last bid = [" + ksB[0] + ", " + ksB[1] + "]");
+		// Calculate distance last opponents bid to estimated KS and save the value
+		double ksDist = getDistanceToKalaiSmorodinsky(bidPointB);
+		distOpponentBidsToKS.add(ksDist);
 		
-//		double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
-
-		double difference;
-		List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-		//Double lastOwnUtil = negotiationSession.getOwnBidHistory().getLastBidDetails().getMyUndiscountedUtil();
-		//Calculate difference between last bid and before last bid
-		if (lastOpponentBids.size() > 0){
-			
-			difference = getAverageDiffLastNBids(2);
-			Log.dln("Difference: " + String.format("%5f", difference) + ", lastWantedUtil: " + String.format("%5f", this.lastWantedUtil));
-
-			double nextBidUtil;
-			
-			//The opponent is approaching us in utility
-			if (difference>0)
-				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-				nextBidUtil = lastWantedUtil-(difference*tft1);
-			
-			//The opponent is distancing from us in utility
-			else
-				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
-				nextBidUtil = lastWantedUtil-(difference*tft2);
-			
-			nextBidUtil = Math.min(nextBidUtil, 1);
-
-			
-			/* Calculate new Bid relative to Kalai Smorodinsky point */
-			
-			double prevDistance2Kalai = lastDistance2Kalai;
-			double distances = getDistToKalaiSmorodinsky(b);
-				 
-			//lastDistance2Kalai = Math.sqrt(Math.pow(distances[0],2) + Math.pow(distances[1],2));
-			//Calculate the relative distance the opponent went to the Kalai point
-			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
-			
-			BidPoint ks = getKalaiSmorodisky();
-			
-			
-			//ks.getDistance(negotiationSession.getOpponentBidHistory().getLastBidDetails().getBid());
-			double OwnKalai = ks.getUtilityA();
-			double OppKalai = ks.getUtilityB();
-			
-			//Calculate linear interpolation
-			//[first = our Util], [second = opponent Util]
-			double[] newBidPoint = {1.0, 0.0};
-			//new Bid Point for us
-			newBidPoint[0] = lastWantedUtil + relDist*(OwnKalai-lastWantedUtil);
-			//new Bid Point for opponent
-			newBidPoint[1] = lastWantedUtilOpp + relDist*(OppKalai-lastWantedUtilOpp);
-			
-			
-			
-			//If there has been a better bid of the opponent, don't go below
-//			nextBidUtil = Math.max(nextBidUtil, bestBid);
-			
-			//Log.dln("nextBidUtil = " + nextBidUtil);
-			
-			/* Decide bid closest to optimal frontier */				
-			nextBid = close2Pareto(nextBidUtil);
-			
-			//Set the lastWantedUtil for the Util we want now
-			lastWantedUtil = nextBidUtil;
-			lastWantedUtilOpp = opponentModel.getBidEvaluation(nextBid.getBid());
+		//System.out.println("Opponents distance to KS point = " + ksDist);
+		
+		double x = getAvgDifferenceKS(5);
+		System.out.println("Average difference to KS over last 5 bids = " + x);
+		
+		return nextBid;
+		
+	}
+	
+	public double getDistToKalaiLastNBids (int N) {
+		
+		int curSize = distOpponentBidsToKS.size();
+		
+		// Determine lower bound
+		int lower = 0;
+		if (curSize >= N) lower = curSize-N-1;
+		if (lower < 0) lower = 0;
+		
+		List<Double> sub = distOpponentBidsToKS.subList(lower, curSize-1);
+		
+		return getListAverage(sub);
+	}
+	
+	public double getAvgDifferenceKS (int N) {
+		
+		// [1 3 4 5 3] 	length = N
+		// [ 2 1 1 2 ]	diff list, length N-1 
+		
+		int curSize = distOpponentBidsToKS.size();
+		
+		// No difference is less than 2 values
+		if (curSize <= 2) return 0.0;
+		
+		// Determine lower bound
+		int lower = 0;
+		if (curSize >= N) lower = curSize-N-1;
+		if (lower < 0) lower = 0;
+		
+		List<Double> sub = distOpponentBidsToKS.subList(lower, curSize-1);
+		double[] diffs = new double[sub.size()-1];
+		
+		// Calculate differences
+		for (int i = 0; i < sub.size()-1; i++) {
+			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
 		
-		else{
-			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(1);
+		// Perform smoothing using convolution
+		/*double[] k = {1.0/6.0, 4.0/6.0, 1.0/6.0};
+		double[] smooth;
+		
+		try {
+			smooth = Convolution.apply(diffs, k, "valid");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			smooth = null;
+			e.printStackTrace();
+		}*/
+		
+		double val = 0;
+		
+		for (int j = 0; j < diffs.length; j++) {
+			val += diffs[j];
 		}
-//		if (nextBid.getMyUndiscountedUtil()>bestBid)
 		
-		
-			return nextBid;
-//		else
-//			return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
+		return val/(double)diffs.length;
+	}
+	
+	public double getListAverage(List<Double> input) {
+		if (input.isEmpty()) return 0.0;
+		double val = 0;
+		for (Double d : input)	val += d;
+		return val/(double)input.size();
 	}
 	
 	/**
@@ -327,9 +324,6 @@ public class Phase2 extends Phase{
 			// Calculate Kalai-Smorodinsky
 			ks = bs.getKalaiSmorodinsky();
 			
-			// Save KS point to history
-			kalaiPoints.add(ks);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -337,7 +331,7 @@ public class Phase2 extends Phase{
 		return ks;
 	}
 	
-	public double getDistToKalaiSmorodinsky (BidPoint input) {
+	public double getDistanceToKalaiSmorodinsky (BidPoint input) {
 		
 		// Calculate Kalai-Smorodinsky
 		BidPoint ks = getKalaiSmorodisky();
