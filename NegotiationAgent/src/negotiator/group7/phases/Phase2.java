@@ -44,7 +44,7 @@ public class Phase2 extends Phase{
 	UtilitySpace ourUtilitySpace;
 	
 	/** ArrayLists for saving history */
-	private ArrayList<BidSpace> bidSpaces;
+	private BidSpace bidSpace; 
 	private ArrayList<BidPoint> kalaiPoints;
 	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
@@ -62,11 +62,13 @@ public class Phase2 extends Phase{
 		this.outcomespace = outcomespace;
 		
 		// Initializing history lists
-		bidSpaces = 	new ArrayList<BidSpace>();
 		kalaiPoints = 	new ArrayList<BidPoint>();
 		
 		// Set our utility space once
 		ourUtilitySpace = negotiationSession.getUtilitySpace();
+		
+		updateBidSpace();
+		
 	}
 	
 	@Override
@@ -86,10 +88,13 @@ public class Phase2 extends Phase{
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
 		BidDetails bidA = negotiationSession.getOwnBidHistory().getLastBidDetails();
+		Double[] utils = {bidA.getMyUndiscountedUtil(), opponentModel.getBidEvaluation(bidA.getBid())};
+		BidPoint b = new BidPoint(bidA.getBid(), utils);
+		
 		//BidDetails bidB = opponentModel.getBidEvaluation(negotiationSession.getOpponentBidHistory().getLastBid());
 		
-		double[] ksA = getDistToKalaiSmorodinsky(bidA);
-		Log.rln("KS for our last bid = [" + ksA[0] + ", " + ksA[1] + "]");
+		double ksA = getDistToKalaiSmorodinsky(b);
+		Log.rln("KS for our last bid = [" + ksA + "]");
 		//double[] ksB = getDistToKalaiSmorodinsky(bidB);
 		//Log.rln("KS for opponents last bid = [" + ksB[0] + ", " + ksB[1] + "]");
 		
@@ -122,9 +127,9 @@ public class Phase2 extends Phase{
 			/* Calculate new Bid relative to Kalai Smorodinsky point */
 			
 			double prevDistance2Kalai = lastDistance2Kalai;
-			double[] distances = getDistToKalaiSmorodinsky(negotiationSession.getOpponentBidHistory().getLastBidDetails());
+			double distances = getDistToKalaiSmorodinsky(b);
 				 
-			lastDistance2Kalai = Math.sqrt(Math.pow(distances[0],2) + Math.pow(distances[1],2));
+			//lastDistance2Kalai = Math.sqrt(Math.pow(distances[0],2) + Math.pow(distances[1],2));
 			//Calculate the relative distance the opponent went to the Kalai point
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
@@ -332,19 +337,14 @@ public class Phase2 extends Phase{
 		return ks;
 	}
 	
-	public double[] getDistToKalaiSmorodinsky (BidDetails input) {
-		
-		double[] distances = {0.0, 0.0};
+	public double getDistToKalaiSmorodinsky (BidPoint input) {
 		
 		// Calculate Kalai-Smorodinsky
 		BidPoint ks = getKalaiSmorodisky();
 		
-		// Calculate the two distances to the KS
-		distances[0] = ks.getUtilityA()-input.getMyUndiscountedUtil();
-		distances[1] = ks.getUtilityB()-opponentModel.getBidEvaluation(input.getBid());
-
-		// If an exception is caught, distances = [0.0, 0.0] is returned
-		return distances;
+		// Return the distance from the bid point to the KS
+		return ks.getDistance(input);
+		
 	}
 	
 	public void updateBidSpace () {
@@ -356,17 +356,15 @@ public class Phase2 extends Phase{
 		BidSpace bs;
 		try {
 			// Compute the bid space from our and their utility space
-			bs = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
+			bidSpace = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
 			
-			// Add bid space to the array list
-			bidSpaces.add(bs);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public BidSpace getCurrentBidSpace () {
-		return bidSpaces.get(bidSpaces.size()-1);
+		return bidSpace;
 	}
 
 	
