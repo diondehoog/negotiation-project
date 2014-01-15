@@ -106,6 +106,31 @@ In this report we describe the process of creating an agent for automated negoti
 
 
 \section{Exercises}
+
+\subsection{Party domain analysis}
+
+\subsubsection{Bidding space and pareto frontier}
+
+In this subsection we analyse the party domain and compute the Pareto frontier.
+The party domain has 6 issues: food (4 options), drinks (4 options), 
+locations (4 options), invitations (4 options), music (3 options), cleanup (4 options).
+This results in $4 \times 4 \times 4 \times 4 \times 3 \times 4 = 3072$ outcomes.
+We took the preference profile of user 10 and 15 of the party domain,
+we compute the outcome space and the pareto frontier and plot this in the figure below:
+
+%\begin{figure}[ht]
+\begin{center}
+ \includegraphics[width=0.6\textwidth]{pareto.png}
+% \caption{The pareto optimal frontier is displayed with a red line in this figure.}
+% \label{fig:pareto} 
+\end{center}
+%\end{figure}
+
+\subsubsection{Analyse simple opponents}
+
+Finally, we perform two negotation sessions: we play with the agent SimpleAgent against
+itself, and we play Boulware vs. Conceder and explain the outcome.
+
 \subsection{PEAS Description}
 
 The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adapt their notation.
@@ -139,48 +164,6 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
 
 \end{description}
-
-\subsection{Example Code}
-
-
-Example of java code inclusion:
-\begin{lstlisting}
-public Action chooseAction () { Action action = null;
-  try {
-    if (actionOfPartner == null) {
-      action = chooseRandomBidAction ();
-    }
-    if (actionOfPartner instanceof Offer) {
-      Bid partnerBid = ((Offer) actionOfPartner).getBid();
-    }
-  } catch
-    e.printStackTrace();
-    action = new Accept(getAgentID()); // best guess if things go wrong.
-  }
-  return action; 
-}
-\end{lstlisting}
-
-\subsection{Party domain analysis}
-
-In this subsection we analyse the party domain and compute the Pareto frontier.
-The party domain has 6 issues: food (4 options), drinks (4 options), 
-locations (4 options), invitations (4 options), music (3 options), cleanup (4 options).
-This results in $4 \times 4 \times 4 \times 4 \times 3 \times 4 = 3072$ outcomes.
-We took the preference profile of user 10 and 15 of the party domain,
-we compute the outcome space and the pareto frontier and plot this in the figure below:
-
-%\begin{figure}[ht]
-\begin{center}
- \includegraphics[width=0.6\textwidth]{pareto.png}
-% \caption{The pareto optimal frontier is displayed with a red line in this figure.}
-% \label{fig:pareto} 
-\end{center}
-%\end{figure}
-
-Finally, we perform two negotation sessions: we play with the agent SimpleAgent against
-itself, and we play Boulware vs. Conceder and explain the outcome.
-
 
 \section{Strategy}
 \label{sec:strategy}
@@ -218,6 +201,28 @@ I'd suggest we mention java method names here and not in the high level descript
 \item{test}
 
 \end{enumerate}
+
+
+\subsection{Example Code}
+
+
+Example of java code inclusion:
+\begin{lstlisting}
+public Action chooseAction () { Action action = null;
+  try {
+    if (actionOfPartner == null) {
+      action = chooseRandomBidAction ();
+    }
+    if (actionOfPartner instanceof Offer) {
+      Bid partnerBid = ((Offer) actionOfPartner).getBid();
+    }
+  } catch
+    e.printStackTrace();
+    action = new Accept(getAgentID()); // best guess if things go wrong.
+  }
+  return action; 
+}
+\end{lstlisting}
 
 \section{Conclusion}
 \label{sec:conclusion}
