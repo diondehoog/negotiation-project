@@ -18,18 +18,18 @@ public class Phase2 extends Phase{
 	private double tft1;
 	private double tft2;
 	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
-	private double k = 0.0;
+	private double k ;
 	/** Maximum target utility */
 	private double Pmax;
 	/** Minimum target utility */
 	private double Pmin;
 	/** Concession factor */
-	private double e = 1.0;
+	private double e;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.4, 1};
-	private double   phase2LowerBound = 0.6;
-	private double   phase2range = 0.05;
+	private double[] phaseBoundary;
+	private double   phase2LowerBound;
+	private double   phase2range;
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
@@ -51,10 +51,10 @@ public class Phase2 extends Phase{
 	
 	@Override
 	public BidDetails determineNextBid() {
+		Log.sln("Phase 2");
 		// Second negotiation phase (implemented by Arnold)
 		double time = negotiationSession.getTime();
 		BidDetails nextBid;
-		Log.dln("Determining next bid in phase 2");
 		
 		/* Opponent modelling by Bas */
 		//OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
@@ -118,6 +118,10 @@ public class Phase2 extends Phase{
 				Log.vln("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()));
 				Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
 				nextBid = bidsInRange.get(0);
+				
+				double newDifference = nextBid.getMyUndiscountedUtil()-lastOwnUtil;
+				if (difference !=0)
+					Log.sln("difference!=0: ("+difference+","+newDifference+")");
 			}
 		}
 		else{
@@ -211,7 +215,7 @@ public class Phase2 extends Phase{
 		
 		avg = avg/((double)n);
 		
-		Log.rln("Average concede over last " + n + " bids = " + avg);
+		
 		Log.sln("Average concede over last " + n + " bids = " + avg);
 /*
 		double[] smooth = new double[n];

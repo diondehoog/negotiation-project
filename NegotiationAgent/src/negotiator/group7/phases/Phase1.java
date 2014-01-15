@@ -1,12 +1,11 @@
 package negotiator.group7.phases;
 
-import java.util.List;
-import java.util.Random;
-
 import misc.Range;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
+import negotiator.group7.Log;
+
 
 public class Phase1 extends Phase{
 	private double phase1LowerBound = 0.8;
@@ -26,6 +25,7 @@ public class Phase1 extends Phase{
 		double time = negotiationSession.getTime();
 		Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
 		
+		Log.sln("Phase 1");
 		/* Code below checks if offer was already used... 
 		BidDetails bd = null;
 		boolean foundOffer = false;
