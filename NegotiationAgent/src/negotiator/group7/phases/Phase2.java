@@ -101,7 +101,8 @@ public class Phase2 extends Phase{
 			//Calculate the relative distance the opponent went to the Kalai point
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
-			
+			//Calculate linear interpolation
+			getKalaiPoint
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
