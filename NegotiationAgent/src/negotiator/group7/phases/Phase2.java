@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import misc.Range;
+import negotiator.analysis.BidPoint;
+import negotiator.analysis.BidSpace;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -13,6 +15,7 @@ import negotiator.group7.Log;
 import negotiator.group7.OpponentBidCompare;
 import negotiator.group7.OpponentType;
 import negotiator.group7.OpponentTypeEstimator;
+import negotiator.utility.UtilitySpace;
 
 public class Phase2 extends Phase{
 	private double tft1;
@@ -64,6 +67,7 @@ public class Phase2 extends Phase{
 		
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
+		estimateDistance();
 		
 //		double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 
@@ -242,5 +246,37 @@ public class Phase2 extends Phase{
 				
 		return avg;
 	}
+	
+	public double estimateDistance () {
+		
+		// Fetch two utility spaces to estimate Kalai-Smorodinsky
+		UtilitySpace spaceOurs = 		negotiationSession.getUtilitySpace();
+		UtilitySpace spaceOpponent = 	opponentModel.getOpponentUtilitySpace();
+		
+		Log.rln("#############################################");
+		Log.rln("OPPONENT: " + spaceOpponent.toString() );
+		Log.rln("OURS: " + spaceOurs.toString());
+		
+		// Build bidSpace
+		BidSpace bs;
+		
+		try {
+			// BidSpace build from ours/opponents 
+			bs = new BidSpace(spaceOurs, spaceOpponent);
+			
+			// Calculate Kalai-Smorodinsky
+			BidPoint ks = bs.getKalaiSmorodinsky();
+			
+			Log.rln("KS for agent A = " + ks.getUtilityA());
+			Log.rln("KS for agent B = " + ks.getUtilityB());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0.0;
+	}
+	
 
 }
