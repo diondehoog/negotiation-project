@@ -104,13 +104,14 @@ public class Phase2 extends Phase{
 			nextBidUtil = Math.min(nextBidUtil, 1);
 
 			double prevDistance2Kalai = lastDistance2Kalai;
-			lastDistance2Kalai = distance2Kalai(negotiationSession.getOpponentBidHistory().getLastBidDetails());
-			
+			double[] distances = getDistToKalaiSmorodinsky(negotiationSession.getOpponentBidHistory().getLastBidDetails());
+				 
+			lastDistance2Kalai = Math.sqrt(Math.pow(distances[0],2) + Math.pow(distances[1],2));
 			//Calculate the relative distance the opponent went to the Kalai point
 			double relDist = 1-(lastDistance2Kalai/prevDistance2Kalai);
 			
 			//Calculate linear interpolation
-			getKalaiPoint
+			double[] newKalaiPoint = {0.0, 0.0};
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
