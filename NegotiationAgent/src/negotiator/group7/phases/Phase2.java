@@ -97,37 +97,9 @@ public class Phase2 extends Phase{
 			//Log.dln("nextBidUtil = " + nextBidUtil);
 			
 			/* Decide bid closest to optimal frontier */				
-			/*Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
-			
-			Double temp = new Double(nextBidUtil);
-			Double range2 = new Double(phase2range);
-
-			Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
-
-			List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-
-			if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
-			*/
-				nextBid =  outcomespace.getBidNearUtility(nextBidUtil);
-				/*
-			} else {
-				Double sizeList = new Double(bidsInRange.size());
-				Log.vln("Number of bids found that are in range:" + sizeList.toString());
-				
-				OpponentBidCompare comparebids = new OpponentBidCompare();
-				comparebids.setOpponentModel(opponentModel);
-				
-				Collections.sort(bidsInRange, comparebids);
-				
-				Log.vln("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()));
-				Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
-				nextBid = bidsInRange.get(0);
-				
-				double newDifference = nextBid.getMyUndiscountedUtil()-lastOwnUtil;
-				if (difference !=0)
-					Log.sln("difference!=0: ("+difference+","+newDifference+")");
-			}*/
+			nextBid = close2Pareto(nextBidUtil);
 		}
+		
 		else{
 			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(1);
 		}
@@ -192,6 +164,40 @@ public class Phase2 extends Phase{
 	 * @param n
 	 * @return
 	 */
+	
+	/* Decide bid closest to optimal frontier */
+	public BidDetails close2Pareto(double nextBidUtil){ 							
+	
+		Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
+	
+		Double temp = new Double(nextBidUtil);
+		Double range2 = new Double(phase2range);
+		BidDetails nextBid;
+
+		Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
+
+		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+
+		if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
+	
+			nextBid =  outcomespace.getBidNearUtility(nextBidUtil);
+		
+		} else {
+			OpponentBidCompare comparebids = new OpponentBidCompare();
+			comparebids.setOpponentModel(opponentModel);
+		
+			Collections.sort(bidsInRange, comparebids);
+		
+			Log.v("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()) + ", ");
+			Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
+			nextBid = bidsInRange.get(0);
+			
+		}
+		
+		return nextBid;
+	}
+	
+	
 	public double getAverageDiffLastNBids (int n) {
 		
 		// Get list of opponent bids sorted on time
