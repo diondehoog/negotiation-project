@@ -144,9 +144,14 @@ public class Group7_AS extends AcceptanceStrategy {
 		//ACList.add(new AC_MAC()); // this is the class that we extend..
 	}
 
-	double averageDeltaTime = 0;
+	static double averageDeltaTime = 0;
+	static double time = 0;
 	double previousTime = 0;
 	int counter = 0;
+	
+	public static int GetGuessedBidsLeft() {
+		return (int) ((1.0 - time) / (averageDeltaTime + 0.00001)); // avoiding division by zero :P
+	}
 	
 	public Actions determineAcceptability() {
 		if (negotiationSession == null) return Actions.Reject;
@@ -157,7 +162,7 @@ public class Group7_AS extends AcceptanceStrategy {
 
 		// Averaging execution time
 		counter++;
-		double time = negotiationSession.getTime();
+		time = negotiationSession.getTime();
 		double dt = time - previousTime;
 		if (previousTime != 0) {
 			if (averageDeltaTime == 0) {
@@ -167,7 +172,7 @@ public class Group7_AS extends AcceptanceStrategy {
 			}
 		}
 		previousTime = time;
-		int bidsLeft = (int) ((1.0 - time) / (averageDeltaTime + 0.00001));
+		int bidsLeft = GetGuessedBidsLeft();
 
 //		Actions a = super.determineAcceptability();
 		BidHistory bh = negotiationSession.getOpponentBidHistory();
@@ -178,15 +183,24 @@ public class Group7_AS extends AcceptanceStrategy {
 
 		if (hisLast > 0.85) {
 			Log.newLine("~~~~~~~~~~~ hisLast > 0.85 ==> hislast: " + hisLast);
+			// Here we simply accept anything above 0.85 without hesitation
 			return Actions.Accept;
-		} else if (hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast) {
-			Log.newLine("~~~~~~~~~~~ hisBest == hisLast && bidsLeft < 30 && (bidsLeft / 30) < hisLast ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
+		} else if (hisBest == hisLast && bidsLeft < 40 && (bidsLeft / 40) + 0.5f < hisLast) {
+			Log.newLine("~~~~~~~~~~~ hisBest == hisLast && bidsLeft < 40 && (bidsLeft / 40) + 0.5f < hisLast ==> hislast: " + hisLast + "; hisBest: " + hisBest + "; time: " + time);
+			// Ok this part seems weird but its simple:
+			// when we have only 40 bids left we will only accept his best
+			// but his best needs to be at least some value: bidsLeft/40 + 0.5
+			// so when 20 bids are left, we will accept bids higher than 0.75 iff he is 
+			// giving his best bid as of yet.
 			return Actions.Accept;
 		} else if (bidsLeft < 3) {
 			Log.newLine("~~~~~~~~~~~ bidsLeft < 3");
+			// Here we accept anything, once only 2 bids are left
 			return Actions.Accept;
 		} else if (hisLast > ourWorstFixed) {
 			Log.newLine("~~~~~~~~~~~ hisLast > ourWorstFixed ==> hislast: " + hisLast + "; ourWorstFixed: " + ourWorstFixed);
+			// If he bids higher than our worst, we will simply accept right away
+			// and since we don't go down with our utility that quickly, this should work fine
 			return Actions.Accept;
 		}
 		return Actions.Reject;
