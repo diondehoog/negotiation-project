@@ -40,6 +40,7 @@ public class Phase2 extends Phase{
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
+	UtilitySpace ourUtilitySpace;
 	
 	/** ArrayLists for saving history */
 	private ArrayList<BidSpace> bidSpaces;
@@ -62,11 +63,18 @@ public class Phase2 extends Phase{
 		// Initializing history lists
 		bidSpaces = 	new ArrayList<BidSpace>();
 		kalaiPoints = 	new ArrayList<BidPoint>();
+		
+		// Set our utility space once
+		ourUtilitySpace = negotiationSession.getUtilitySpace();
 	}
 	
 	@Override
 	public BidDetails determineNextBid() {
 		Log.sln("Phase 2");
+		
+		// Update bid space every iteration
+		updateBidSpace();
+		
 		// Second negotiation phase (implemented by Arnold)
 		double time = negotiationSession.getTime();
 		BidDetails nextBid;
@@ -75,7 +83,6 @@ public class Phase2 extends Phase{
 		//OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
 		//Log.dln("EstimatedOpponentType: " + type.toString());
 				
-		
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
 		BidDetails bidA = negotiationSession.getOwnBidHistory().getLastBidDetails();
@@ -124,7 +131,7 @@ public class Phase2 extends Phase{
 			//new Kalai Point for us
 			newKalaiPoint[0] = lastWantedUtil + relDist*(distances[0]-lastWantedUtil);
 			//new Kalai Point for opponents
-			newKalaiPoint[1] = 
+			//newKalaiPoint[1] = 
 			//If there has been a better bid of the opponent, don't go below
 //			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
@@ -290,24 +297,14 @@ public class Phase2 extends Phase{
 		
 		BidPoint ks = null;
 		
-		// Fetch two utility spaces to estimate Kalai-Smorodinsky
-		UtilitySpace spaceOurs = 		negotiationSession.getUtilitySpace();
-		UtilitySpace spaceOpponent = 	opponentModel.getOpponentUtilitySpace();
-		
 		//Log.rln("#############################################");
 		//Log.rln("OPPONENT: " + spaceOpponent.toString() );
 		//Log.rln("OURS: " + spaceOurs.toString());
 		
 		// Build bidSpace
-		BidSpace bs;
+		BidSpace bs = getCurrentBidSpace();
 		
 		try {
-			// BidSpace build from ours/opponents 
-			bs = new BidSpace(spaceOurs, spaceOpponent);
-			
-			// Save current bid space in array list
-			bidSpaces.add(bs);
-			
 			// Calculate Kalai-Smorodinsky
 			ks = bs.getKalaiSmorodinsky();
 			
@@ -319,7 +316,6 @@ public class Phase2 extends Phase{
 		}
 		
 		return ks;
-		
 	}
 	
 	public double[] getDistToKalaiSmorodinsky (BidDetails input) {
@@ -332,10 +328,33 @@ public class Phase2 extends Phase{
 		// Calculate the two distances to the KS
 		distances[0] = ks.getUtilityA()-input.getMyUndiscountedUtil();
 		distances[1] = ks.getUtilityB()-opponentModel.getBidEvaluation(input.getBid());
-		
+
 		// If an exception is caught, distances = [0.0, 0.0] is returned
 		return distances;
 	}
+	
+	public void updateBidSpace () {
+		
+		//ourUtilitySpace
+		UtilitySpace utilitySpaceOpponent = 	opponentModel.getOpponentUtilitySpace();
+		
+		// BidSpace build from ours/opponents 
+		BidSpace bs;
+		try {
+			// Compute the bid space from our and their utility space
+			bs = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
+			
+			// Add bid space to the array list
+			bidSpaces.add(bs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public BidSpace getCurrentBidSpace () {
+		return bidSpaces.get(bidSpaces.size()-1);
+	}
+
 	
 
 }
