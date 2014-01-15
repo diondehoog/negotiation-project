@@ -17,6 +17,7 @@
 \usepackage{microtype}
 \usepackage{enumerate}
 \usepackage{courier}
+\usepackage{graphicx}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
@@ -98,16 +99,36 @@ A relatively new and evolving branch of Artificial Intelligence is automated neg
 
 In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. \Autoref{sec:questions} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
 
-% Temporarily disabled table of contents
-%\newpage
-%\tableofcontents
-%\newpage
+\newpage
+\tableofcontents
+\newpage
 
-\section{Strategy}
-\label{sec:strategy}
 
-\todo{``a high-level description of the agent and its structure, including the main Java methods(mention these explicitly!) used in the negotiating agent that have been implemented in the source code.''
-I suggest we name most methods in the subsection about the BOA components}
+\section{Exercises}
+
+\subsection{Party domain analysis}
+
+\subsubsection{Bidding space and pareto frontier}
+
+In this subsection we analyse the party domain and compute the Pareto frontier.
+The party domain has 6 issues: food (4 options), drinks (4 options), 
+locations (4 options), invitations (4 options), music (3 options), cleanup (4 options).
+This results in $4 \times 4 \times 4 \times 4 \times 3 \times 4 = 3072$ outcomes.
+We took the preference profile of user 10 and 15 of the party domain,
+we compute the outcome space and the pareto frontier and plot this in the figure below:
+
+%\begin{figure}[ht]
+\begin{center}
+ \includegraphics[width=0.6\textwidth]{pareto.png}
+% \caption{The pareto optimal frontier is displayed with a red line in this figure.}
+% \label{fig:pareto} 
+\end{center}
+%\end{figure}
+
+\subsubsection{Analyse simple opponents}
+
+Finally, we perform two negotation sessions: we play with the agent SimpleAgent against
+itself, and we play Boulware vs. Conceder and explain the outcome.
 
 \subsection{PEAS Description}
 
@@ -185,6 +206,28 @@ In the first phase of the negotiation session our agents performs some kind of o
 \item{test}
 
 \end{enumerate}
+
+
+\subsection{Example Code}
+
+
+Example of java code inclusion:
+\begin{lstlisting}
+public Action chooseAction () { Action action = null;
+  try {
+    if (actionOfPartner == null) {
+      action = chooseRandomBidAction ();
+    }
+    if (actionOfPartner instanceof Offer) {
+      Bid partnerBid = ((Offer) actionOfPartner).getBid();
+    }
+  } catch
+    e.printStackTrace();
+    action = new Accept(getAgentID()); // best guess if things go wrong.
+  }
+  return action; 
+}
+\end{lstlisting}
 
 \section{Conclusion}
 \label{sec:conclusion}

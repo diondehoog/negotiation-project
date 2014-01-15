@@ -73,7 +73,7 @@ public class BidSaverFrequencyModel extends OpponentModel {
 		List<BidDetails> all = bh.getHistory();
 		try
 		{
-			File file = new File("/home/immortaly007/workspace/Log/OwnHistory" + date + ".txt");
+			File file = new File("/home/immortaly007/workspace/Log/" + date + "_OwnHistory.txt");
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
@@ -98,7 +98,7 @@ public class BidSaverFrequencyModel extends OpponentModel {
 	{
 		try
 		{
-			File file = new File("/home/immortaly007/workspace/Log/OtherHistory" + date + ".txt");
+			File file = new File("/home/immortaly007/workspace/Log/" + date + "_OtherHistory.txt");
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
