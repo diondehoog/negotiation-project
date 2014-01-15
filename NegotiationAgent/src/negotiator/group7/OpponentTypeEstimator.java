@@ -9,6 +9,8 @@ import negotiator.boaframework.OpponentModel;
 
 public class OpponentTypeEstimator {
 	public static final int filterSize = 10;
+	public static final double concedingnessThreshold = -0.01;
+	public static final double titLikelihoodThreshold = 0.8;
 	
 	/**
 	 * Returns the estimated opponent type, based on baseOnXBids bids. 
@@ -25,12 +27,12 @@ public class OpponentTypeEstimator {
 		
 		double tit = titLikelihood(oppHUtils, ownHUtils);
 		Log.dln("titLikelihood = " + tit);
-		if (tit > 0.8) 
+		if (tit > titLikelihoodThreshold) 
 			return OpponentType.TitForTat;
 		else {
 			double conced = Concedingness(oppHUtils);
 			Log.dln("Concedingness = " + conced);
-			if (conced < 0.1)
+			if (conced < concedingnessThreshold)
 				return OpponentType.Conceder;
 			else
 				return OpponentType.HardHeaded;
@@ -72,8 +74,6 @@ public class OpponentTypeEstimator {
 	}
 	
 	private static double Concedingness(double[] enemyUtils) {
-		//TODO: Use Average filter and then guess the derivative
-		
 		// Create average filter kernel
 		double[] k = new double[filterSize];
 		double x = 1.0/filterSize;
@@ -83,9 +83,12 @@ public class OpponentTypeEstimator {
 		try {
 			double[] output = Convolution.apply(enemyUtils, k, "valid");
 			double differencesSum = 0.0; 
-			for (int i = 1; i < output.length; i++) {
+			//Log.d("average enemyUtils: " + output[0]);
+			for (int i = output.length - 1; i > 0; i--) {
 				differencesSum += output[i] - output[i - 1];
+				//Log.d(", " + output[i]);
 			}
+			Log.dln("");
 			return differencesSum / ((double)output.length);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,15 +109,16 @@ public class OpponentTypeEstimator {
 			List<BidDetails> ownH = negSession.getOwnBidHistory().sortToTime().getHistory();
 			int n = Math.min(Math.min(baseOnXBids, oppH.size()), ownH.size());
 			
-			double[] oppHUtils = new double[n];
-			double[] ownHUtils = new double[n];
+			this.enemyUtils = new double[n];
+			this.ourUtils = new double[n];
 			Iterator<BidDetails> oppHI = oppH.iterator();
 			Iterator<BidDetails> ownHI = ownH.iterator();
 			int i = 0;
 			while (i < n && oppHI.hasNext() && ownHI.hasNext())
 			{
-				oppHUtils[i] = om.getBidEvaluation(oppHI.next().getBid());
-				ownHUtils[i] = ownHI.next().getMyUndiscountedUtil();
+				this.enemyUtils[i] = om.getBidEvaluation(oppHI.next().getBid());
+				this.ourUtils[i] = ownHI.next().getMyUndiscountedUtil();
+				i++;
 			}
 		}
 		
