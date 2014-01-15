@@ -57,14 +57,14 @@ public class Phase2 extends Phase{
 		Log.dln("Determining next bid in phase 2");
 		
 		/* Opponent modelling by Bas */
-		OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
-		Log.dln("EstimatedOpponentType: " + type.toString());
+		//OpponentType type = OpponentTypeEstimator.EstimateType(this.negotiationSession, this.opponentModel, 100);
+		//Log.dln("EstimatedOpponentType: " + type.toString());
 				
 		
 		//int opponentClass = 1 for Hardheaded, 2 for Conceder, 3 for random
 		
 		
-		double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
+//		double bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails().getMyUndiscountedUtil();
 
 		double difference;
 		List<BidDetails> lastOpponentBids = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
@@ -72,20 +72,25 @@ public class Phase2 extends Phase{
 		//Calculate difference between last bid and before last bid
 		if (lastOpponentBids.size() > 0){
 			
-			difference = getAverageDiffLastNBids(10);
+			difference = getAverageDiffLastNBids(2);
 
 			double nextBidUtil;
 			
 			//The opponent is approaching us in utility
 			if (difference>0)
-				nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
-				
+				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft1),p(time));
+				nextBidUtil = lastOwnUtil-(difference*tft1);
+			
 			//The opponent is distancing from us in utility
 			else
-				nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
+				//nextBidUtil = Math.max(lastOwnUtil-(difference*tft2),p(time));
+				nextBidUtil = lastOwnUtil-(difference*tft2);
+			
+			
+			
 			
 			//If there has been a better bid of the opponent, don't go below
-			nextBidUtil = Math.max(nextBidUtil, bestBid);
+//			nextBidUtil = Math.max(nextBidUtil, bestBid);
 			
 			//Log.dln("nextBidUtil = " + nextBidUtil);
 			
@@ -118,10 +123,10 @@ public class Phase2 extends Phase{
 		else{
 			nextBid = negotiationSession.getOutcomeSpace().getBidNearUtility(p(time));
 		}
-		if (nextBid.getMyUndiscountedUtil()>bestBid)
+//		if (nextBid.getMyUndiscountedUtil()>bestBid)
 			return nextBid;
-		else
-			return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
+//		else
+//			return negotiationSession.getOutcomeSpace().getBidNearUtility(bestBid);
 	}
 	
 	/**
@@ -186,6 +191,9 @@ public class Phase2 extends Phase{
 			// Not enough bids in history! n is set to the size-1
 			n = negotiationSession.getOpponentBidHistory().size()-1;
 		}
+		if (n <= 1) {
+			return 0;
+		}
 		
 		// Save values
 		double[] vals = new double[n];
@@ -197,15 +205,15 @@ public class Phase2 extends Phase{
 		for (int i = 0; i < n-1; i++) {
 			//BidDetails bd = h.get(i);
 			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
-			vals[i] = h.get(i).getMyUndiscountedUtil()-h.get(i+1).getMyUndiscountedUtil();
+			vals[i] = h.get(i).getMyUndiscountedUtil() - h.get(i+1).getMyUndiscountedUtil();
 			avg += vals[i];
 		}
 		
-		avg = avg/n;
+		avg = avg/((double)n);
 		
 		Log.rln("Average concede over last " + n + " bids = " + avg);
 		Log.sln("Average concede over last " + n + " bids = " + avg);
-
+/*
 		double[] smooth = new double[n];
 		
 		Log.rln("###################################");
@@ -220,7 +228,7 @@ public class Phase2 extends Phase{
 		
 		
 		//Log.rln("Average concede over last " + n + " bids = " + avg);
-		
+	*/	
 				
 		return avg;
 	}
