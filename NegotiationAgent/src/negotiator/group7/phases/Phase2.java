@@ -78,7 +78,6 @@ public class Phase2 extends Phase{
 	
 	@Override
 	public BidDetails determineNextBid() {
-		Log.sln("Phase 2");
 		
 		// Update bid space every iteration
 		updateBidSpace();
@@ -102,7 +101,8 @@ public class Phase2 extends Phase{
 		
 		//System.out.println("Opponents distance to KS point = " + ksDist);
 		
-		double x = getAvgDifferenceKS(5);
+		int av = 5; // how many bids to average over
+		double x = getAvgDifferenceKS(av);
 		System.out.println("Average difference to KS over last 5 bids = " + x);
 		
 		try {
@@ -129,22 +129,94 @@ public class Phase2 extends Phase{
 		double theirMaxDist = getDistanceToKalaiSmorodinsky(theirBB);
 		double theirDist = ksDist;
 		
-		ourDist += x; // add their difference distance to our distance
+		ourDist += x*(ourMaxDist/theirMaxDist)*1/(3.0); // add their difference distance to our distance
 		
 		if (ourDist > ourMaxDist) {
 			ourDist = ourMaxDist;
 		}
 		
-		//double W = ourDist/ourMaxDist;
-		double W = theirDist/theirMaxDist;
+		double W = ourDist/ourMaxDist;
+		//double W = theirDist/theirMaxDist;
 		
 		Double W2 = new Double(W);
 		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
 		
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
+		if (Math.random()>0.5) { // 50% of time offer pareto outcome that is closest to our offer
+			List<BidPoint> pareto = null;
+			try {
+				pareto = bidSpace.getParetoFrontier();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			BidPoint nextBidPoint = getBidPointFromBidDetails(nextBid);
+			
+			double minDist = 2.0;
+			BidPoint closest = null;
+			for (BidPoint B : pareto) {
+				double dist = getDistanceBetweenBidPoints(B, nextBidPoint);
+				if (dist < minDist) {
+					minDist = dist;
+					closest = B;
+				}
+			}
+			
+			if (closest == null) {
+				System.out.println("Closest bid not found");
+			}
+			// TODO: check if our utility is not TOO high
+			
+			nextBid = findBidDetailsFromBidPoint(closest);
+			
+		}
+				
 		return nextBid;
 		
+	}
+	
+	public BidDetails findBidDetailsFromBidPoint(BidPoint B) {
+		double curR = 0.005;
+		System.out.println("Crash?");
+		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
+		System.out.println("Koe");
+		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+		System.out.println("Neus");
+		for (BidDetails B2: bidsInRange) {
+			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
+				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
+					return B2;
+		}
+		return null;
+	}
+	
+	public double getDistanceBetweenBidPoints(BidPoint B1, BidPoint B2) {
+		double U1A = B1.getUtilityA();
+		double U1B = B2.getUtilityB();
+		double U2A = B2.getUtilityA();
+		double U2B = B2.getUtilityB();
+		return Math.sqrt(Math.pow(U1A-U2A,2) + Math.pow(U1B-U2B, 2));
+	}
+	
+	public BidDetails getBidDetailsFromBidPoint(BidPoint A) { // this function does not work :(
+		Bid B = A.getBid();
+		if (B == null) {
+			System.out.println("JA DAS NULL HE!");
+		}
+		return getBidDetailsFromBid(B);
+	}
+	
+	public BidDetails getBidDetailsFromBid(Bid B) {
+		BidDetails C = null;
+		try {
+			C = new BidDetails(B, ourUtilitySpace.getUtility(B));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return C;
 	}
 	
 	public BidDetails interpolateBidPoints(BidPoint B1, BidPoint B2, double W1) {
@@ -162,6 +234,22 @@ public class Phase2 extends Phase{
 		//Bid WantedBid = WantedBidPoint.getBid();
 		//BidDetails WantedBidDetails = new BidDetails(WantedBid, WantedBidPoint.getUtilityA());
 		//return WantedBidDetails;
+	}
+	
+	public BidPoint getBidPointFromBid(Bid A) {
+		Double[] utilities2 = new Double[2];
+		try {
+			utilities2[0] = ourUtilitySpace.getUtility(A);
+			utilities2[1] = opponentModel.getBidEvaluation(A);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new BidPoint(A, utilities2);
+	}
+	
+	public BidPoint getBidPointFromBidDetails(BidDetails A) {
+		return getBidPointFromBid(A.getBid());
 	}
 	
 	public BidPoint getBestBidPointFromUtilitySpace(UtilitySpace A) {
@@ -338,7 +426,7 @@ public class Phase2 extends Phase{
 		if (bidsInRange.size() == 0) { // do bid nearest to this utility because there are none
 			return outcomespace.getBidNearUtility(UA);
 		} 
-		
+		System.out.println("Found: " + bidsInRange.size() + " bids in range " + curR);
 		double minDist = 2.0;
 		BidDetails bestBid = null;
 		for (BidDetails B : bidsInRange) { // look for bid with smallest euclidean distance
@@ -480,6 +568,7 @@ public class Phase2 extends Phase{
 		try {
 			// Compute the bid space from our and their utility space
 			bidSpace = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
