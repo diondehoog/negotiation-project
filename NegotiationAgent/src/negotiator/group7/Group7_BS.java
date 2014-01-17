@@ -50,7 +50,7 @@ public class Group7_BS extends OfferingStrategy {
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.1, 1};
+	private double[] phaseBoundary = {0.4, 1};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
@@ -148,17 +148,6 @@ public class Group7_BS extends OfferingStrategy {
 	@Override
 	public BidDetails determineNextBid() {
 		
-		bidNum++;
-		Log.vln("Bid nummer: " + bidNum);
-		
-		if (bidNum % recomputePar == 0) {
-			Log.vln("Ik ga nash product uitrekenen");
-			this.computeNash();
-			Log.vln("Ik heb de nash product uitgerekend, het is de volgende bid:");
-			Log.vln("Mijn utility in Nash: " + nash.getMyUndiscountedUtil());
-			Log.vln("Geschatte utility van tegenstander in Nash: " + opponentModel.getBidEvaluation(nash.getBid()));
-		}
-		
 		/* Tom R (2013-12-28)
 		 * Some ideas:
 		 * 	- NS.getBidHistory() and NS.getOpponentBidHistory() might be useful
@@ -173,7 +162,7 @@ public class Group7_BS extends OfferingStrategy {
 		int newPhase = getNegotiationPhase();
 		if (newPhase != curPhase)
 		{
-			Log.dln("Switching to phase " + newPhase);
+			System.out.println("Switching to phase " + newPhase);
 			if (newPhase == 1)
 				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], this.phase1LowerBound, this.phase1UpperBound);
 			if (newPhase == 2)
