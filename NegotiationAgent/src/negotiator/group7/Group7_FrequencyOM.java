@@ -1,9 +1,12 @@
 package negotiator.group7;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import negotiator.Bid;
+import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -25,6 +28,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	// the value weights converge.
 	private int learnValueAddition;
 	private int amountOfIssues;
+	
+	
+	private final double meanConcessionPerNewBid = 0.02;
+	private final double rightMargin = 0.05;
+	private final double leftMargin = 0.10;
 	
 	/**
 	 * Initializes the utility space of the opponent such that all value
@@ -123,6 +131,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
 		}
 		
+		List<BidDetails> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+		double expectedUtil = ExpectedNewBidUtil();
 		// Then for each issue value that has been offered last time, a constant value is added to its corresponding ValueDiscrete.
 		try{
 			for(Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()){
@@ -137,6 +147,34 @@ public class Group7_FrequencyOM extends OpponentModel {
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Finds the minimum util we currently expect from the opponent (e.g. what strategy we expect)
+	 * @return
+	 */
+	public double ExpectedNewBidUtil()
+	{
+		// The expected minimum utility is a function of the number of different offers we have received and the number of different offers possible.
+		List<BidDetails> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+		// Assuming each new bid concedes at most 5%, with a mean concession of 2% per new bid. 
+		return 1d - ((double)distinctBids.size() + 1d) * meanConcessionPerNewBid;
+	}
+	
+	/**
+	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+	 * @return List of recent bids
+	 */
+	public static List<BidDetails> getDistinctBids(BidHistory hist)
+	{
+		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
+		List<BidDetails> distinctBids = new ArrayList<BidDetails>();
+		for (BidDetails bid: opponentBids) {
+			if (!distinctBids.contains(bid))
+				distinctBids.add(bid);			
+		}
+		return distinctBids;
 	}
 
 	@Override
