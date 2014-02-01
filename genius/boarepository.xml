@@ -48,6 +48,7 @@
 		<opponentmodel description="Smith Frequency Model V2" classpath="negotiator.boaframework.opponentmodel.SmithFrequencyModelV2"/>
 		<opponentmodel description="IAMhaggler Bayesian Model" classpath="negotiator.boaframework.opponentmodel.IAMhagglerBayesianModel"/>
 		<opponentmodel description="Group7_HH_OM" classpath="negotiator.group7.Group7_HH_OM"/>
+		<opponentmodel description="Group7_OM: Adaptive Frequency Model" classpath="negotiator.group7.Group7_FrequencyOM"/>
 		<opponentmodel description="Nash Frequency Model" classpath="negotiator.boaframework.opponentmodel.NashFrequencyModel"/>
 		<opponentmodel description="Scalable Bayesian Model" classpath="negotiator.boaframework.opponentmodel.ScalableBayesianModel"/>
 		<opponentmodel description="Logging Frequency Model" classpath="negotiator.group7.BidSaverFrequencyModel"/>
