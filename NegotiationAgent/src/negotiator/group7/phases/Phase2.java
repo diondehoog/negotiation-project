@@ -45,7 +45,6 @@ public class Phase2 extends Phase{
 	
 	/** ArrayLists for saving history */
 	private BidSpace bidSpace; 
-	private ArrayList<BidPoint> kalaiPoints;
 	
 	private ArrayList<Double> distOpponentBidsToKS = new ArrayList<Double>();
 	
@@ -66,9 +65,6 @@ public class Phase2 extends Phase{
 		this.phase2range = phase2range;
 		this.outcomespace = outcomespace;
 		
-		// Initializing history lists
-		kalaiPoints = 	new ArrayList<BidPoint>();
-		
 		// Set our utility space once
 		ourUtilitySpace = negotiationSession.getUtilitySpace();
 		
@@ -81,9 +77,6 @@ public class Phase2 extends Phase{
 		
 		// Update bid space every iteration
 		updateBidSpace();
-		
-		// Second negotiation phase (implemented by Arnold)
-		double time = negotiationSession.getTime();
 		
 		// By default return best current bid
 		BidDetails nextBid = negotiationSession.getOwnBidHistory().getBestBidDetails();
@@ -103,25 +96,16 @@ public class Phase2 extends Phase{
 		
 		int av = 5; // how many bids to average over
 		double x = getAvgDifferenceKS(av);
-		System.out.println("Average difference to KS over last 5 bids = " + x);
-		
-		try {
-			Bid bestbid = ourUtilitySpace.getMaxUtilityBid();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//System.out.println("Average difference to KS over last 5 bids = " + x);
 		
 		BidPoint ks = getKalaiSmorodisky();
-		double ourUtil = ks.getUtilityA();
-		double theirUtil = ks.getUtilityB();
 		
 		UtilitySpace utilitySpaceOpponent = opponentModel.getOpponentUtilitySpace();
 		
 		BidPoint myBB = getBestBidPointFromUtilitySpace(ourUtilitySpace);
 		BidPoint theirBB = getBestBidPointFromUtilitySpace(utilitySpaceOpponent);
 		
-		if (ourDist < -0.05) {
+		if (ourDist < -0.05) { // if first time ever
 			ourDist = getDistanceToKalaiSmorodinsky(myBB);
 			ourMaxDist = getDistanceToKalaiSmorodinsky(myBB);
 		}
@@ -129,6 +113,7 @@ public class Phase2 extends Phase{
 		double theirMaxDist = getDistanceToKalaiSmorodinsky(theirBB);
 		double theirDist = ksDist;
 		
+		// ourDist = theirDist; // just mirror the opponent bid 
 		ourDist += x*(ourMaxDist/theirMaxDist)*1/(3.0); // add their difference distance to our distance
 		
 		if (ourDist > ourMaxDist) {
@@ -138,11 +123,11 @@ public class Phase2 extends Phase{
 		double W = ourDist/ourMaxDist;
 		//double W = theirDist/theirMaxDist;
 		
-		Double W2 = new Double(W);
 		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
 		
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
+		// TODO: this might be bad, since we might concede alot because of this! :(
 		if (Math.random()>0.5) { // 50% of time offer pareto outcome that is closest to our offer
 			List<BidPoint> pareto = null;
 			try {
@@ -154,9 +139,9 @@ public class Phase2 extends Phase{
 			
 			BidPoint nextBidPoint = getBidPointFromBidDetails(nextBid);
 			
-			double minDist = 2.0;
+			double minDist = 5.0; 
 			BidPoint closest = null;
-			for (BidPoint B : pareto) {
+			for (BidPoint B : pareto) { // loop over pareto to find closest bid
 				double dist = getDistanceBetweenBidPoints(B, nextBidPoint);
 				if (dist < minDist) {
 					minDist = dist;
@@ -179,11 +164,8 @@ public class Phase2 extends Phase{
 	
 	public BidDetails findBidDetailsFromBidPoint(BidPoint B) {
 		double curR = 0.005;
-		System.out.println("Crash?");
 		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
-		System.out.println("Koe");
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-		System.out.println("Neus");
 		for (BidDetails B2: bidsInRange) {
 			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
 				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
@@ -203,7 +185,7 @@ public class Phase2 extends Phase{
 	public BidDetails getBidDetailsFromBidPoint(BidPoint A) { // this function does not work :(
 		Bid B = A.getBid();
 		if (B == null) {
-			System.out.println("JA DAS NULL HE!");
+			System.out.println("JA DAS NULL HE!"); // jammer genius
 		}
 		return getBidDetailsFromBid(B);
 	}
