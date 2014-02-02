@@ -130,6 +130,7 @@ public class Phase2 extends Phase{
 		
 		double xconcede = 0;
 		if (concedeStep > 0) {
+			Log.vln("Concede! Just because were nice. :) Step: " + concedeStep);
 			xconcede = concedeStep/concedeSteps*concedeFactor;
 			concedeStep++;
 			if (concedeStep >= this.concedeSteps) {
@@ -146,12 +147,13 @@ public class Phase2 extends Phase{
 		double W = ourDist/ourMaxDist;
 		//double W = theirDist/theirMaxDist;
 		
-		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
+		//Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
 		
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
 		// TODO: this might be bad, since we might concede alot because of this! :(
 		if (Math.random()<this.Ppareto) { // 50% of time offer pareto outcome that is closest to our offer
+			Log.vln("Offer pareto, just because were nice! :) ");
 			List<BidPoint> pareto = null;
 			try {
 				pareto = bidSpace.getParetoFrontier();
@@ -465,7 +467,7 @@ public class Phase2 extends Phase{
 		Double range2 = new Double(phase2range);
 		BidDetails nextBid;
 
-		Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
+		//Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
 
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 
@@ -479,8 +481,8 @@ public class Phase2 extends Phase{
 		
 			Collections.sort(bidsInRange, comparebids);
 		
-			Log.v("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()) + ", ");
-			Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
+			//Log.v("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()) + ", ");
+			//Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
 			nextBid = bidsInRange.get(0);
 			
 		}
