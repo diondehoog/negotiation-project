@@ -86,7 +86,7 @@ public class Group7_BS extends OfferingStrategy {
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
-		
+
 		if (parameters.get("phase2") != null)
 			phaseBoundary[0] = parameters.get("phase2");
 		
@@ -216,48 +216,24 @@ public class Group7_BS extends OfferingStrategy {
 	
 	public void computeNash() {
 		
-		//if 
-		
 		List<BidDetails> allOutcomes = negotiationSession.getOutcomeSpace().getAllOutcomes();
 		double max = -1;
 		BidDetails best = null;
-		for (BidDetails koe : allOutcomes)
+		
+		for (BidDetails bd : allOutcomes)
 		{
-			double myUtil = koe.getMyUndiscountedUtil();
-			double enUtil = opponentModel.getBidEvaluation(koe.getBid());
+			double myUtil = bd.getMyUndiscountedUtil();
+			double enUtil = opponentModel.getBidEvaluation(bd.getBid());
 			double prod = myUtil*enUtil;
 			if (prod > max) {
-				best = koe;
+				best = bd;
 				max = prod;
 			}
 		}
 		
 		this.nash = best;
+		Helper.setNashPoint(best);
 		
-		/* This code does not work, I dont know why :(
-		UtilitySpace A = opponentModel.getOpponentUtilitySpace();
-		if (A == null) {
-			Log.vln("Ja dat werkt dus niet, KUT!");
-			try {
-				this.wait(1000000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try {
-			this.bidSpace = new BidSpace(A, this.myUtilSpace, false);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			this.par = this.bidSpace.getParetoFrontierBids();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		*/
 	}
 	
 	/**
