@@ -40,6 +40,15 @@ public class Phase2 extends Phase{
 	private double   lastWantedUtilOpp = 0;
 	private double 	 lastDistance2Kalai = 0;
 	
+	private double Ppareto = 0.5; // probability of offering pareto
+	private int averageOver = 5; // how many bids to average over to determine concession of opponent
+	private double niceFactor = 0.33; // when opponent concedes, their concession is multiplied by this
+	private double Pconcede = 0.05; // probability of conceding to make opponent happy
+	private double concedeFactor = 0.3; // amount of distance to concede to KS
+	private int concedeSteps = 10; // concession steps taken after eachother
+	
+	private int concedeStep = -1;
+	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	UtilitySpace ourUtilitySpace;
@@ -53,8 +62,8 @@ public class Phase2 extends Phase{
 	private double ourMaxDist = -1.0;
 	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
-			double tft1, double tft2, double k, double e, 
-			double[] phaseBoundary, double phase2LowerBound, double phase2range,
+			double Ppareto, int averageOver, double niceFactor, double Pconcede, double concedeFactor, int concedeSteps, 
+			double k, double e, double[] phaseBoundary, double phase2LowerBound, double phase2range,
 			SortedOutcomeSpace outcomespace) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		this.tft1 = tft1;
@@ -95,8 +104,7 @@ public class Phase2 extends Phase{
 		
 		//System.out.println("Opponents distance to KS point = " + ksDist);
 		
-		int av = 5; // how many bids to average over
-		double x = getAvgDifferenceKS(av);
+		double x = getAvgDifferenceKS(averageOver);
 		//System.out.println("Average difference to KS over last 5 bids = " + x);
 		
 		
@@ -115,7 +123,21 @@ public class Phase2 extends Phase{
 		double theirDist = ksDist;
 		
 		// ourDist = theirDist; // just mirror the opponent bid 
-		ourDist += x*(ourMaxDist/theirMaxDist)*1/(3.0); // add their difference distance to our distance
+		
+		if ((concedeStep == -1)&&(Math.random()<this.Pconcede)) {
+			concedeStep = 1;
+		}
+		
+		double xconcede = 0;
+		if (concedeStep > 0) {
+			xconcede = concedeStep/concedeSteps*concedeFactor;
+			concedeStep++;
+			if (concedeStep >= this.concedeSteps) {
+				concedeStep = -1;
+			}
+		}
+		
+		ourDist += (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist); // add their difference distance to our distance
 		
 		if (ourDist > ourMaxDist) {
 			ourDist = ourMaxDist;
@@ -129,7 +151,7 @@ public class Phase2 extends Phase{
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
 		// TODO: this might be bad, since we might concede alot because of this! :(
-		if (Math.random()>0.5) { // 50% of time offer pareto outcome that is closest to our offer
+		if (Math.random()<this.Ppareto) { // 50% of time offer pareto outcome that is closest to our offer
 			List<BidPoint> pareto = null;
 			try {
 				pareto = bidSpace.getParetoFrontier();
@@ -366,7 +388,7 @@ public class Phase2 extends Phase{
 		
 		// scale t
 		double torig = t;
-		t = (t - this.phaseStart) / (this.phaseEnd -  this.phaseStart);
+		t = (t - this.phaseStart) * (this.phaseEnd -  this.phaseStart);
 		//Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
 		
 		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
