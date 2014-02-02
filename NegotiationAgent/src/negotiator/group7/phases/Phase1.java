@@ -40,30 +40,50 @@ public class Phase1 extends Phase {
 	}
 	
 	public Range getBidRange (double t, double margin) {
+		double upperBound = 1.0;
+		double lowerBound = 0.9;
 		double normTime = t/this.phaseEnd; // Normalized time
 		
 		// Center of the utility range
-		double val = 1-(normTime/10);
+		
+		//double val = 1-(normTime/10);
 		
 		// Best bid that the opponent has offered so far
 		BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
+		double bestUtilOpp = 0.0;
+		if (bestOpponent != null) {
+			bestUtilOpp = bestOpponent.getMyUndiscountedUtil();
+		}
+		
+		double utilDiff = 0.1; // minimum utility difference between best opp offer and lower bound
+		if (bestUtilOpp + utilDiff > lowerBound) // if opponent offer to close to lowerbound,
+			// change lowerbound:
+			lowerBound = bestUtilOpp + utilDiff;
+		
+		// lower bound may be too high, fix:
+		if (lowerBound + 0.01 > upperBound) { 
+			lowerBound = upperBound - 0.01;
+		}
+		
+		// find the utility value to offer
+		double val = upperBound-(upperBound-lowerBound)*normTime;
 		
 		// Set the bounds for the range
 		double lb = val-margin;
 		double ub = val+margin;
-		
+		/*
 		if (bestOpponent.getMyUndiscountedUtil() > val){
 			// The opponent has offered a better bid (for us)
 			// than the center of our bid range, we counter this
 			// by choosing a bid higher (+0.05) than the opponents bid.
-			val = bestOpponent.getMyUndiscountedUtil()+0.05;
+			
 			
 			// Update boundaries
 			lb = val; ub = val+margin;
 			
 			Log.newLine("NOTICE: Updated boundary because opponent has chosen higher bid.");
 		}
-		
+		*/
 		//Log.rln("Center of our bidRange = " + val + ", Best opponents bid = " + bestOpponent.getMyUndiscountedUtil());
 		
 		// Range in which bids are randomly generated
@@ -76,3 +96,4 @@ public class Phase1 extends Phase {
 	}
 
 }
+
