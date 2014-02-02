@@ -36,20 +36,10 @@ public abstract class Phase {
 	 */
 	public BidDetails getRandomBid (Range r) {
 		
-//		Log.newLine.out.println("################################################");
-//		Log.newLine("Generating random bids within range [" + lb + ", " + ub + "]");
-
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-		
-		// Just for testing, print all bids in range
-		//for (BidDetails b : bidsInRange) {
-		//	Log.newLine("Found bid: " + b.getMyUndiscountedUtil());
-		//}
 		
 		int numBids = bidsInRange.size(); // Number of found bids
 		BidDetails randBid;
-		
-//		Log.newLine("Found " + numBids + " within range.");
 		
 		if (numBids > 0) {
 			// One or more bids within range are found.
@@ -57,17 +47,13 @@ public abstract class Phase {
 			Random randgen = new Random();
 			randBid = bidsInRange.get(randgen.nextInt(numBids));
 			
-			//Log.newLine("Selected random bid with utility " + randBid.getMyUndiscountedUtil());
-			
 		} else {
 			// No bids within range are found, now we selected the bid that is closest 
 			// to the UPPER bound of the given range.
 			randBid = negotiationSession.getOutcomeSpace().getBidNearUtility(r.getUpperbound());
-			
-			//Log.newLine("No bids found, selecting bid closest to upper bound: " + randBid.getMyUndiscountedUtil());
+
 		}
 		
-		//		Log.newLine("################################################");
 		return randBid;
 		
 	}

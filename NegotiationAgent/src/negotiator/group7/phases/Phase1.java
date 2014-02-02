@@ -7,12 +7,12 @@ import negotiator.boaframework.OpponentModel;
 import negotiator.group7.Log;
 
 
-public class Phase1 extends Phase{
-	private double phase1LowerBound = 0.8;
-	private double phase1UpperBound = 1.0;
+public class Phase1 extends Phase {
+	private double phase1LowerBound;
+	private double phase1UpperBound;
 	
 	public Phase1(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
-			double phase1LowerBound, double phase1UpperBound) {
+				  double phase1LowerBound, double phase1UpperBound) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		this.phase1LowerBound = phase1LowerBound;
 		this.phase1UpperBound = phase1UpperBound;
@@ -56,13 +56,11 @@ public class Phase1 extends Phase{
 
 		double normTime = t/this.phaseEnd; // Normalized time
 		
-		double val = 1-(normTime/10);
-		Range r = new Range(val-margin, val+margin);
+		double val = 1-(normTime/10); // Center of the utility range
+		Range r = new Range(val-margin, val+margin); // Range in which bids are randomly generated
 		
-		// Set upper bound to 1 is exceeds
+		// Set upper bound to 1 if it exceeds
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
-		
-		//Log.rln("Calculated range for t = " + normTime + ", ["+r.getLowerbound()+","+r.getUpperbound()+"]");
 		
 		return r;
 	}
