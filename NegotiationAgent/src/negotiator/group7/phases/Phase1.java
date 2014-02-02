@@ -61,10 +61,10 @@ public class Phase1 extends Phase {
 			// Update boundaries
 			lb = val; ub = val+margin;
 			
-			Log.newLine("Updated boundary because opponent has chosen higher bid.");
+			Log.newLine("NOTICE: Updated boundary because opponent has chosen higher bid.");
 		}
 		
-		Log.rln("Center of our bidRange = " + val + ", Best opponents bid = " + bestOpponent.getMyUndiscountedUtil());
+		//Log.rln("Center of our bidRange = " + val + ", Best opponents bid = " + bestOpponent.getMyUndiscountedUtil());
 		
 		// Range in which bids are randomly generated
 		Range r = new Range(lb, ub); 

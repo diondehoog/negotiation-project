@@ -14,6 +14,7 @@ import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.group7.Convolution;
 import negotiator.group7.Log;
+import negotiator.group7.Helper;
 import negotiator.group7.OpponentBidCompare;
 import negotiator.group7.OpponentType;
 import negotiator.group7.OpponentTypeEstimator;
@@ -512,16 +513,13 @@ public class Phase2 extends Phase{
 		
 		BidPoint ks = null;
 		
-		//Log.rln("#############################################");
-		//Log.rln("OPPONENT: " + spaceOpponent.toString() );
-		//Log.rln("OURS: " + spaceOurs.toString());
-		
 		// Build bidSpace
 		BidSpace bs = getCurrentBidSpace();
 		
 		try {
 			// Calculate Kalai-Smorodinsky
 			ks = bs.getKalaiSmorodinsky();
+			Helper.setKalaiPoint(ks);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
