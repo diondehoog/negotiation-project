@@ -13,53 +13,63 @@ public class Phase1 extends Phase {
 	
 	public Phase1(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 				  double phase1LowerBound, double phase1UpperBound) {
+		
+		// Constructor of Phase class
 		super(negSession, opponentModel, phaseStart, phaseEnd);
+		
+		// Set the phase time boundaries
 		this.phase1LowerBound = phase1LowerBound;
 		this.phase1UpperBound = phase1UpperBound;
+	
 	}
 
 	@Override
 	public BidDetails determineNextBid() {
-		// First negotiation phase (implemented by Tom)
+		
 		// During the first phase we select random bids.
 		double time = negotiationSession.getTime();
-		Range randBidRange = getRangeFunctionFirstPhase(time, 0.02);
+
+		// Calculate the bid range based on current time
+		// The margin for the bid range is set to 0.02
+		Range randBidRange = getBidRange(time, 0.02);
 		
-		Log.sln("Phase 1");
-		/* Code below checks if offer was already used... 
-		BidDetails bd = null;
-		boolean foundOffer = false;
-		int iterations = 0;
-		
-		// Iterate until we found offer that was not offered before...
-		while (!foundOffer && iterations < 5) {
-			bd = getRandomBid(randBidRange);
-			Log.newLine("Generated random bid within range: " + bd.getMyUndiscountedUtil());
-			
-			if (isAlreadyOffered(bd)) {
-				// Bid was already offered, generate new one...
-				Log.rln("Generating NEW random bid since current was already offered!");
-			} else {
-				// We found a new available offer :-)
-				foundOffer = true;
-			}
-			
-			iterations++;
-		} */
-		
+		// Generate random bid within the range
 		BidDetails bd = getRandomBid(randBidRange);
 		
 		return bd;
 	}
 	
-	public Range getRangeFunctionFirstPhase (double t, double margin) {
-
+	public Range getBidRange (double t, double margin) {
 		double normTime = t/this.phaseEnd; // Normalized time
 		
-		double val = 1-(normTime/10); // Center of the utility range
-		Range r = new Range(val-margin, val+margin); // Range in which bids are randomly generated
+		// Center of the utility range
+		double val = 1-(normTime/10);
 		
-		// Set upper bound to 1 if it exceeds
+		// Best bid that the opponent has offered so far
+		BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
+		
+		// Set the bounds for the range
+		double lb = val-margin;
+		double ub = val+margin;
+		
+		if (bestOpponent.getMyUndiscountedUtil() > val){
+			// The opponent has offered a better bid (for us)
+			// than the center of our bid range, we counter this
+			// by choosing a bid higher (+0.05) than the opponents bid.
+			val = bestOpponent.getMyUndiscountedUtil()+0.05;
+			
+			// Update boundaries
+			lb = val; ub = val+margin;
+			
+			Log.newLine("Updated boundary because opponent has chosen higher bid.");
+		}
+		
+		Log.rln("Center of our bidRange = " + val + ", Best opponents bid = " + bestOpponent.getMyUndiscountedUtil());
+		
+		// Range in which bids are randomly generated
+		Range r = new Range(lb, ub); 
+		
+		// Set upper bound to 1 if it exceeds upper bound
 		if (r.getUpperbound() > 1) r.setUpperbound(1.0);
 		
 		return r;

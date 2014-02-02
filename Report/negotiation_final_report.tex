@@ -214,22 +214,42 @@ Our bidding strategy is time dependent, we have implemented three phases each of
 \subsubsection{First Phase}
 Our agents first bid is determined by the method \texttt{determineOpeningBid()}. By offering a bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $0.9$. The best bid of this utility is obtained by calling \texttt{getBidNearUtility()} of the \texttt{OutcomeSpace} class. \\
 
-After determining our openings bid and receiving the initial bid from the opponent our agent continues by generating random bids. These random bids are generated within a small utility range. The (average) height of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getRangeFunctionFirstPhase()} given in Listing~\ref{code:getrangefunctionfirstphase}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
+After determining our openings bid and receiving the initial bid from the opponent our agent continues by generating random bids. These random bids are generated within a small utility range. The (average) height of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()} given in Listing~\ref{code:getrangefunctionfirstphase}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
 
-We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$.
+We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
 
 \clearpage
 
 \begin{lstlisting}[caption=Code for calculating bid range as function of normalized time, label=code:getrangefunctionfirstphase]
-public Range getRangeFunctionFirstPhase (double t, double margin) {
+public Range getBidRange (double t, double margin) {
   double normTime = t/this.phaseEnd; // Normalized time
-
-  double val = 1-(normTime/10); // Center of the utility range
-  Range r = new Range(val-margin, val+margin); // Range in which bids are randomly generated
+  
+  // Center of the utility range
+  double val = 1-(normTime/10);
+  
+  // Best bid that the opponent has offered so far
+  BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
+  
+  // Set the bounds for the range
+  double lb = val-margin;
+  double ub = val+margin;
+  
+  if (bestOpponent.getMyUndiscountedUtil() > val){
+    // The opponent has offered a better bid (for us)
+    // than the center of our bid range, we counter this
+    // by choosing a bid higher (+0.05) than the opponents bid.
+    val = bestOpponent.getMyUndiscountedUtil()+0.05;
     
+    // Update boundaries
+    lb = val; ub = val+margin;
+  }
+  
+  // Range in which bids are randomly generated
+  Range r = new Range(lb, ub); 
+  
   // Set upper bound to 1 if it exceeds upper bound
   if (r.getUpperbound() > 1) r.setUpperbound(1.0);
-    
+  
   return r;
 }
 \end{lstlisting}
@@ -264,52 +284,12 @@ public Range getRangeFunctionFirstPhase (double t, double margin) {
 
 \end{enumerate}
 
-
-\subsection{Example Code}
-
-
-Example of java code inclusion:
-\begin{lstlisting}
-public Action chooseAction () { Action action = null;
-  try {
-    if (actionOfPartner == null) {
-      action = chooseRandomBidAction ();
-    }
-    if (actionOfPartner instanceof Offer) {
-      Bid partnerBid = ((Offer) actionOfPartner).getBid();
-    }
-  } catch
-    e.printStackTrace();
-    action = new Accept(getAgentID()); // best guess if things go wrong.
-  }
-  return action; 
-}
-\end{lstlisting}
-
 \section{Conclusion}
 \label{sec:conclusion}
-\todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.}
-As a conclusion I'd like to cite: \cite{baarslag2012decoupling}...
+\todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.} \\ 
 
-\subsection{Example Code}
-Example of java code inclusion:
+\todo{Het lijkt me hier op zijn plaats om het BOA framework te bekritiseren zoals het nu is. Dat je sommige componenten niet makkelijk kan bereiden (BS/AS) is echt heel onhandig...}
 
-\begin{lstlisting}
-public Action chooseAction () { Action action = null;
-  try {
-    if (actionOfPartner == null) {
-      action = chooseRandomBidAction ();
-    }
-    if (actionOfPartner instanceof Offer) {
-      Bid partnerBid = ((Offer) actionOfPartner).getBid();
-    }
-  } catch
-    e.printStackTrace();
-    action = new Accept(getAgentID()); // best guess if things go wrong.
-  }
-  return action; 
-}
-\end{lstlisting}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
