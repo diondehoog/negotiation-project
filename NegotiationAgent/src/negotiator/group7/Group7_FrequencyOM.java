@@ -1,9 +1,12 @@
 package negotiator.group7;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import negotiator.Bid;
+import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -26,6 +29,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private int learnValueAddition;
 	private int amountOfIssues;
 	
+	private final double meanBidSkip = 4d;
+	private final double rightMargin = 0.05;
+	private final double leftMargin = 0.10;
+	private final int maxLearnValueAddition = 100;
+	
 	/**
 	 * Initializes the utility space of the opponent such that all value
 	 * issue weights are equal.
@@ -36,7 +44,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		if (parameters != null && parameters.get("l") != null) {
 			learnCoef = parameters.get("l");
 		} else {
-			learnCoef = 0.2;
+			learnCoef = 0.3;
 		}
 		learnValueAddition = 1;
 		initializeModel();
@@ -95,7 +103,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 			return;
 		}
 		int numberOfUnchanged = 0;
-		BidDetails oppBid = negotiationSession.getOpponentBidHistory().getHistory().get(negotiationSession.getOpponentBidHistory().size() - 1);
+		BidDetails oppBid = negotiationSession.getOpponentBidHistory().getLastBidDetails();
 		BidDetails prevOppBid = negotiationSession.getOpponentBidHistory().getHistory().get(negotiationSession.getOpponentBidHistory().size() - 2);
 		HashMap<Integer, Integer> lastDiffSet = determineDifference(prevOppBid, oppBid);
 		
@@ -123,20 +131,102 @@ public class Group7_FrequencyOM extends OpponentModel {
 				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
 		}
 		
-		// Then for each issue value that has been offered last time, a constant value is added to its corresponding ValueDiscrete.
-		try{
-			for(Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()){
-				( (EvaluatorDiscrete)e.getValue() ).setEvaluation(oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()), 
-					( learnValueAddition + 
-						((EvaluatorDiscrete)e.getValue()).getEvaluationNotNormalized( 
-							( (ValueDiscrete)oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()) ) 
-						)
-					)
-				);
+		try {
+			List<BidDetails> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+			double curUtil = this.getBidEvaluation(oppBid.getBid());
+			double expectedUtil = ExpectedNewBidUtil();
+			Log.dln("Expected Util: " + expectedUtil + ", Estimated Util: " + curUtil);
+			int actualLearnRate = learnValueAddition;
+			if (!distinctBids.contains(oppBid) && (curUtil < expectedUtil - rightMargin || curUtil > expectedUtil + leftMargin)) { // We have a new original bid!
+				// Algebra to find the new learnValueAddition (where w_i is the weight of issue i, and v_i,j is the value item j from issue i:
+				// U(offer) = sum_i(w_i (v_{i,j}/sum_j(v_{i,j}))
+				// Frequency modeling will add the following:
+				// U(offer) = sum_i(w_i (v_{i,j} + x)/(sum_j(v_{i,j}) + x))
+				// However this is a bit hard to solve algebraically, so we just try some values for x and choose the best one.
+				double closestUtil = 0;
+				// Estimate the utility for all possible learn rates
+//				Log.d("Estimated utils: ");
+				for (int i = 1; i <= maxLearnValueAddition; i++) {
+					double estimatedUtil = calculateUtilityUsingLearnRate(oppBid, i);
+//					Log.d(estimatedUtil + ", ");
+					if (Math.abs(estimatedUtil - expectedUtil) < Math.abs(closestUtil - expectedUtil)) {
+						closestUtil = estimatedUtil;
+						actualLearnRate = i;
+					}
+				}
+//				Log.dln("");
+				Log.dln("optimalUtil: " + closestUtil + " achieved with learnRate: " + actualLearnRate);
 			}
+			
+			UpdateValues(oppBid, actualLearnRate);
+			Log.dln("ActualLearnRate: " + actualLearnRate + "New estimated util: " + this.getBidEvaluation(oppBid.getBid()));
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
+	}
+	
+	private void UpdateValues(BidDetails oppBid, int learnRate) throws Exception
+	{
+		// Then for each issue value that has been offered last time, a constant value is added to its corresponding ValueDiscrete.
+		for(Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()){
+			( (EvaluatorDiscrete)e.getValue() ).setEvaluation(oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()), 
+				( learnRate + 
+					((EvaluatorDiscrete)e.getValue()).getEvaluationNotNormalized( 
+						( (ValueDiscrete)oppBid.getBid().getValue(((IssueDiscrete)e.getKey()).getNumber()) ) 
+					)
+				)
+			);
+		}
+	}
+	
+	private double calculateUtilityUsingLearnRate(BidDetails oppBid, int learnRate) throws Exception {
+		double utility = 0;
+		for (Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()) { // Iterates over all issues
+			EvaluatorDiscrete e2 = ((EvaluatorDiscrete)e.getValue());
+			double issueWeight = e2.getWeight();
+			int itemValue = e2.getValue((ValueDiscrete)oppBid.getBid().getValue(e.getKey().getNumber()));
+			itemValue += learnRate;
+			double normalizedItemValue = (double)itemValue / Math.max(e2.getValue((ValueDiscrete) e2.getMaxValue()), itemValue + learnRate);
+			utility += issueWeight * normalizedItemValue;
+			//Log.dln("issueWeight: " + issueWeight + ", normalizedItemValue: " + normalizedItemValue + ", valueSum: " + valueSum + "itemValue: " + itemValue);
+		}
+		return utility;
+	}
+	
+	/**
+	 * Finds the minimum util we currently expect from the opponent (e.g. what strategy we expect)
+	 * @return
+	 */
+	public double ExpectedNewBidUtil()
+	{
+		// The expected minimum utility is a function of the number of different offers we have received and the number of different offers possible.
+		List<BidDetails> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
+		// Assuming each time we receive a new 
+		System.out.println("meanConcessionPerNewBid: " + meanConcessionPerNewBid + ", Number of bids: " + distinctBids.size());
+		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
+	}
+	
+	/**
+	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+	 * @return List of recent bids
+	 */
+	public static List<BidDetails> getDistinctBids(BidHistory hist)
+	{
+		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
+		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
+		// Also the most recent bid should be ignored in the calculation.
+		Log.dln("opponentBids: " + opponentBids.size());
+		List<BidDetails> distinctBids = new ArrayList<BidDetails>();
+		boolean ignoredFirst = false;
+		for (BidDetails bid: opponentBids) {
+			if (!ignoredFirst)
+				ignoredFirst = true;
+			if (!distinctBids.contains(bid))
+				distinctBids.add(bid);			
+		}
+		return distinctBids;
 	}
 
 	@Override
