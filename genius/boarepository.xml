@@ -8,7 +8,13 @@
 		<biddingstrategy description="Other - Offer decreasing utility" classpath="negotiator.boaframework.offeringstrategy.other.ChoosingAllBids"/>
 		<biddingstrategy description="2011 - IAMHaggler2011" classpath="negotiator.boaframework.offeringstrategy.anac2011.IAMhaggler2011_Offering"/>
 		<biddingstrategy description="Group7_BS2" classpath="negotiator.group7.Group7_BS">
-			<parameter name="e" default="0.3" description="concession factor"/>
+			<parameter name="e" default="0.3" description="concession factor unused"/>
+			<parameter name="Ppareto" default="0.5" description="chance to offer pareto bid"/>
+			<parameter name="averageOver" default="5.0" description="bids to average over to determine concession"/>
+			<parameter name="niceFactor" default="0.33" description="how to weigh opponent concessions"/>
+			<parameter name="Pconcede" default="0.05" description="chance to concede a bit"/>
+			<parameter name="concedeFactor" default="0.3" description="amount to concede"/>
+			<parameter name="concedeSteps" default="10.0" description="how many steps it takes to concede"/>
 		</biddingstrategy>
 		<biddingstrategy description="2011 - The Negotiator" classpath="negotiator.boaframework.offeringstrategy.anac2011.TheNegotiator_Offering"/>
 		<biddingstrategy description="Group7_BS" classpath="negotiator.group7.Group7_BS"/>

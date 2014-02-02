@@ -55,7 +55,13 @@ public class Group7_BS extends OfferingStrategy {
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;
 	private double   phase2range = 0.05;
-
+	
+	private double Ppareto = 0.5; // probability of offering pareto
+	private int averageOver = 5; // how many bids to average over to determine concession of opponent
+	private double niceFactor = 0.33; // when opponent concedes, their concession is multiplied by this
+	private double Pconcede = 0.05; // probability of conceding to make opponent happy
+	private double concedeFactor = 0.3; // amount of distance to concede to KS
+	private int concedeSteps = 10; // concession steps taken after eachother
 	
 	/** Keep track of the current phase */
 	private int curPhase = 0;
@@ -124,6 +130,20 @@ public class Group7_BS extends OfferingStrategy {
 			Pmax = maxBid.getMyUndiscountedUtil();
 		}
 		
+		// phase 2 parameters:
+		if (parameters.get("Ppareto") != null)
+			Ppareto = parameters.get("Ppareto");
+		if (parameters.get("averageOver") != null)
+			averageOver = parameters.get("averageOver").intValue();
+		if (parameters.get("niceFactor") != null)
+			niceFactor = parameters.get("niceFactor");
+		if (parameters.get("Pconcede") != null)
+			Pconcede = parameters.get("Pconcede");
+		if (parameters.get("concedeFactor") != null)
+			concedeFactor = parameters.get("concedeFactor");
+		if (parameters.get("concedeSteps") != null)
+			concedeSteps = parameters.get("concedeSteps").intValue();
+	
 		this.opponentModel = model;
 		this.omStrategy = oms;		
 	}
@@ -167,7 +187,7 @@ public class Group7_BS extends OfferingStrategy {
 				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], this.phase1LowerBound, this.phase1UpperBound);
 			if (newPhase == 2)
 				this.phase = new Phase2(this.negotiationSession, this.opponentModel, this.phaseBoundary[0], this.phaseBoundary[1], 
-						tft1, tft2, this.k, this.e, this.phaseBoundary, this.phase2LowerBound, this.phase2range,
+				this.Ppareto, this.averageOver, this.niceFactor, this.Pconcede, this.concedeFactor, this.concedeSteps, this.k, this.e, this.phaseBoundary, this.phase2LowerBound, this.phase2range,
 						this.outcomespace);
 			if (newPhase == 3)
 				this.phase = new Phase3(this.negotiationSession, this.opponentModel, this.phaseBoundary[1], 1.0);
