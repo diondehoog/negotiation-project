@@ -143,7 +143,8 @@ public class Phase2 extends Phase{
 			double minDist = 5.0; 
 			BidPoint closest = null;
 			for (BidPoint B : pareto) { // loop over pareto to find closest bid
-				double dist = getDistanceBetweenBidPoints(B, nextBidPoint);
+				// our utility distance is more important than theirs
+				double dist = getAdjustedDistanceBetweenBidPoints(B, nextBidPoint, 2.0, 1.0);
 				if (dist < minDist) {
 					minDist = dist;
 					closest = B;
@@ -181,6 +182,14 @@ public class Phase2 extends Phase{
 		double U2A = B2.getUtilityA();
 		double U2B = B2.getUtilityB();
 		return Math.sqrt(Math.pow(U1A-U2A,2) + Math.pow(U1B-U2B, 2));
+	}
+	
+	public double getAdjustedDistanceBetweenBidPoints(BidPoint B1, BidPoint B2, double W1, double W2) {
+		double U1A = B1.getUtilityA();
+		double U1B = B2.getUtilityB();
+		double U2A = B2.getUtilityA();
+		double U2B = B2.getUtilityB();
+		return Math.sqrt(W1*Math.pow(U1A-U2A,2) + W2*Math.pow(U1B-U2B, 2));
 	}
 	
 	public BidDetails getBidDetailsFromBidPoint(BidPoint A) { // this function does not work :(
@@ -394,14 +403,14 @@ public class Phase2 extends Phase{
 		Range r = new Range(UA-curR, UA+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		
-		while (bidsInRange.size() < 50) {
-			curR *= 2;
+		while (bidsInRange.size() > 500) {
+			curR /= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		}
 		
-		while (bidsInRange.size() > 500) {
-			curR /= 2;
+		while (bidsInRange.size() < 50) {
+			curR *= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		}
@@ -409,7 +418,7 @@ public class Phase2 extends Phase{
 		if (bidsInRange.size() == 0) { // do bid nearest to this utility because there are none
 			return outcomespace.getBidNearUtility(UA);
 		} 
-		System.out.println("Found: " + bidsInRange.size() + " bids in range " + curR);
+		//System.out.println("Found: " + bidsInRange.size() + " bids in range " + curR);
 		double minDist = 2.0;
 		BidDetails bestBid = null;
 		for (BidDetails B : bidsInRange) { // look for bid with smallest euclidean distance
