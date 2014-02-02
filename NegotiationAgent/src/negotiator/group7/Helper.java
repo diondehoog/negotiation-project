@@ -15,26 +15,44 @@ public class Helper {
 	private static Integer bidsTotal;
 	private static Integer bidsMade;
 	
+	/**
+	 * @return The amount of bids that are possibly left, based on the (running) average duration per bid. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static Integer getBidsLeft() {
 		return bidsLeft;
 	}
 
+	/**
+	 * @param bidsLeft The amount of bids that are possibly left, based on the (running) average duration per bid. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static void setBidsLeft(Integer bidsLeft) {
 		Helper.bidsLeft = bidsLeft;
 	}
 
+	/**
+	 * @return The total amount of bids that we guess will be made in this session. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static Integer getBidsTotal() {
 		return bidsTotal;
 	}
 
+	/**
+	 * @param bidsTotal The amount of bids that are possibly left, based on the (running) average duration per bid. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static void setBidsTotal(Integer bidsTotal) {
 		Helper.bidsTotal = bidsTotal;
 	}
 
+	/**
+	 * @return the amount of bids that have been made until now. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static Integer getBidsMade() {
 		return bidsMade;
 	}
 
+	/**
+	 * @param bidsMade the amount of bids that have been made until now. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
+	 */
 	public static void setBidsMade(Integer bidsMade) {
 		Helper.bidsMade = bidsMade;
 	}
