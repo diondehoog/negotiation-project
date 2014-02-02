@@ -34,6 +34,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private final double leftMargin = 0.10;
 	private final int maxLearnValueAddition = 100;
 	
+	public Group7_FrequencyOM() {
+		super();
+		Helper.setOpponentModel(this);
+	}
+	
 	/**
 	 * Initializes the utility space of the opponent such that all value
 	 * issue weights are equal.
@@ -48,6 +53,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		}
 		learnValueAddition = 1;
 		initializeModel();
+		Helper.setOpponentModel(this);
 	}
 	
 	private void initializeModel(){
