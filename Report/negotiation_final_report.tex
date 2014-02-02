@@ -128,8 +128,51 @@ we compute the outcome space and the pareto frontier and plot this in the figure
 \subsubsection{Analyse simple opponents}
 
 Finally, we perform two negotation sessions: we play with the agent SimpleAgent against
-itself, and we play Boulware vs. Conceder and explain the outcome.
+itself, and we play Boulware vs Conceder and explain the outcome. 
 
+When we play simple agent against itself, we notice the behaviour is quite random.
+This is explained by the code: it always offers a random bid higher than a certain threshold,
+by default this threshold is zero. Therefore it performs a random walk through the 
+biddingspace. It's acceptance strategy is as follows: it accepts higher bids with 
+higher probability, and if the deadline is closer it will also accept bids with higher probability.
+It will never accept bids with a utility of zero. The equation that determines the 
+probability of acceptance is:
+
+\begin{equation}
+P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
+\end{equation}
+
+Where $P$ denotes the chance of acceptance.
+
+Because of this behaviour 
+we found the average utility playing against itself is around $0.68$, and the
+time needed to reach an agreement was very short: $0.03$ (averaged
+over 20 negotations on the party domain).
+This is quite logical, since because both sides offer random bids, it is very soon the
+case that either bid is quite acceptable for the opposing party.
+When this agent negotiates with other agents, it performs horrible, because
+it offers random bids. Smart agents will accept good offers, and deny other offers,
+and because of this the obtained utility for this agent will be quite low.
+We confirm this by letting simple agent play against boulware, here it obtains 
+an average utility of $0.6$ while boulware scores on average $1.0$.
+
+Finally, we play boulware against conceder. A typical negotiation trace is displayed below:
+
+%\begin{figure}[ht]
+\begin{center}
+ \includegraphics[width=0.6\textwidth]{traceConcederBoulware.png}
+% \caption{The pareto optimal frontier is displayed with a red line in this figure.}
+% \label{fig:pareto} 
+\end{center}
+%\end{figure}
+
+Boulware chooses the best bid for itself, and keeps offering this bid. This agent
+only concedes at the very last moments before the deadline. Conceder on the other hand
+starts conceding directly, conceding more and more with every new bid. 
+We also ran simulations on the party domain using these agents. 
+Averaging over 20 negotations the conceder reached an utility of $0.67$ and
+boulware $0.99$. 
+ 
 \subsection{PEAS Description}
 
 The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adapt their notation.
