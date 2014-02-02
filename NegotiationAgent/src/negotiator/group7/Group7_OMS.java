@@ -23,7 +23,9 @@ public class Group7_OMS extends OMStrategy {
 	/**
 	 * Empty constructor for the BOA framework.
 	 */
-	public Group7_OMS() { }
+	public Group7_OMS() {
+		Helper.setOMStrategy(this);
+	}
 
 	/**
 	 * Normal constructor used to initialize the BestBid opponent model strategy.
@@ -36,6 +38,7 @@ public class Group7_OMS extends OMStrategy {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Helper.setOMStrategy(this);
 	}
 	
 	/**
@@ -53,6 +56,7 @@ public class Group7_OMS extends OMStrategy {
 		} else {
 			Log.dln("OMStrategy assumed t = 1.1");
 		}
+		Helper.setOMStrategy(this);
 	}
 	
 	/**

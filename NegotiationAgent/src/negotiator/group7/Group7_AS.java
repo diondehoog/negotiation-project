@@ -22,11 +22,16 @@ public class Group7_AS extends AcceptanceStrategy {
 	 * @return
 	 */
 	public Group7_AS() {
+		Helper.setAcceptanceStrategy(this);
 	}
 
 	public Group7_AS(NegotiationSession negoSession, OfferingStrategy strat) {
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
+		Helper.setBidsLeft(0);
+		Helper.setBidsMade(0);
+		Helper.setBidsTotal(0);
+		Helper.setAcceptanceStrategy(this);
 	}
 
 	@Override
@@ -34,6 +39,10 @@ public class Group7_AS extends AcceptanceStrategy {
 			HashMap<String, Double> parameters) throws Exception {
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
+		Helper.setBidsLeft(0);
+		Helper.setBidsMade(0);
+		Helper.setBidsTotal(0);
+		Helper.setAcceptanceStrategy(this);
 		
 		if (parameters != null) {
 			if (parameters.containsKey("timeWindow"))
@@ -129,7 +138,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * Here we accept the opponents best with a conceding factor, only when 
 		  * less than 'panicWhenBidsLeft' bids are left
 		  * -------------------------------------------------------------- */
-		else if (bidsLeft < panicWhenBidsLeft && hisLast >= hisBest - panicConcede) 
+		else if (Helper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede) 
 		{
 			Log.newLine(" @ bidsLeft < " + panicWhenBidsLeft);
 			return Actions.Accept;
@@ -167,9 +176,6 @@ public class Group7_AS extends AcceptanceStrategy {
 
 	double averageDeltaTime = 0;
 	double previousTime = 0;
-	static int bidsMade = 0;
-	static int bidsLeft = 0;
-	static int bidsTotal = 0;
 	
 	/**
 	 * This method guesses the amount of bids that are left and counts how many bids have passed.
@@ -185,28 +191,9 @@ public class Group7_AS extends AcceptanceStrategy {
 			}
 		}
 		previousTime = time;
-		
-		bidsMade++;
-		bidsLeft = (int) ((1.0 - time) / (averageDeltaTime + 0.00001)); // avoiding division by zero :P
-		bidsTotal = bidsMade + bidsLeft;
-	}
 
-	/**
-	 * @return amount of bids that are probably left (from AS point of view)
-	 */
-	public static int GetGuessedBidsLeft() {
-		return bidsLeft;
-	}
-	/**
-	 * @return amount of bids that are made until now (from AS point of view)
-	 */
-	public static int GetBidsMade() {
-		return bidsMade;
-	}
-	/**
-	 * @return guessed total amount of bids of session (from AS point of view)
-	 */
-	public static int GetBidsTotal() {
-		return bidsMade;
+		Helper.setBidsMade(Helper.getBidsMade() + 1);
+		Helper.setBidsLeft((int) ((1.0 - time) / (averageDeltaTime + 0.00001)));
+		Helper.setBidsTotal(Helper.getBidsMade() + Helper.getBidsLeft());
 	}
 }

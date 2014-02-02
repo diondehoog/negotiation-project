@@ -5,7 +5,6 @@ import java.util.HashMap;
 import negotiator.Bid;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
-import negotiator.boaframework.opponentmodel.HardHeadedFrequencyModel;
 import negotiator.boaframework.opponentmodel.NashFrequencyModel;
 import negotiator.boaframework.opponentmodel.ScalableBayesianModel;
 import negotiator.issue.Issue;
@@ -29,6 +28,10 @@ public class Group7_OM extends OpponentModel {
 	
 	private HashMap<String, Double> parameters;
 	
+	public Group7_OM() {
+		Helper.setOpponentModel(this);
+	}
+	
 	/**
 	 * Initializes the utility space of the opponent such that all value
 	 * issue weights are equal.
@@ -39,16 +42,18 @@ public class Group7_OM extends OpponentModel {
 		this.parameters = parameters;
 		initializeModel();
 		initializeOpponentModeller();
+		Helper.setOpponentModel(this);
 	}
 	
 	@Override
 	public void init(NegotiationSession negotiationSession)
 	{
-			try {
-				init(negotiationSession, new HashMap<String, Double>());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			init(negotiationSession, new HashMap<String, Double>());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Helper.setOpponentModel(this);
 	}
 	
 	private void initializeModel(){

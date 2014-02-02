@@ -1,13 +1,9 @@
 package negotiator.group7;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
-import misc.Range;
 import negotiator.Bid;
-import negotiator.BidHistory;
 import negotiator.analysis.BidSpace;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
@@ -15,7 +11,6 @@ import negotiator.boaframework.OMStrategy;
 import negotiator.boaframework.OfferingStrategy;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
-import negotiator.boaframework.opponentmodel.tools.UtilitySpaceAdapter;
 import negotiator.group7.phases.Phase;
 import negotiator.group7.phases.Phase1;
 import negotiator.group7.phases.Phase2;
@@ -87,6 +82,8 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 
+		Helper.setBiddingStrategy(this);
+		
 		if (parameters.get("phase2") != null)
 			phaseBoundary[0] = parameters.get("phase2");
 		
