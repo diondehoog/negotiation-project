@@ -149,7 +149,7 @@ public class Group7_BS extends OfferingStrategy {
 	public BidDetails determineOpeningBid() {
 		// We can do something better here...
 		double time = negotiationSession.getTime();
-		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(0.9);
+		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(1.0);
 		
 		Log.sln("openingBid = " + openingBid.toString());
 		return openingBid;
