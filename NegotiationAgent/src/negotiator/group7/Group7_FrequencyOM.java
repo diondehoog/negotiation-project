@@ -203,7 +203,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		List<BidDetails> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
 		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
 		// Assuming each time we receive a new 
-		System.out.println("meanConcessionPerNewBid: " + meanConcessionPerNewBid + ", Number of bids: " + distinctBids.size());
+		Log.dln("meanConcessionPerNewBid: " + meanConcessionPerNewBid + ", Number of bids: " + distinctBids.size());
 		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
 	}
 	
