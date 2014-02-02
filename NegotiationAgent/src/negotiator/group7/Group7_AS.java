@@ -71,7 +71,7 @@ public class Group7_AS extends AcceptanceStrategy {
 	private double timeWindow = 0.2; // how big is the time window in which to search for our/his best/worst bids?
 	private double capWorstSlope = -0.3; // the slope from t=0 to t=1 with which to cap our worst bid utility
 	private double capWorstMinimal = 0.6; // the minimal value that our worst utility should be, otherwise capped
-	private double acceptCurveStart = 0.9; // the starting value of the accept curve
+	private double acceptCurveStart = 0.98; // the starting value of the accept curve
 	private double acceptCurveExponent = 0.04; // the exponent with which the curve falls. determines how hard and fast. Calculate final value curve: start * 0.005 ^ exponent. For start=0.9, exponent=0.04, we get: 0.73
 	private double percentDurationWeight = 0.25; // how much the duration of the last bid weighs in with the current running average
 	private double panicConcede = 0.05; // amount of utility we allow ourself to concede from opponents best bid during panic mode (from time window)
