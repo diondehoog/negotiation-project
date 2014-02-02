@@ -99,12 +99,12 @@ public class Phase2 extends Phase{
 		double x = getAvgDifferenceKS(av);
 		//System.out.println("Average difference to KS over last 5 bids = " + x);
 		
-		BidPoint ks = getKalaiSmorodisky();
 		
 		UtilitySpace utilitySpaceOpponent = opponentModel.getOpponentUtilitySpace();
 		
 		BidPoint myBB = getBestBidPointFromUtilitySpace(ourUtilitySpace);
 		BidPoint theirBB = getBestBidPointFromUtilitySpace(utilitySpaceOpponent);
+		BidPoint ks = getKalaiSmorodisky();
 		
 		if (ourDist < -0.05) { // if first time ever
 			ourDist = getDistanceToKalaiSmorodinsky(myBB);
@@ -519,11 +519,16 @@ public class Phase2 extends Phase{
 	}
 	
 	public BidPoint getKalaiSmorodisky () {
-		
-		BidPoint ks = null;
-		
 		// Build bidSpace
 		BidSpace bs = getCurrentBidSpace();
+		
+		BidPoint ks;
+		try {
+			ks = bs.getParetoFrontier().get(0); // FALLBACK
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			ks = bs.bidPoints.get(0); // worst fallback ever ?
+		}
 		
 		try {
 			// Calculate Kalai-Smorodinsky
@@ -542,8 +547,12 @@ public class Phase2 extends Phase{
 		// Calculate Kalai-Smorodinsky
 		BidPoint ks = getKalaiSmorodisky();
 		
-		// Return the distance from the bid point to the KS
-		return ks.getDistance(input);
+		if (ks != null) {
+			// Return the distance from the bid point to the KS
+			return ks.getDistance(input);
+		} else {
+			return 0.0;
+		}
 		
 	}
 	
