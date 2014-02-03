@@ -75,6 +75,8 @@ public class Group7_BS extends OfferingStrategy {
 	
 	private Phase phase;
 	
+	private Helper ourHelper;
+	
 	
 	/**
 	 * Method which initializes the agent by setting all parameters.
@@ -82,8 +84,9 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 
-		Helper.setBiddingStrategy(this);
-		Helper.setSession(negoSession);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setBiddingStrategy(this);
+		ourHelper.setSession(negoSession);
 		
 		if (parameters.get("phase2") != null)
 			phaseBoundary[0] = parameters.get("phase2");
@@ -230,7 +233,7 @@ public class Group7_BS extends OfferingStrategy {
 		}
 		
 		this.nash = best;
-		Helper.setNashPoint(best);
+		ourHelper.setNashPoint(best);
 		
 	}
 	

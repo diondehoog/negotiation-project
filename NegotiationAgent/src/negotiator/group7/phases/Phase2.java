@@ -571,7 +571,7 @@ public class Phase2 extends Phase{
 		try {
 			// Calculate Kalai-Smorodinsky
 			ks = bs.getKalaiSmorodinsky();
-			Helper.setKalaiPoint(ks);
+			Helper.get(negotiationSession).setKalaiPoint(ks);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
