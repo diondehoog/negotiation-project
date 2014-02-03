@@ -66,7 +66,11 @@ public class Phase3 extends Phase {
 						}
 					}
 				} else {
-					best = randBid.get(randgen.nextInt(randBid.size()));
+					int size = randBid.size();
+					if (size > 0)
+						best = randBid.get(randgen.nextInt(size));
+					else 
+						best = null;
 				}
 				
 				tries--;
