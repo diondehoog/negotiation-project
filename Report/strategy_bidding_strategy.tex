@@ -1,13 +1,14 @@
 The bidding strategy we chose for is not a static strategy but is time dependend. The strategy is divided in three different timephases with each phase using its own strategy for offering bids. The main \texttt{Group7\_BS} class decides the current phase by evaluating the normalized time (\texttt{getTime()}) and the two hard-coded phase thresholds, which are stored in the array \texttt{phaseBoundary}. In this section we discuss the strategy behind each of the phases separately.
 
 \subsubsection{First Phase}
-The agents first bid is determined by the method \texttt{determineOpeningBid()}. By offering a bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $0.9$. The best bid of this utility is obtained by calling \texttt{getBidNearUtility()} of the \texttt{OutcomeSpace} class. \\
+By offering an opening bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $1.0$ (lower values sometimes lead to bad results where this bid is extremely good for our opponent and is directly accepted).\\ 
 
-After determining our opening bid and receiving the initial bid from the opponent, our agent continues by generating random bids. These random bids are generated within a small own-utility range. The (average) upperbound of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
+After determining our opening bid and receiving the initial bid from the opponent, our agent continues by generating random bids. These random bids are generated within a small utility range (measured by our utility). The center of this range decreases by a small amount when time passes.
+The center is first set to $1.0$, and ends at $0.9$ (the lower bound). The lowerbound is set to $0.9$, except when our opponent best bid is closer than $0.1$ to $0.9$ utility (in our utility scale). If this is the case the lower bound is set to the utility of this bid of the opponent $+0.1$, and we ensure that the lowerbound and upperbound do not overlap. The width of the range is set to  $0.02$. 
 
-We set the parameters such that in the beginning of the negotiation bids are generated around an utility of $1$ (in practice this is $[0.98, 1.0]$) and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ ( in practice this is $[0.88, 0.92]$). As these numbers indicate, we set the margin of the bid range to $0.02$. 
-
-\todo{Update this, we now also look at the best bid of the opponent.}
+We do this, because we think that if the opponent can estimate our preference profile better,
+we can reach better win-win situations. By conseding this way, we ensure that most opponent 
+models accurately profile our preferences.
 
 \subsubsection{Second Phase}
 
@@ -19,25 +20,25 @@ and try to exploit other opponents. We use the following strategy. \\
 
 We use the distance to the \emph{Kalai-Smorodinsky} point as reference to calculate
 the amount of concession for both the opponent as our own agent. When conceding, we aim for this point.
-We decided to use the distance to this point instead of calculating the distance for our own utility of opponent bids, since when we look at the latter, we can hardly see whether or not
-our opponent is conceding (since these utilities will have large variation). So instead, we use the distance to the KS and this improves the detection of concessions. \\
+We decided to use the distance to this point instead of only relying on our own utility 
+or opponent estimated utilities, because when we look at these values we can hardly see whether or not our opponent is conceding: conceding opponents tend to vary a lot on the scale of our utility,
+and utility estimates for the opponent are so noise one at least needs to average over more than 100 bids. So instead, we use the distance to the KS and this improves the detection of concessions,
+since it relies on both the opponent model and our own utility estimates. \\
 
-We average the distance of the last five bids to the Kalai-Smorodinsky point to determine the concession of the opponent. We
-multiply this by a factor $\sfrac{1}{3}$, and then match their concession to the KS point.
-We do this to avoid conceding too much in the direction of the opponent. \\
+We average the change in distance of the last five bids to the Kalai-Smorodinsky point to determine the mean concession of the opponent. We
+multiply this by a factor $\sfrac{1}{3}$, and then match their concession by walking towards the KS point. We multiply by this factor to avoid conceding too much in the direction of the opponent. \\
 
 Furthermore, to ensure our agent does not get stuck when playing against 
 another Tit-for-Tat agent, we will randomly concede from time to time. 
 These concessions are done towards the Kalai-Smorodinsky point, and linearly over 
-$10$ bids. When the concession has been done, we hope the opponent matches 
-our concession. If the opponent has done this, we will approach him
-using Tit-for-Tat, but if not, we take our concession back. \\
+$10$ bids, so the opponent can detect our concession more accurately. When the concession has been done, we hope the opponent matches  our concession. If the opponent has done this, we will approach him using Tit-for-Tat, but if not, we take our concession back. \\
 
 Finally, we want to reach the most efficient outcomes. Because of this,
 we will randomly offer bids on the \emph{Pareto Frontier} $50\%$ of the time.
-However, to select this bid, we take the Pareto bid closest to our current bid.
+However, to select this bid, we take the Pareto bid closest to our current bid in a special sense.
 When determining the closest bid, we weigh our utility twice as much
-as the opponent utility, to ensure we don't concede too much by accident.
+as the opponent utility, to ensure we don't concede too much by accident 
+(this can happen when dealing with strange pareto frontiers).
 
 \subsubsection{Third Phase}
 
