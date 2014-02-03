@@ -93,6 +93,11 @@ public class Group7_AS extends AcceptanceStrategy {
 			return Actions.Reject;
 		}
 		
+		// Just for testing !
+		if (Helper.getOpponentModel() != null) {
+			Helper.getOMStrategy().getOpponentModel();
+		}
+		
 		// guess how many bids are left
 		guessBidsLeft();
 
