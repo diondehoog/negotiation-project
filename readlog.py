@@ -48,7 +48,7 @@ def readstrings(filename, prop, agent, negOutcome = False):
 	return pearsons
 
 def latexprint(table):
-	print "\\begin{tabular}{" + ("l" * len(table[0])) + "}"
+	print "\\begin{tabular}{l" + ("|p{2cm}" * (len(table[0]) - 1)) + "|}"
 	for line in table:
 		for item in line:
 			print str(item),
@@ -67,18 +67,18 @@ hardHeaded = 'HardHeaded'
 negotiator = 'bs: 2011 - The Negotiator  as: 2011 - The Negotiator  om: CUHKFrequencyModelV2  oms: Best bid {t=1.0}'
 
 agents = [hardHeaded, gabber, negotiator, own]
-shortNames = ['HardHeaded', 'Gahboninho', 'The Negotiator', 'BOA Constructor']
+shortNames = ['HardHeaded', 'Gahboninho', 'The Negotiator', 'Self']
 
 table = list();
-table.append(['Agent', 'Average discounted util', 'Avg time of agreement', 'Avg dist nash of agreement', 'Avg pareto', 'Avg KS agree']);
+table.append(['', 'Average Time Agreement', 'Average Discounted Util', 'Average Dist. to Nash', 'Average Dist. to Pareto',  'Average Dist. to Kalai']);
 for i in range(len(agents)):
 	agent = agents[i]
 	table.append([shortNames[i], 
-		numpy.mean(readvalues(filename, 'discountedUtility', agent)), 
-		numpy.mean(readvalues(filename, 'timeOfAgreement', agent, True)),
-		numpy.mean(readvalues(filename, 'nash_distance', agent)),
-		numpy.mean(readvalues(filename, 'pareto_distance', agent)),
-		numpy.mean(readvalues(filename, 'kalai_distance', agent))])
+		"%0.3f" % (numpy.mean( readvalues(filename, 'timeOfAgreement', agent, True))),
+		"%0.3f" % (numpy.mean(readvalues(filename, 'discountedUtility', agent))), 
+		"%0.3f" % (numpy.mean(readvalues(filename, 'nash_distance', agent))),
+		"%0.3f" % (numpy.mean(readvalues(filename, 'pareto_distance', agent))),
+		"%0.3f" % (numpy.mean(readvalues(filename, 'kalai_distance', agent)))])
 latexprint(table)
 
 
