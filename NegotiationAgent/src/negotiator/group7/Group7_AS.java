@@ -174,7 +174,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
 			return Actions.Accept;
-		} 
+		}
 		
 		/** --------------------- AC_nash ----------------------------- 
 		  * automatically a reliable nash
