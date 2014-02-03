@@ -159,30 +159,32 @@ bidding space. The acceptance strategy works as follows: it calculates a probabi
 P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
 \end{align*}
 
-Where $P$ denotes the chance of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0,1]$. Because of this behaviour we found the average utility playing against itself is around $0.68$, and the time needed to reach an agreement was very short: $0.03$ (averaged over $20$ negotiations on the party domain).
+Where $P$ denotes the probability of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0, 1]$. Because of this behaviour we found the average utility playing against itself is around $0.68$, and the time needed to reach an agreement was very short: $0.03$ (averaged over $20$ negotiations on the party domain).
 This is quite logical, since both sides offer random bids, it is the
 case quite soon that either bid has a high probability of acceptance for the opposing party. When this agent negotiates with other agents, it performs badly, because
 it offers random bids. Smart agents will accept good offers and deny other offers,
 and because of this the obtained utility for the simple agent will be quite low.
-We confirm this by letting simple agent play against boulware. In these tests the simpleagent obtains  an average utility of $0.6$ while the boulware agent scores on average $1.0$. Finally, we play with the boulware agent against the conceder agent. A typical negotiation trace is displayed below:
+We confirm this by letting simple agent play against Boulware. In these tests the simpleagent obtains an average utility of $0.6$ while the Boulware agent scores on average $1.0$. Finally, we play with the Boulware agent against the conceder agent. A typical negotiation trace is displayed below: \\
 
-%\begin{figure}[ht]
+\begin{figure}[H]
 \begin{center}
- \includegraphics[width=0.6\textwidth]{traceConcederBoulware.png}
-% \caption{The pareto optimal frontier is displayed with a red line in this figure.}
-% \label{fig:pareto} 
+ \includegraphics[width=1.0\textwidth]{traceConcederBoulware.png}
+ \caption{The \emph{Pareto Optimal Frontier} is displayed with a red line in this figure.}
+ \label{fig:pareto} 
 \end{center}
-%\end{figure}
-In the figure, the green and blue lines are the bidding-traces for respectively the boulware and the conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent
-only concedes at the very last moments before the deadline. The conceder agent on the other hand
-starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
-boulware $0.99$. 
+\end{figure}
+
+\clearpage
+
+In this figure, the green and blue lines are the bidding-traces for respectively the Boulware and the Conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent only concedes at the very last moments before the deadline. The conceder agent on the other hand starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the Conceder reached an utility of $0.67$ and
+Boulware $0.99$. 
  
 \subsection{PEAS Description}
 
 The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adapt their notation.
 
 \begin{table}[H]
+  \small
     \begin{tabular}{|p{1.8cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
     \hline
     \textbf{Agent} & \textbf{Performance \mbox{Measure}} & \textbf{Environment} & \textbf{Actuators} & \textbf{Sensors} \\
@@ -211,7 +213,7 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies is available with combinations of time-dependend, utility-dependent and threshold-dependent strategies.
 
 \item[Opponent Model Strategy] \hfill \\
-  Analyzing the opponents behaviour could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like hardheaded, conceder, tit-for-tat, etc. The own bidding strategy can be adapted to the opponent's strategy, to derive a maximum possible outcome for the own utility.
+  Analyzing the opponents behaviour could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like \emph{Hardheaded}, \emph{Conceder}, \emph{Tit-for-Tat}, etc. The own bidding strategy can be adapted to the opponent's strategy, to derive a maximum possible outcome for the own utility.
 
 \end{description}
 
@@ -228,7 +230,10 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \subsection{Acceptance Strategy}
 \label{sec:strategyAS}
+\todo{Ollibol, write something nice here... :-)}
 \input{strategy_acceptance_strategy}
+
+\clearpage
 
 \subsection{Opponent Model Strategy} 
 \label{sec:strategyOMS}
