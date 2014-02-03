@@ -126,7 +126,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		
 		// adjust ourWorst so that it can never go lower than the line from 0.9 at t=0 to 0.6 at t=1
 		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal) - (0.05 * time);
-		Log.hln(Log.format(ourWorst) + " ; " +Log.format ((1 - time) * -capWorstSlope + capWorstMinimal));
+		//Log.hln(isHardHeaded + " ; " + Log.format(ourWorst) + " ; " +Log.format ((1 - time) * -capWorstSlope + capWorstMinimal));
 		
 		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
 		double acceptCurve = getAcceptCurveValue(time);
@@ -275,7 +275,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		acceptCurveExponent = log(curveFix, approach);
 		acceptCurveStart = start;
 		
-		Log.hln("## Accept curve approaches: " + Log.format(approach) + " and starts at: " + Log.format(start));
+		//Log.hln("## Accept curve approaches: " + Log.format(approach) + " and starts at: " + Log.format(start));
 		
 		acceptCurveReady = true;
 	}

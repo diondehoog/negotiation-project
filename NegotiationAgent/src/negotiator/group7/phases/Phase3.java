@@ -1,5 +1,9 @@
 package negotiator.group7.phases;
 
+import java.util.List;
+import java.util.Random;
+
+import misc.Range;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -8,6 +12,7 @@ import negotiator.group7.Log;
 
 public class Phase3 extends Phase {
 
+	private double phaseStart = 0.95;
 	private Helper ourHelper;
 	public Phase3(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
@@ -22,7 +27,27 @@ public class Phase3 extends Phase {
 		if (opponentStrategy == 1) {
 			// Opponent is assumed to be HardHeaded
 			Log.rln("Opponent is assumed to be HardHeaded, offering random bid [0.7, 0.8]");
-			return getRandomBid(0.7, 0.8);
+
+			BidDetails best = null;
+			Random randgen = new Random();
+			double time = (negotiationSession.getTime() - phaseStart) * (1 / (1 - phaseStart));
+			
+			while (best == null) {
+				double u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
+				Log.hln("  u: " + u);
+				Range r = new Range(u - 0.01, u + 0.01);
+				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+				double bestValue = 0.0;
+				for (BidDetails b : randBid) {
+					double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
+					if (value > bestValue) {
+						best = b;
+						bestValue = value;
+					}
+				}
+			}
+			
+			return best;
 		} else {
 			// Opponent is assumed to be Conceder
 			Log.rln("Opponent is assumed to be Conceder, offering KS point");
