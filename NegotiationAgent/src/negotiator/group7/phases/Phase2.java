@@ -304,7 +304,7 @@ public class Phase2 extends Phase{
 	public double getMaxDistToKalai() {
 		double max = -1.0;
 		for (double dist : distOpponentBidsToKS) {
-			//Log.vln("Runialoop");
+			Log.vln("Runialoop");
 			if (dist > max)
 				max = dist;
 		}
@@ -327,7 +327,6 @@ public class Phase2 extends Phase{
 	
 	//Returns the average difference to the KS between the N last bids
 	public double getAvgDifferenceKS (int N) {
-		
 		int curSize = distOpponentBidsToKS.size();
 
 		// No difference is less than 2 values
@@ -346,14 +345,13 @@ public class Phase2 extends Phase{
 		
 		// Calculate differences, diffs goes from old [0] to new [sub.size-1] bids
 		for (int i = 0; i < sub.size()-1; i++) {
-			//Log.vln("Runia loop 2");
 			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
 		
 		double val = 0;
 		
 		for (int j = 0; j < diffs.length; j++) {
-			//Log.vln("Some loop");
+			Log.vln("Some loop");
 			val += diffs[j];
 		}
 		//System.out.println("val1/val2: " + val + ", " + val2);

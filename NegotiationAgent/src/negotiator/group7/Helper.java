@@ -1,8 +1,11 @@
 package negotiator.group7;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import misc.Range;
+import negotiator.Bid;
+import negotiator.BidHistory;
 import negotiator.analysis.BidPoint;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
@@ -19,14 +22,14 @@ public class Helper {
 	private static Integer bidsLeft;
 	private static Integer bidsTotal;
 	private static Integer bidsMade;
-	private static Integer bidsDistinctOpponent;
-	
-	public static Integer getCountDistinctOpponentBids() {
-		return bidsDistinctOpponent;
+	private static Boolean opponentModelReliable;
+
+	public static Boolean isOpponentModelReliable() {
+		return opponentModelReliable;
 	}
 
-	public static void setCountDistinctOpponentBids(Integer bidsDistinctOpponent) {
-		Helper.bidsDistinctOpponent = bidsDistinctOpponent;
+	public static void setOpponentModelReliable(Boolean opponentModelReliable) {
+		Helper.opponentModelReliable = opponentModelReliable;
 	}
 
 	public static NegotiationSession getSession() {
@@ -128,7 +131,9 @@ public class Helper {
 	}
 	
 	/**
-	 * Depends on the Group7_OM, Frequency Opponent Model and the session
+	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+	 * @return List of recent bids
 	 */
 	public static BidDetails getBidDetails(BidPoint point) {
 		if (getOpponentModel() == null) return null;
@@ -142,5 +147,30 @@ public class Helper {
 					return B2;
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+	 * @return List of recent bids
+	 */
+	public static List<Bid> getDistinctBids(BidHistory hist)
+	{
+		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
+		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
+		// Also the most recent bid should be ignored in the calculation.
+		Log.dln("opponentBids: " + opponentBids.size());
+		List<Bid> distinctBids = new ArrayList<Bid>();
+		boolean ignoredFirst = false;
+		for (BidDetails bidDet: opponentBids) {
+			Bid bid = bidDet.getBid();
+			if (!ignoredFirst)
+				ignoredFirst = true;
+			if (!distinctBids.contains(bid))
+				distinctBids.add(bid);			
+		}
+		
+		//Log.rln("Number of distinct opponent bids: " + distinctBids.size());
+		return distinctBids;
 	}
 }

@@ -139,7 +139,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		}
 		
 		try {
-			List<Bid> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+			List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
 			double expectedUtil = ExpectedNewBidUtil();
 			int actualLearnRate = learnValueAddition;
@@ -201,33 +201,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	 */
 	public double ExpectedNewBidUtil()
 	{
-		// The expected minimum utility is a function of the number of different offers we have received and the number
-		// of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
-		List<Bid> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
+		// The expected minimum utility is a function of the number of different offers we have received and the number 
+		//of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
+		List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
 		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
-	}
-	
-	/**
-	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
-	 * @param hist The BidHistory from which we want to get the list of distinct bids.
-	 * @return List of recent bids
-	 */
-	public static List<Bid> getDistinctBids(BidHistory hist)
-	{
-		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
-		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
-		// Also the most recent bid should be ignored in the calculation.
-		List<Bid> distinctBids = new ArrayList<Bid>();
-		boolean ignoredFirst = false;
-		for (BidDetails bidDet: opponentBids) {
-			Bid bid = bidDet.getBid();
-			if (!ignoredFirst)
-				ignoredFirst = true;
-			if (!distinctBids.contains(bid))
-				distinctBids.add(bid);			
-		}
-		return distinctBids;
 	}
 
 	@Override

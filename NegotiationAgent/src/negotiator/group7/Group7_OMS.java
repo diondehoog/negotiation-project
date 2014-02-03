@@ -3,6 +3,9 @@ package negotiator.group7;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import negotiator.Bid;
+import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
@@ -110,13 +113,55 @@ public class Group7_OMS extends OMStrategy {
 		return negotiationSession.getTime() < updateThreshold;
 	}
 	
-	// TODO: implemented this!
+	/**
+	 * Returns 1 if the opponent is HardHeaded
+	 * Returns 2 if the opponent is Conceder
+	 * 
+	 * @return
+	 */
 	public int getOpponentModel() {
-		
-		// 1 = Conceder
-		// 2 = HardHeaded
-		
-		return 1;
-		
+
+		try {
+			// Fetch the bid history of the opponent
+			BidHistory opponentHist = negotiationSession.getOpponentBidHistory();
+			
+			// Load the list of distinct bids from the Helper
+			List<Bid> distinctBids = Helper.getDistinctBids(opponentHist);
+			
+			// Number of total opponent bids
+			double numBids = 		 (double)opponentHist.size();
+			double numDistinctBids = (double)distinctBids.size();
+			
+			// Threshold percentage for conceder/hardheaded
+			double threshold = 0.03;
+			
+			double ratio = (double)numDistinctBids/numBids;
+			
+			// Ratio ~0.05 for IAmHaggler == Conceder
+			if (ratio < threshold) {
+				// There is a small percentage of distinct bids,
+				// therefore we classify the opponent as HardHeaded
+				Log.rln("Opponent is classified as HardHeaded [" + ratio + "]");
+				return 1;
+			} else {
+				// The percentage of distinct bids is large,
+				// therefore we classify the opponent as Conceder
+				Log.rln("Opponent is classified as Conceder [" + ratio + "]");
+				return 2;
+			}
+		} catch (Exception e) {
+			Log.newLine("WARNING: unable to determine opponent model...");
+			return -1;
+		}
+	}
+	
+	public boolean isOpponentHardHeaded () {
+		boolean ret = (getOpponentModel() == 1) ? true : false;
+		return ret;
+	}
+	
+	public boolean isOpponentConceder () {
+		boolean ret = (getOpponentModel() == 2) ? true : false;
+		return ret;
 	}
 }
