@@ -29,10 +29,10 @@ public class Phase3 extends Phase {
 		List<BidDetails> bh = negotiationSession.getOwnBidHistory().getHistory();
 		fallback = bh.get(randgen.nextInt(bh.size()));
 		
-		if (opponentStrategy == 1) // Opponent is assumed to be HardHeaded
+		//if (opponentStrategy == 1) // Opponent is assumed to be HardHeaded
 		{
 			
-			Log.rln("Opponent is assumed to be HardHeaded, decreasingly offering random bid that approaches the pareto");
+			//Log.hln("Opponent is assumed to be HardHeaded, decreasingly offering random bid that approaches the pareto");
 
 			BidDetails best = null;
 			double time = (negotiationSession.getTime() - phaseStart) * (1 / (1 - phaseStart));
@@ -40,7 +40,12 @@ public class Phase3 extends Phase {
 			
 			while (best == null && tries > 0) 
 			{
-				double u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
+				double u;
+				if (ourHelper.getBidsLeft() == null || ourHelper.getBidsLeft() > 3) {
+					u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
+				} else {
+					u = randgen.nextDouble() * 0.1 + 0.6;
+				}
 				Range r = new Range(u - 0.01, u + 0.01);
 				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 				
@@ -62,15 +67,15 @@ public class Phase3 extends Phase {
 			else
 				return best;
 		} 
-		else 
-		{
-			// Opponent is assumed to be Conceder
-			Log.rln("Opponent is assumed to be Conceder, offering KS point");
-			if (ourHelper.getKalaiPoint() != null)
-				return ourHelper.getKalaiPoint();
-			else
-				return fallback;
-		}
+//		else 
+//		{
+//			// Opponent is assumed to be Conceder
+//			Log.hln("Opponent is assumed to be Conceder, offering KS point");
+//			if (ourHelper.getKalaiPoint() != null)
+//				return ourHelper.getKalaiPoint();
+//			else
+//				return fallback;
+//		}
 		
 	}
 }
