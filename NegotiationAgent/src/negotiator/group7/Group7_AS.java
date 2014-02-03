@@ -149,9 +149,9 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * AC_time, but only opponent's better offers (AC_max)
 		  * Here we accept the opponents best with a conceding factor, only when 
 		  * less than 'panicWhenBidsLeft' bids are left.
-		  * ----- removed: But(!) never do this when opponent is hardheaded
+		  * But(!) never do this when opponent is hardheaded
 		  * -------------------------------------------------------------- */
-		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede /*&& !isHardHeaded*/) 
+		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede && !isHardHeaded) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + " && hisLast >= hisBest - panicConcede: " + ourHelper.getBidsLeft() + "; " + hisLast + "; " + (hisBest - panicConcede) + "\n\n");
 			return Actions.Accept;
@@ -174,7 +174,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
 			return Actions.Accept;
-		} 
+		}
 		
 		/** --------------------- AC_nash ----------------------------- 
 		  * automatically a reliable nash
