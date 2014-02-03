@@ -124,7 +124,7 @@ we compute the outcome space and the pareto frontier and plot this in the figure
 \end{center}
 %\end{figure}
 
-\subsubsection{Analyse simple opponents}
+\subsubsection{Analyze simple opponents}
 
 Finally, we perform two negotiation sessions: we play with the agent SimpleAgent against
 itself, and we play Boulware vs Conceder and explain the outcome. 
@@ -182,18 +182,18 @@ The first step in designing an agent is to specify the environment as fully as p
     \caption{PEAS description for our negotiation agent \label{table:peas-description}}
 \end{table}
 
-Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The performance is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two actuators. Firstly, the agent offers a new bid based on the environment. Secondly, the agent can accept or reject a bid of an opponent.  
+Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The \emph{performance} is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two \emph{actuators}, first of all the acceptance or rejection of a bid of an opponent. The second actuator is the offering of a new bid. The bid is based on the biddings of the opponent, which is the only \emph{sensor} the agent has. Under the surface of the PEAS elements, different java-classes, algorithms and calculations are performed, like the \textit{nash-point} and the \textit{Kalai-Smorodinsky solution}. These will be explained in more detail in the next sections.
 
 \subsection{BOA Framework}
 
-Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model}, \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
+Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy is arguably the most important component. Its goal is to determine the next bid that is offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation sessions is split up in multiple phases and each of the phases uses a different bidding strategy.
+  The bidding strategy is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases uses a different bidding strategy.
 
   \item[Opponent Model] \hfill \\
-  Learning the opponents behaviour is essential in a good negotiation session. It allows for adapting to the way the other party provides its bids. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
+  Learning the opponents behaviour is essential for being able to determine more customized bids, depending on the bidding strategy of the opponent. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
 
   \item[Acceptance Strategy] \hfill \\
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
