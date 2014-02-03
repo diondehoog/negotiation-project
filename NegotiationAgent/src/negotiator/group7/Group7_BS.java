@@ -45,7 +45,7 @@ public class Group7_BS extends OfferingStrategy {
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
-	private double[] phaseBoundary = {0.1, 0.95};
+	private double[] phaseBoundary = {0.1, 0.9};
 	private double   phase1LowerBound = 0.8;
 	private double   phase1UpperBound = 1.0;
 	private double   phase2LowerBound = 0.6;

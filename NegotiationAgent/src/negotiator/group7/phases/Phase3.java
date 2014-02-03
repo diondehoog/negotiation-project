@@ -7,7 +7,10 @@ import negotiator.group7.Helper;
 import negotiator.group7.Log;
 
 public class Phase3 extends Phase {
-
+	
+	private static double lowerBound = 0.7;
+	private static double upperBound = 0.8;
+	
 	public Phase3(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 	}
@@ -19,8 +22,20 @@ public class Phase3 extends Phase {
 		
 		if (opponentStrategy == 1) {
 			// Opponent is assumed to be HardHeaded
-			Log.rln("Opponent is assumed to be HardHeaded, offering random bid [0.7, 0.8]");
-			return getRandomBid(0.7, 0.8);
+			
+			// Get the best bid so far offered by the opponent
+			BidDetails bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails();
+			
+			// Go the the best bid offered by the opponent if this is higher than 'upperBound',
+			// if his bid is lower than this bound, then offer random bid between 'lowerBound' and 'upperBound'
+			if (bestBid.getMyUndiscountedUtil() > upperBound) {
+				Log.rln("Opponent is assumed to be HardHeaded, best bid of opponent ["+bestBid.getMyUndiscountedUtil()+"]");
+				return bestBid;
+			} else {
+				Log.rln("Opponent is assumed to be HardHeaded, offering random bid ["+lowerBound+", "+upperBound+"]");
+				return getRandomBid(0.7, 0.8);
+			}
+			
 		} else {
 			// Opponent is assumed to be Conceder
 			Log.rln("Opponent is assumed to be Conceder, offering KS point");
