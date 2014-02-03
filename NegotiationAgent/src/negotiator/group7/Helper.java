@@ -9,7 +9,7 @@ public class Helper {
 	private static BidDetails nashPoint;
 	private static Group7_AS as;
 	private static Group7_BS bs;
-	private static Group7_OM om;
+	private static Group7_FrequencyOM om;
 	private static Group7_OMS oms;
 	private static Integer bidsLeft;
 	private static Integer bidsTotal;
@@ -73,11 +73,11 @@ public class Helper {
 		Helper.bs = bs;
 	}
 
-	public static Group7_OM getOpponentModel() {
+	public static Group7_FrequencyOM getOpponentModel() {
 		return om;
 	}
 
-	public static void setOpponentModel(Group7_OM om) {
+	public static void setOpponentModel(Group7_FrequencyOM om) {
 		Helper.om = om;
 	}
 

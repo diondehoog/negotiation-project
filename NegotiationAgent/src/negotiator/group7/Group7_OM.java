@@ -29,7 +29,7 @@ public class Group7_OM extends OpponentModel {
 	private HashMap<String, Double> parameters;
 	
 	public Group7_OM() {
-		Helper.setOpponentModel(this);
+		//Helper.setOpponentModel(this);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class Group7_OM extends OpponentModel {
 		this.parameters = parameters;
 		initializeModel();
 		initializeOpponentModeller();
-		Helper.setOpponentModel(this);
+		//Helper.setOpponentModel(this);
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class Group7_OM extends OpponentModel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Helper.setOpponentModel(this);
+		//Helper.setOpponentModel(this);
 	}
 	
 	private void initializeModel(){

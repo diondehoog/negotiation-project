@@ -40,12 +40,15 @@ public class Phase2 extends Phase{
 	private double   lastWantedUtilOpp = 0;
 	private double 	 lastDistance2Kalai = 0;
 	
+	/** Initialize variables */
 	private double Ppareto = 0.5; // probability of offering pareto
 	private int averageOver = 5; // how many bids to average over to determine concession of opponent
 	private double niceFactor = 0.33; // when opponent concedes, their concession is multiplied by this
 	private double Pconcede = 0.05; // probability of conceding to make opponent happy
 	private double concedeFactor = 0.3; // amount of distance to concede to KS
-	private int concedeSteps = 10; // concession steps taken after eachother
+	
+//TODO explain these two
+	private int concedeSteps = 10; // concession steps taken after each other
 	
 	private int concedeStep = -1;
 	
@@ -98,7 +101,7 @@ public class Phase2 extends Phase{
 		// Create BidPoint using the opponents bid and the two utilities
 		BidPoint bidPointB = new BidPoint(bidB.getBid(), utilities);
 		
-		// Calculate distance last opponents bid to estimated KS and save the value
+		// Calculate distance between last opponents bid to estimated KS
 		double ksDist = getDistanceToKalaiSmorodinsky(bidPointB);
 		distOpponentBidsToKS.add(ksDist);
 		
@@ -130,7 +133,7 @@ public class Phase2 extends Phase{
 		
 		double xconcede = 0;
 		if (concedeStep > 0) {
-			Log.vln("Concede! Just because were nice. :) Step: " + concedeStep);
+			Log.vln("Concede! Just because we are nice. :) Step: " + concedeStep);
 			xconcede = concedeStep/concedeSteps*concedeFactor;
 			concedeStep++;
 			if (concedeStep >= this.concedeSteps) {
@@ -242,7 +245,7 @@ public class Phase2 extends Phase{
 		double U2B = B2.getUtilityB();
 		double wantedUtilA = U1A*(1-W1) + U2A*W1;
 		double wantedUtilB = U1B*(1-W1) + U2B*W1;
-		ArrayList<Bid> koe = new ArrayList<Bid>();
+//trash		ArrayList<Bid> koe = new ArrayList<Bid>();
 		
 		return getNearestBidDetailsFromUtilities(wantedUtilA, wantedUtilB, 0.025);
 		
@@ -313,13 +316,15 @@ public class Phase2 extends Phase{
 		return getListAverage(sub);
 	}
 	
+	//Returns the average difference to the KS between the N last bids
 	public double getAvgDifferenceKS (int N) {
 		
 		// [1 3 4 5 3] 	length = N
 		// [ 2 1 1 2 ]	diff list, length N-1 
 		
 		int curSize = distOpponentBidsToKS.size();
-		
+
+//TODO waarom dan <= 2 ipv <2
 		// No difference is less than 2 values
 		if (curSize <= 2) return 0.0;
 		
@@ -328,10 +333,11 @@ public class Phase2 extends Phase{
 		if (curSize >= N) lower = curSize-N-1;
 		if (lower < 0) lower = 0;
 		
+		//Put last distances of the opponent into list sub
 		List<Double> sub = distOpponentBidsToKS.subList(lower, curSize-1);
 		double[] diffs = new double[sub.size()-1];
 		
-		// Calculate differences
+		// Calculate differences, diffs goes from old [0] to new [sub.size-1] bids
 		for (int i = 0; i < sub.size()-1; i++) {
 			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
