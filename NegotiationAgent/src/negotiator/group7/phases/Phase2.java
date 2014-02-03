@@ -324,7 +324,6 @@ public class Phase2 extends Phase{
 	
 	//Returns the average difference to the KS between the N last bids
 	public double getAvgDifferenceKS (int N) {
-		
 		int curSize = distOpponentBidsToKS.size();
 
 		// No difference is less than 2 values
@@ -343,7 +342,6 @@ public class Phase2 extends Phase{
 		
 		// Calculate differences, diffs goes from old [0] to new [sub.size-1] bids
 		for (int i = 0; i < sub.size()-1; i++) {
-			Log.vln("Runia loop 2");
 			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
 		
