@@ -29,7 +29,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private int learnValueAddition;
 	private int amountOfIssues;
 	
-	private final double meanBidSkip = 3d;
+	private final double meanBidSkip = 4d;
 	private final double rightMargin = 0.10;
 	private final double leftMargin = 0.10;
 	private final int maxLearnValueAddition = 100;
@@ -141,7 +141,6 @@ public class Group7_FrequencyOM extends OpponentModel {
 			List<Bid> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
 			double expectedUtil = ExpectedNewBidUtil();
-			Log.dln("Expected Util: " + expectedUtil + ", Estimated Util: " + curUtil);
 			int actualLearnRate = learnValueAddition;
 			if (!distinctBids.contains(oppBid) && (curUtil < expectedUtil - rightMargin || curUtil > expectedUtil + leftMargin)) { // We have a new original bid!
 				// Algebra to find the new learnValueAddition (where w_i is the weight of issue i, and v_i,j is the value item j from issue i:
@@ -151,21 +150,17 @@ public class Group7_FrequencyOM extends OpponentModel {
 				// However this is a bit hard to solve algebraically, so we just try some values for x and choose the best one.
 				double closestUtil = 0;
 				// Estimate the utility for all possible learn rates
-//				Log.d("Estimated utils: ");
 				for (int i = 1; i <= maxLearnValueAddition; i++) {
 					double estimatedUtil = calculateUtilityUsingLearnRate(oppBid, i);
-//					Log.d(estimatedUtil + ", ");
 					if (Math.abs(estimatedUtil - expectedUtil) < Math.abs(closestUtil - expectedUtil)) {
 						closestUtil = estimatedUtil;
 						actualLearnRate = i;
 					}
 				}
-//				Log.dln("");
-				Log.dln("optimalUtil: " + closestUtil + " achieved with learnRate: " + actualLearnRate);
 			}
 			
 			UpdateValues(oppBid, actualLearnRate);
-			Log.dln("ActualLearnRate: " + actualLearnRate + "New estimated util: " + this.getBidEvaluation(oppBid.getBid()));
+			Log.dln("expectedUtil: " + Log.format(expectedUtil, "0.000") + ", estimatedUtil: " + Log.format(curUtil, "0.000") + ", New estimated util: " + Log.format(this.getBidEvaluation(oppBid.getBid()), "0.000") + ", ActualLearnRate: " + actualLearnRate );
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -205,11 +200,10 @@ public class Group7_FrequencyOM extends OpponentModel {
 	 */
 	public double ExpectedNewBidUtil()
 	{
-		// The expected minimum utility is a function of the number of different offers we have received and the number of different offers possible.
+		// The expected minimum utility is a function of the number of different offers we have received and the number
+		// of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
 		List<Bid> distinctBids = getDistinctBids(negotiationSession.getOpponentBidHistory());
 		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
-		// Assuming each time we receive a new 
-		Log.dln("meanConcessionPerNewBid: " + meanConcessionPerNewBid + ", Number of bids: " + distinctBids.size());
 		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
 	}
 	
@@ -223,7 +217,6 @@ public class Group7_FrequencyOM extends OpponentModel {
 		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
 		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
 		// Also the most recent bid should be ignored in the calculation.
-		Log.dln("opponentBids: " + opponentBids.size());
 		List<Bid> distinctBids = new ArrayList<Bid>();
 		boolean ignoredFirst = false;
 		for (BidDetails bidDet: opponentBids) {
