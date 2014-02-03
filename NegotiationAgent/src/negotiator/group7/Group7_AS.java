@@ -136,7 +136,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 		
 		/** --------------------- AC_panic ----------------------------- 
-		  * AC_time, but only opponent's better offers
+		  * AC_time, but only opponent's better offers (AC_max)
 		  * Here we accept the opponents best with a conceding factor, only when 
 		  * less than 'panicWhenBidsLeft' bids are left
 		  * -------------------------------------------------------------- */
