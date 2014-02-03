@@ -130,7 +130,7 @@ public class Phase2 extends Phase{
 		
 		double xconcede = 0;
 		if (concedeStep > 0) {
-			Log.vln("Concede! Just because were nice. :) Step: " + concedeStep);
+			Log.vln("Concede! Just because we are nice. :) Step: " + concedeStep);
 			xconcede = concedeStep/concedeSteps*concedeFactor;
 			concedeStep++;
 			if (concedeStep >= this.concedeSteps) {
@@ -242,7 +242,7 @@ public class Phase2 extends Phase{
 		double U2B = B2.getUtilityB();
 		double wantedUtilA = U1A*(1-W1) + U2A*W1;
 		double wantedUtilB = U1B*(1-W1) + U2B*W1;
-		ArrayList<Bid> koe = new ArrayList<Bid>();
+//trash		ArrayList<Bid> koe = new ArrayList<Bid>();
 		
 		return getNearestBidDetailsFromUtilities(wantedUtilA, wantedUtilB, 0.025);
 		
