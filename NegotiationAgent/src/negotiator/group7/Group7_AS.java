@@ -122,6 +122,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		double hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
+		boolean isOpponentModelReliable = Helper.isOpponentModelReliable() != null ? Helper.isOpponentModelReliable().booleanValue() : false;
 		
 		// adjust ourWorst so that it can never go lower than the line from 0.9 at t=0 to 0.6 at t=1
 		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal);
@@ -155,7 +156,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * -------------------------------------------------------------- */
 		else if (Helper.getKalaiPoint() != null 
 				&& hisLastBid.getBid().equals(Helper.getKalaiPoint().getBid())
-				&& Helper.isOpponentModelReliable()) 
+				&& isOpponentModelReliable) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
 			return Actions.Accept;
@@ -166,7 +167,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * -------------------------------------------------------------- */
 		else if (Helper.getNashPoint() != null 
 				&& hisLastBid.getBid().equals(Helper.getNashPoint().getBid())
-				&& Helper.isOpponentModelReliable()) 
+				&& isOpponentModelReliable) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Nash!!! :9 \n\n");
 			return Actions.Accept;
