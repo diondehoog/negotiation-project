@@ -33,7 +33,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		Helper.setBidsMade(0);
 		Helper.setBidsTotal(0);
 		Helper.setAcceptanceStrategy(this);
-		Helper.setSession(negoSession);
+		//Helper.setSession(negoSession);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		Helper.setBidsMade(0);
 		Helper.setBidsTotal(0);
 		Helper.setAcceptanceStrategy(this);
-		Helper.setSession(negoSession);
+		//Helper.setSession(negoSession);
 		
 		if (parameters != null) {
 			if (parameters.containsKey("timeWindow"))

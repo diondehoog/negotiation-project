@@ -138,14 +138,25 @@ public class Helper {
 	public static BidDetails getBidDetails(BidPoint point) {
 		if (getOpponentModel() == null) return null;
 		if (getSession() == null) return null;
+		if (getSession().getOutcomeSpace() == null) return null;
 		
-		Range r = new Range(point.getUtilityA() - 0.001, point.getUtilityA() + 0.001);	
-		List<BidDetails> bidsInRange = getSession().getOutcomeSpace().getBidsinRange(r);
-		for (BidDetails B2: bidsInRange) {
-			if (B2.getMyUndiscountedUtil() == point.getUtilityA())
-				if (getOpponentModel().getBidEvaluation(B2.getBid()) == point.getUtilityB())
-					return B2;
+		Range r = new Range(point.getUtilityA() - 0.001, point.getUtilityA() + 0.001);
+		
+		try {
+			// Why is the outcome space null ?!?!
+			List<BidDetails> bidsInRange = getSession().getOutcomeSpace().getBidsinRange(r);
+		
+			for (BidDetails B2: bidsInRange) {
+				if (B2.getMyUndiscountedUtil() == point.getUtilityA()) {
+					if (getOpponentModel().getBidEvaluation(B2.getBid()) == point.getUtilityB())
+						return B2;
+				}
+			}
+		} catch (NullPointerException e) {
+			Log.newLine("ERROR: probably the opponent also used methods from Helper.java!");
+			return null;
 		}
+		
 		return null;
 	}
 	
