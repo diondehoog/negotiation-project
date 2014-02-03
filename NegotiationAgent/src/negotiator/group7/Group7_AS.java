@@ -310,7 +310,8 @@ public class Group7_AS extends AcceptanceStrategy {
 			if (averageDeltaTime == 0) {
 				averageDeltaTime = dt;
 			} else {
-				averageDeltaTime = (1 - percentDurationWeight) * averageDeltaTime + percentDurationWeight * dt;
+				if (dt < averageDeltaTime * 10) // dont take big values..
+					averageDeltaTime = (1 - percentDurationWeight) * averageDeltaTime + percentDurationWeight * dt;
 			}
 		}
 		previousTime = time;
