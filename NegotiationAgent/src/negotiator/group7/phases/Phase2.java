@@ -119,6 +119,7 @@ public class Phase2 extends Phase{
 
 		double theirMaxDist = getDistanceToKalaiSmorodinsky(theirBB);
 		double theirDist = ksDist;
+		ourMaxDist = getDistanceToKalaiSmorodinsky(myBB);
 		
 		if (ourDist < -0.05) { // if first time ever
 			ourDist = (ourMaxDist/theirMaxDist)*ksDist; // match their concession
@@ -143,7 +144,9 @@ public class Phase2 extends Phase{
 			}
 		}
 		
-		ourDist += (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist); // add their difference distance to our distance
+		double dDist = (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist);
+		Log.vln("x: " + String.format("%5.4f", x) + " Ddist: " + String.format("%5.4f",dDist));
+		ourDist += dDist; // add their difference distance to our distance
 		
 		if (ourDist > ourMaxDist) {
 			ourDist = ourMaxDist;
@@ -152,7 +155,7 @@ public class Phase2 extends Phase{
 		double W = ourDist/ourMaxDist;
 		//double W = theirDist/theirMaxDist;
 		
-		//Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
+		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
 		
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
@@ -179,7 +182,7 @@ public class Phase2 extends Phase{
 					minDist = dist;
 					closest = B;
 				}
-				Log.vln("Finding pareto bid...");
+				//Log.vln("Finding pareto bid...");
 			}
 			
 			if (closest == null) {
@@ -200,7 +203,7 @@ public class Phase2 extends Phase{
 		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		for (BidDetails B2: bidsInRange) {
-			Log.vln("Finding biddetails...");
+			//Log.vln("Finding biddetails...");
 			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
 				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
 					return B2;
@@ -428,7 +431,7 @@ public class Phase2 extends Phase{
 			curR /= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-			Log.vln("Making radius smaller...");
+			//Log.vln("Making radius smaller...");
 		}
 		
 		while (bidsInRange.size() < 1) {
@@ -445,7 +448,7 @@ public class Phase2 extends Phase{
 		double minDist = 2.0;
 		BidDetails bestBid = null;
 		for (BidDetails B : bidsInRange) { // look for bid with smallest euclidean distance
-			Log.vln("Loop over bid too find nearest bid");
+			//Log.vln("Loop over bid too find nearest bid");
 			double myU = B.getMyUndiscountedUtil();
 			double theirU = opponentModel.getBidEvaluation(B.getBid());
 			double dist = Math.sqrt(Math.pow(UA-myU,2) + Math.pow(UB-theirU,2));
@@ -512,7 +515,7 @@ public class Phase2 extends Phase{
 		// TODO: Smooth the values
 		
 		for (int i = 0; i < n-1; i++) {
-			Log.vln("Another runialoop");
+			//Log.vln("Another runialoop");
 			//BidDetails bd = h.get(i);
 			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
 			vals[i] = h.get(i).getMyUndiscountedUtil() - h.get(i+1).getMyUndiscountedUtil();
@@ -522,7 +525,7 @@ public class Phase2 extends Phase{
 		avg = avg/((double)n-1.0);
 		
 		
-		Log.sln("Average concede over last " + n + " bids = " + avg);
+		//Log.sln("Average concede over last " + n + " bids = " + avg);
 /*
 		double[] smooth = new double[n];
 		
