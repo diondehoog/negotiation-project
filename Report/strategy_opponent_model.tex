@@ -4,4 +4,8 @@ In order to estimate how ``wrong'' the estimate is, we first need to decide what
 \begin{equation}
   E(U) = \text{normcdf}^{-1} (\frac{D \cdot I}{T}) = \mu + \sigma \sqrt{2} \text{erf}^{-1} (2 \frac{D \cdot I}{T} - 1)
 \end{equation}
-Where $\text{erf}^{-1}(x)$ is the inverse error function. We save this expected utility for each bid and when we receive it again 
+Where $\text{erf}^{-1}(x)$ is the inverse error function. We save this expected utility for each bid and use it again if the bid is made again. 
+
+Next we check if the utility calculated using the current opponent model is within a certain range of the expected utility. If this is not the case we try a number of different learn value addition values (1 to 100) and check for each of these values what the utility of the current bid would be if we used that value for the frequency modeling algorithm. We pick the learn value addition value that leads to the smallest absolute difference between the utility calculated using our opponent model and the expected utility.
+
+The advantage of this method over standard value iteration is that it approximates the opponent model better for agents that are hardheaded. Bids that they have never done before leads to much bigger changes in the opponent model, which leads to a faster convergence towards to true opponent model. However, for agents that concede much faster then the algorithm anticipates (e.g. skip much more that $I$ bids whenever they make a new bid), the opponent model is less accurate. Since we found that most opponents are hardheaded for at least some part of the total time they are active, we thing that, on average, this model will give better results.
