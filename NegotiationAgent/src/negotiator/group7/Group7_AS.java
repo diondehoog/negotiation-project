@@ -110,10 +110,6 @@ public class Group7_AS extends AcceptanceStrategy {
 		BidHistory bhOpp = negotiationSession.getOpponentBidHistory();
 		BidHistory bhOwn = negotiationSession.getOwnBidHistory();
 		
-		// get the distinct bid count of the opponent. If it is low, then the OM is probably not
-		// that reliable
-		//int distinctOppBids = Helper.getDistinctBids(bhOpp).size();
-		
 		// only look within certain time window
 		if (window < 1.0) {
 			bhOpp = bhOpp.filterBetweenTime(window, time);
@@ -121,7 +117,8 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 
 		// get some historical facts
-		double hisLast = bhOpp.getHistory().get(0).getMyUndiscountedUtil();
+		BidDetails hisLastBid = bhOpp.getHistory().get(0);
+		double hisLast = hisLastBid.getMyUndiscountedUtil();
 		double hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
@@ -131,8 +128,6 @@ public class Group7_AS extends AcceptanceStrategy {
 		
 		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
 		double acceptCurve = getAcceptCurveValue(time);
-
-		// TODO: accept when hisLast == nash/kalai??
 
 		/** --------------------- AC_curve ----------------------------- 
 		  * AC_const, but time dependent
@@ -152,6 +147,28 @@ public class Group7_AS extends AcceptanceStrategy {
 		else if (Helper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + "\n\n");
+			return Actions.Accept;
+		} 
+		
+		/** --------------------- AC_kalai ----------------------------- 
+		  * automatically a reliable kalai
+		  * -------------------------------------------------------------- */
+		else if (Helper.getKalaiPoint() != null 
+				&& hisLastBid.getBid().equals(Helper.getKalaiPoint().getBid())
+				&& Helper.isOpponentModelReliable()) 
+		{
+			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
+			return Actions.Accept;
+		} 
+		
+		/** --------------------- AC_nash ----------------------------- 
+		  * automatically a reliable nash
+		  * -------------------------------------------------------------- */
+		else if (Helper.getNashPoint() != null 
+				&& hisLastBid.getBid().equals(Helper.getNashPoint().getBid())
+				&& Helper.isOpponentModelReliable()) 
+		{
+			Log.newLine("\n\n ACCEPT! @ hisLast == Nash!!! :9 \n\n");
 			return Actions.Accept;
 		} 
 		
