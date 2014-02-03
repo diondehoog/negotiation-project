@@ -159,7 +159,6 @@ public class Helper {
 		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
 		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
 		// Also the most recent bid should be ignored in the calculation.
-		Log.dln("opponentBids: " + opponentBids.size());
 		List<Bid> distinctBids = new ArrayList<Bid>();
 		boolean ignoredFirst = false;
 		for (BidDetails bidDet: opponentBids) {

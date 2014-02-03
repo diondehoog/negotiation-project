@@ -4,7 +4,8 @@ import numpy
 #Let's read the file.
 #filename = "genius/log/2014-02-03 09.47.51.xml"
 #filename = "genius/log/2014-02-03 10.45.16.xml"
-filename = "genius/log/2014-02-03 11.05.22.xml"
+#filename = "genius/log/2014-02-03 11.05.22.xml"
+#filename = "genius/log/2014-02-03 13.42.56.xml"
 
 # Read the pearsons:
 def readpearson(filename):

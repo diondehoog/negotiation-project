@@ -32,7 +32,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private final double meanBidSkip = 3d;
 	private final double rightMargin = 0.05;
 	private final double leftMargin = 0.10;
-	private final int maxLearnValueAddition = 75;
+	private final int maxLearnValueAddition = 150;
 	
 	private int opponentModelReliableThreshold;
 	
@@ -155,10 +155,12 @@ public class Group7_FrequencyOM extends OpponentModel {
 				// U(offer) = sum_i(w_i (v_{i,j} + x)/(sum_j(v_{i,j}) + x))
 				// However this is a bit hard to solve algebraically, so we just try some values for x and choose the best one.
 				double closestUtil = 0;
+				double utilToApproach = curUtil < expectedUtil - rightMargin ? expectedUtil - rightMargin : expectedUtil + leftMargin;
+					
 				// Estimate the utility for all possible learn rates
 				for (int i = 1; i <= maxLearnValueAddition; i++) {
 					double estimatedUtil = calculateUtilityUsingLearnRate(oppBid, i);
-					if (Math.abs(estimatedUtil - expectedUtil) < Math.abs(closestUtil - expectedUtil)) {
+					if (Math.abs(estimatedUtil - utilToApproach) < Math.abs(closestUtil - utilToApproach)) {
 						closestUtil = estimatedUtil;
 						actualLearnRate = i;
 					}
