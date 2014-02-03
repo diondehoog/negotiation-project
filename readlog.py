@@ -82,3 +82,9 @@ for i in range(len(agents)):
 latexprint(table)
 
 
+## Create the table per domain
+spaces = [["etc/templates/anac/y2011/Car/adg_deal.xml", "etc/templates/anac/y2011/Car/adg_deal2.xml"],
+	["etc/templates/anac/y2011/Amsterdam/Amsterdam_party2.xml", "etc/templates/anac/y2011/Amsterdam/Amsterdam_party1.xml"],
+	["etc/templates/anac/y2011/Camera/camera_seller_utility.xml", "etc/templates/anac/y2011/Camera/camera_buyer_utility.xml"]
+	]
+
