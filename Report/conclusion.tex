@@ -6,8 +6,13 @@
 In the proces of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.\\
 
 While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they got a good utility themselves.  \\
+
+Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \textit{Nash-point} and the \textit{Kalai-Smorodinsky solution}. An objective mediator can walk over the Pareto Optimal Frontier, offerings bids until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome. \\
+
+This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
+
 \subsubsection{Other capabilities}
-Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \textit{Nash-point} and the \textit{Kalai-Smorodinsky solution}. An objective mediator could walk over the Pareto Optimal Frontier, doing offers until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome, without any optimization after. 
+
 
 This method would definitely 
 We think that extending agents with more communication abilities would not 
@@ -17,7 +22,7 @@ you would need to define a protocol so they can understand eachother.
 Agents could communicate things like: if you do this, I will concede here, etc...
 However, using the current method of exchanging bids, this already becomes 
 appararent. The advantage of working with bids is agents are sure and that they are final,
-when communicating, agents can lie and take advantage of eachother. 
+when communicating, agents can lie and take advantage of each other. 
 We think that this will lead to no communication at all because of this danger.
 One type of communication that would be useful is maybe that agents
 tell eachother what bids they deem unacceptable. 
