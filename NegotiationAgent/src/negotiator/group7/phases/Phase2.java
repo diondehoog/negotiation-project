@@ -193,9 +193,7 @@ public class Phase2 extends Phase{
 			nextBid = findBidDetailsFromBidPoint(closest);
 			
 		}
-				
 		return nextBid;
-		
 	}
 	
 	public BidDetails findBidDetailsFromBidPoint(BidPoint B) {
