@@ -22,16 +22,13 @@ public class Phase3 extends Phase {
 	@Override
 	public BidDetails determineNextBid() {
 		
-		//int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
+		int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
 
 		Random randgen = new Random();
 		BidDetails fallback;
 		List<BidDetails> bh = negotiationSession.getOwnBidHistory().getHistory();
 		fallback = bh.get(randgen.nextInt(bh.size()));
 		
-		//if (opponentStrategy == 1) // Opponent is assumed to be HardHeaded
-		{
-			
 			//Log.hln("Opponent is assumed to be HardHeaded, decreasingly offering random bid that approaches the pareto");
 
 			BidDetails best = null;
@@ -47,6 +44,12 @@ public class Phase3 extends Phase {
 					Log.newLine("\n Panic!! Conceding faster..\n");
 					u = randgen.nextDouble() * 0.2 + 0.5;
 				}
+
+				if (opponentStrategy != 1 && ourHelper.getKalaiPoint() != null) // Opponent is assumed to be Conceder
+				{
+					u = Math.max(ourHelper.getKalaiPoint().getMyUndiscountedUtil(), u);
+				}
+				
 				Range r = new Range(u - 0.01, u + 0.01);
 				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 				
@@ -67,7 +70,7 @@ public class Phase3 extends Phase {
 				return fallback;
 			else
 				return best;
-		} 
+
 //		else 
 //		{
 //			// Opponent is assumed to be Conceder
