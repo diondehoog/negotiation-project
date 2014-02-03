@@ -22,14 +22,14 @@ public class Helper {
 	private static Integer bidsLeft;
 	private static Integer bidsTotal;
 	private static Integer bidsMade;
-	private static Integer bidsDistinctOpponent;
-	
-	public static Integer getCountDistinctOpponentBids() {
-		return bidsDistinctOpponent;
+	private static Boolean opponentModelReliable;
+
+	public static Boolean isOpponentModelReliable() {
+		return opponentModelReliable;
 	}
 
-	public static void setCountDistinctOpponentBids(Integer bidsDistinctOpponent) {
-		Helper.bidsDistinctOpponent = bidsDistinctOpponent;
+	public static void setOpponentModelReliable(Boolean opponentModelReliable) {
+		Helper.opponentModelReliable = opponentModelReliable;
 	}
 
 	public static NegotiationSession getSession() {

@@ -75,7 +75,13 @@ public class Log {
 		}
 	}
 	public static String format(double d) {
-		DecimalFormat f = new DecimalFormat("##.000");  // this will helps you to always keeps in two decimal places
-        return f.format(d);
+		return format(d, "##.000"); // this will helps you to always keeps in three decimal places
 	}
+	
+	public static String format(double d, String decimalFormat) {
+		DecimalFormat f = new DecimalFormat(decimalFormat);  
+		return f.format(d);
+	}
+	
+	
 }

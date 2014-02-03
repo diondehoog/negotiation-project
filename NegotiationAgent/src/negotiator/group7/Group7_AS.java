@@ -110,6 +110,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		BidHistory bhOpp = negotiationSession.getOpponentBidHistory();
 		BidHistory bhOwn = negotiationSession.getOwnBidHistory();
 		
+		// get the distinct bid count of the opponent. If it is low, then the OM is probably not
+		// that reliable
+		//int distinctOppBids = Helper.getDistinctBids(bhOpp).size();
+		
 		// only look within certain time window
 		if (window < 1.0) {
 			bhOpp = bhOpp.filterBetweenTime(window, time);
@@ -141,7 +145,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 		
 		/** --------------------- AC_panic ----------------------------- 
-		  * AC_time, but only opponent's better offers
+		  * AC_time, but only opponent's better offers (AC_max)
 		  * Here we accept the opponents best with a conceding factor, only when 
 		  * less than 'panicWhenBidsLeft' bids are left
 		  * -------------------------------------------------------------- */
