@@ -13,8 +13,7 @@ In this part we compare our agent to three of the agents that attended in the AN
     \emph{HardHeaded}		& 0.858  & 0.927  & 0.102  & 0.017  & 0.084   \\ \hline
     \emph{Gahboninho}   	& 0.887  & 0.918  & 0.032  & 0.001  & 0.035   \\ \hline
     \emph{The Negotiator} 	& 0.725  & 0.871  & 0.050  & 0.003  & 0.052   \\ \hline
-    \emph{Self}             & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ 
-    \hline
+    \emph{Self}             & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ \hline
     \end{tabular}
     \caption{Performance of our agent against \texttt{ANAC 2011} agents (Runtime: $30$s) \label{table:anac2011-results}}
 \end{table}
@@ -30,6 +29,41 @@ The next test consists of running our agent with varying \emph{acceptance strate
 \todo{Insert results and discuss them...}
 
 \subsection{Comparison with HardHeaded Frequency Model}
+To test if our opponent model is better than the default hardheaded frequency model, we ran the performance test against the ANAC 2011 agents using the hardheaded frequency model. The results of this are shown in \autoref{table:anac2011-hh}.
+\begin{table}[H]
+	\centering
+	\small
+    \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+    ~              & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \hline
+    \emph{HardHeaded}		& 0.883  & 0.916  & 0.166  & 0.055  & 0.152   \\ \hline
+    \emph{Gahboninho}   	& 0.881  & 0.848  & 0.116  & 0.020  & 0.097   \\ \hline
+    \emph{The Negotiator} 	& 0.756  & 0.868  & 0.092  & 0.027  & 0.079   \\ \hline
+    \emph{Self}             & 0.839  & 0.806  & 0.125  & 0.035  & 0.140   \\ \hline
+    \end{tabular}
+    \caption{Performance of our agent with \texttt{HardHeaded Frequency Modeling} (Runtime: $30$s) \label{table:anac2011-hh}}
+\end{table}
+We see that, compared to our own opponent model, the average utility has decreased by $0.071$, which means that our opponent model leads to  better results for our agents. 
+Furthermore, we see that the average utilities for the opponent are also lower compared to what our opponent model achieved.
+The distance to the Nash point, Pareto frontier and Kalai point are especially interesting for evaluating the quality of the opponent model: a better opponent model allows us to do bids closer to these optimal values. We also note here that for every agent these properties are lowest using our own opponent model.
+
+\subsection{Performance In Different Domains}
+In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition IS prof domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}.
+\begin{table}
+  \centering
+  \small
+  \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+    ~ & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \hline
+    HardHeaded & 0.807 & 0.750 & 0.142 & 0.032 & 0.150 \\
+  Gahboninho & 0.731 & 0.807 & 0.065 & 0.004 & 0.165 \\
+  The Negotiator & 0.694 & 0.646 & 0.288 & 0.000 & 0.220 \\
+  Self & 0.744 & 0.712 & 0.165 & 0.012 & 0.179 
+  \end{tabular}
+
+\end{table}
+
+
 
 \subsection{How Generic is our Agent?}
 
