@@ -18,7 +18,7 @@ public class Log {
 	/**
 	 * What to print?
 	 */
-	private static final int PRINT = VIERING; // set to NONE for only important outputs
+	private static final int PRINT = RUNIA; // set to NONE for only important outputs
 	
 	
 	

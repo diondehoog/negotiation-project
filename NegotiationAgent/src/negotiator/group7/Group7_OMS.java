@@ -141,12 +141,12 @@ public class Group7_OMS extends OMStrategy {
 			if (ratio < threshold) {
 				// There is a small percentage of distinct bids,
 				// therefore we classify the opponent as HardHeaded
-				Log.rln("Opponent is classified as HardHeaded [" + ratio + "]");
+				//Log.rln("Opponent is classified as HardHeaded [" + ratio + "]");
 				return 1;
 			} else {
 				// The percentage of distinct bids is large,
 				// therefore we classify the opponent as Conceder
-				Log.rln("Opponent is classified as Conceder [" + ratio + "]");
+				//Log.rln("Opponent is classified as Conceder [" + ratio + "]");
 				return 2;
 			}
 		} catch (Exception e) {

@@ -22,13 +22,13 @@ public class Helper {
 	private static Integer bidsLeft;
 	private static Integer bidsTotal;
 	private static Integer bidsMade;
-	private static Boolean opponentModelReliable;
+	private static boolean opponentModelReliable;
 
-	public static Boolean isOpponentModelReliable() {
+	public static boolean isOpponentModelReliable() {
 		return opponentModelReliable;
 	}
 
-	public static void setOpponentModelReliable(Boolean opponentModelReliable) {
+	public static void setOpponentModelReliable(boolean opponentModelReliable) {
 		Helper.opponentModelReliable = opponentModelReliable;
 	}
 
