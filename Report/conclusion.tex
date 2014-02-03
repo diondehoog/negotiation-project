@@ -6,17 +6,33 @@
 In the proces of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.\\
 
 While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they got a good utility themselves.  \\
-
+\subsubsection{Other capabilities}
 Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \textit{Nash-point} and the \textit{Kalai-Smorodinsky solution}. An objective mediator could walk over the Pareto Optimal Frontier, doing offers until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome, without any optimization after. 
 
 This method would definitely 
-
+We think that extending agents with more communication abilities would not 
 Nash-points have the characteristic that it is the point which in total optimizes the utility for every agent. However, the Nash-point is not necessarily the optimal point for every individual agent. Therefore, it is dependent on the order of bids what the outcome of the negotiation will be. 
-
-
-
-
-
+increase the perfromancy very much. When automated agents communicate,
+you would need to define a protocol so they can understand eachother.
+Agents could communicate things like: if you do this, I will concede here, etc...
+However, using the current method of exchanging bids, this already becomes 
+appararent. The advantage of working with bids is agents are sure and that they are final,
+when communicating, agents can lie and take advantage of eachother. 
+We think that this will lead to no communication at all because of this danger.
+One type of communication that would be useful is maybe that agents
+tell eachother what bids they deem unacceptable. 
+After communicating this, the agents will never offer these bids because they know
+their opponent will never accept these. This way, 
+agents will know what bids are unacceptable for the opponent, and this way
+the domain size can be reduced. 
+However, another way to look at this is that the domain is not specified well for the 
+negotation if this is the case. Before you negotatiate, you need to specify the issues
+and values for these issues, and if you include values that are not acceptable to 
+yourself as negotatior, this is useless. However, one can imagine cases where
+there is a default domain. For example, when buying a car, one could have a default domain
+where all possible values for all possible cars are specified, and that this domain is 
+downloaded to your pocket negotatior. Then this would be very useful,
+to make negotations much faster.
 
 
 

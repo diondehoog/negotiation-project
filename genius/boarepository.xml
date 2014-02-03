@@ -24,6 +24,7 @@
 			<parameter name="Pconcede" default="0.05" description="chance to concede a bit"/>
 			<parameter name="concedeFactor" default="0.3" description="amount to concede"/>
 			<parameter name="concedeSteps" default="10.0" description="how many steps it takes to concede"/>
+			<parameter name="discount" default="0.0" description="whether to adapt strategy to discounts"/>
 		</biddingstrategy>
 	</biddingstrategies>
 	<acceptanceconditions>

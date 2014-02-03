@@ -18,6 +18,7 @@
 \usepackage{enumerate}
 \usepackage{courier}
 \usepackage{graphicx}
+\usepackage{xfrac}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
@@ -42,7 +43,8 @@
 
 % Settings for hyperref package (e.g. wat \autoref en \nameref moeten doen)
 \hypersetup{
-  colorlinks  = true,
+  bookmarks   = false
+  colorlinks  = false,
   linkcolor   = [rgb]{0.1,0.1,0.5},
   citecolor   = [rgb]{0.5,0.1,0.1},
   filecolor   = [rgb]{0.1,0.5,0.5},
@@ -91,11 +93,26 @@
 \setlength{\parindent}{0cm}
 
 \begin{document}
-\maketitle
 
-\section{Introduction}
-\label{sec:introduction}
-\input{introduction}
+\begin{center}
+\vskip 1cm
+{\Huge Artificial Intelligence \vskip 2mm}
+{\Large BOAconstructor -- An Automated Negotiation Agent \vskip 1cm}
+
+{\normalsize \textbf{Bas Dado} ($4033736$) -- \textbf{Olivier Hokke} ($1352679$) -- \textbf{Tom Runia} ($1517996$) \\ \textbf{Tom Viering} ($4333055$) -- \textbf{Arnold Schutter} ($4260724$) \vskip 3cm}
+
+\end{center}
+
+\begin{abstract}
+\noindent A relatively new and evolving branch of artificial intelligence is \emph{automated negotiation}. In automated negotiation, two or more agents negotiate about a multi-issue problem in order to find a solution that maximizes their utility. The utilities for each possible bid are determined using a human-defined preference profile, which consists of weights for each of the issues and a utility for each possible value of the issues. \\
+
+\noindent In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:exercises} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. 
+\Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In the subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific \emph{BOA components}. \Autoref{sec:performance} shows the results of performance tests of our final agent against a number agents that were included in genius. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
+\end{abstract}
+
+%\section{Introduction}
+%\label{sec:introduction}
+%\input{introduction}
 
 \newpage
 \tableofcontents
@@ -107,7 +124,7 @@
 
 \subsection{Party domain analysis}
 
-\subsubsection{Bidding space and pareto frontier}
+\subsubsection{Bidding space and Pareto Frontier}
 
 In this subsection we analyse the party domain and compute the Pareto frontier.
 The party domain has 6 issues: food (4 options), drinks (4 options), 
@@ -210,12 +227,6 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 \label{sec:strategyBS}
 \input{strategy_bidding_strategy}
 
-\subsubsection{Phase 1}
-
-\subsubsection{Phase 2}
-
-\subsubsection{Phase 3}
-
 \subsection{Opponent Model}
 \label{sec:strategyOM}
 \input{strategy_opponent_model}
@@ -224,7 +235,7 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 \label{sec:strategyAS}
 \input{strategy_acceptance_strategy}
 
-\subsection{Opponent Strategy Model}
+\subsection{Opponent Model Strategy} 
 \label{sec:strategyOMS}
 \input{strategy_opponent_strategy_model}
 
