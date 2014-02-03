@@ -201,16 +201,16 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases use a different bidding strategy.
+  The bidding strategy (BS) is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases use a different bidding strategy.
 
   \item[Opponent Model] \hfill \\
-  Analyzing the opponents behaviour is essential for being able to determine the opponent's preference profile.  With a well defined opponent model, the opponent's utility of a bid can be determined more accurate. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modeling} or \emph{frequency analysis}. 
+  Analyzing the opponents behaviour is essential for being able to determine the opponent's preference profile.  With a well defined opponent model (OM), the opponent's utility of a bid can be determined more accurate. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modeling} or \emph{frequency analysis}. 
 
   \item[Acceptance Strategy] \hfill \\
-  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies is available with combinations of time-dependend, utility-dependent and threshold-dependent strategies.
+  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy (AS) decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies is available with combinations of time-dependend, utility-dependent and threshold-dependent strategies.
 
 \item[Opponent Model Strategy] \hfill \\
-  Analyzing the opponents behaviour could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like \emph{Hardheaded}, \emph{Conceder}, \emph{Tit-for-Tat}, etc. The own bidding strategy can be adapted to the opponent's strategy, to derive a maximum possible outcome for the own utility.
+  Analyzing the opponents behaviour could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like \emph{Hardheaded}, \emph{Conceder}, \emph{Tit-for-Tat}, etc. The own bidding strategy can be adapted to the opponent's model strategy (OMS), to derive a maximum possible outcome for the own utility.
 
 \end{description}
 
