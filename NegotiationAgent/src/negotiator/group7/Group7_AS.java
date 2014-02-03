@@ -147,11 +147,11 @@ public class Group7_AS extends AcceptanceStrategy {
 		
 		/** --------------------- AC_panic ----------------------------- 
 		  * AC_time, but only opponent's better offers (AC_max)
-		  * Here we accept the opponents best with a conceding factor, only when 
+		  * Here we accept the opponents best or kalai with a conceding factor, only when 
 		  * less than 'panicWhenBidsLeft' bids are left.
 		  * But(!) never do this when opponent is hardheaded
 		  * -------------------------------------------------------------- */
-		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede && !isHardHeaded) 
+		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && (hisLast >= hisBest - panicConcede || hisLast >= kalaiUtility - panicConcede) /*&& !isHardHeaded*/) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + " && hisLast >= hisBest - panicConcede: " + ourHelper.getBidsLeft() + "; " + hisLast + "; " + (hisBest - panicConcede) + "\n\n");
 			return Actions.Accept;
