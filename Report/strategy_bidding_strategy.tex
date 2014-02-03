@@ -3,75 +3,41 @@ Our bidding strategy is time dependent, we have implemented three phases each of
 \subsubsection{First Phase}
 Our agents first bid is determined by the method \texttt{determineOpeningBid()}. By offering a bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $0.9$. The best bid of this utility is obtained by calling \texttt{getBidNearUtility()} of the \texttt{OutcomeSpace} class. \\
 
-After determining our openings bid and receiving the initial bid from the opponent our agent continues by generating random bids. These random bids are generated within a small utility range. The (average) height of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()} given in Listing~\ref{code:getrangefunctionfirstphase}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
+After determining our openings bid and receiving the initial bid from the opponent our agent continues by generating random bids. These random bids are generated within a small utility range. The (average) height of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
 
 We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
 
-\begin{lstlisting}[caption=Code for calculating bid range as function of normalized time, label=code:getrangefunctionfirstphase]
-public Range getBidRange (double t, double margin) {
-  double normTime = t/this.phaseEnd; // Normalized time
-  
-  // Center of the utility range
-  double val = 1-(normTime/10);
-  
-  // Best bid that the opponent has offered so far
-  BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
-  
-  // Set the bounds for the range
-  double lb = val-margin;
-  double ub = val+margin;
-  
-  if (bestOpponent.getMyUndiscountedUtil() > val){
-    // The opponent has offered a better bid (for us)
-    // than the center of our bid range, we counter this
-    // by choosing a bid higher (+0.05) than the opponents bid.
-    val = bestOpponent.getMyUndiscountedUtil()+0.05;
-    
-    // Update boundaries
-    lb = val; ub = val+margin;
-  }
-  
-  // Range in which bids are randomly generated
-  Range r = new Range(lb, ub); 
-  
-  // Set upper bound to 1 if it exceeds upper bound
-  if (r.getUpperbound() > 1) r.setUpperbound(1.0);
-  
-  return r;
-}
-\end{lstlisting}
-
 \subsubsection{Second Phase}
 
-For phase 2 we decided to implement the Tit For Tat strategy \ref{titfortat}.
+For phase $2$ we decided to implement the \emph{Tit-for-Tat} strategy \ref{titfortat}.
 This because it works fairly well against different agents, since you will play
-hard against hard headed opponents and more nice against conceding agents.
-However, as noted in the referenced paper, we should not play too nicely,
-and try to exploit other opponents. We use the following strategy.
+hard against hardheaded opponents and more nice against conceding agents.
+However, as noted in the referenced paper, we should not play too nice,
+and try to exploit other opponents. We use the following strategy. \\
 
-We use the distance to the Kalai Smorodinsky point as reference to calculate
-the amount of concessions. When conceeding, we aim for this point.
+We use the distance to the \emph{Kalai-Smorodinsky} point as reference to calculate
+the amount of concessions. When conceding, we aim for this point.
 We decided to use this distance instead of our own utility, since when looking
 at our own utility for offers of the opponent, we can hardly see whether or not
-our opponent is conceding (since these utilities will vary alot).
+our opponent is conceding (since these utilities will have large variation).
 So instead, we use the distance, so the opponent model is used, and 
-this improves the detection of concessions.
+this improves the detection of concessions. \\
 
-We average the distance of the last five bids to the KS point,
+We average the distance of the last five bids to the Kalai-Smorodinsky point,
 to determine the concession of the opponent. We
-multiply this by a factor $1/3$, and then match their concession to the KS point.
-We do this to avoid conceding too much. 
+multiply this by a factor $\sfrac{1}{3}$, and then match their concession to the KS point.
+We do this to avoid conceding too much in the direction of the opponent. \\
 
 Furthermore, to ensure our agent does not get stuck when playing against 
-another tit for tat agent, we will randomly concede sometimes. 
-These concessions are done towards the KS point, and linearly over 
-10 bids. When the concession has been done, we hope the opponent matches 
+another Tit-for-Tat agent, we will randomly concede from time to time. 
+These concessions are done towards the Kalai-Smorodinsky point, and linearly over 
+$10$ bids. When the concession has been done, we hope the opponent matches 
 our concession. If the opponent has done this, we will approach him
-using tit for tat, but if not, we take our concession back.
+using Tit-for-Tat, but if not, we take our concession back. \\
 
 Finally, we want to reach the most efficient outcomes. Because of this,
-we will randomly offer bids on the pareto frontier $50 \%$ of the time.
-However, to select this bid, we take the pareto bid closest to our current bid.
+we will randomly offer bids on the \emph{Pareto Frontier} $50\%$ of the time.
+However, to select this bid, we take the Pareto bid closest to our current bid.
 When determining the closest bid, we weigh our utility twice as much
 as the opponent utility, to ensure we don't concede too much by accident.
 
