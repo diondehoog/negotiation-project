@@ -28,11 +28,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private int amountOfIssues;
 	
 	private final double meanBidSkip = 1D;
-	private final double rightMargin = 0.05;
-	private final double leftMargin = 0.10;
+	private final double rightMargin = 0.03;
+	private final double leftMargin = 0.05;
 	private final double mu = 0.6;
 	private final double sigma = 0.019;
-	private final int maxLearnValueAddition = 150;
+	private final int maxLearnValueAddition = 100;
 	
 	private int opponentModelReliableThreshold;
 	
