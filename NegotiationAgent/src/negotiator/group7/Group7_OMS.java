@@ -23,11 +23,12 @@ public class Group7_OMS extends OMStrategy {
 	 * 	 is not exactly one as a match sometimes lasts slightly longer. */
 	double updateThreshold = 1.1;
 	
+	private Helper ourHelper;
+	
 	/**
 	 * Empty constructor for the BOA framework.
 	 */
 	public Group7_OMS() {
-		Helper.setOMStrategy(this);
 	}
 
 	/**
@@ -41,7 +42,8 @@ public class Group7_OMS extends OMStrategy {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Helper.setOMStrategy(this);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setOMStrategy(this);
 	}
 	
 	/**
@@ -59,7 +61,8 @@ public class Group7_OMS extends OMStrategy {
 		} else {
 			Log.dln("OMStrategy assumed t = 1.1");
 		}
-		Helper.setOMStrategy(this);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setOMStrategy(this);
 	}
 	
 	/**
@@ -126,7 +129,7 @@ public class Group7_OMS extends OMStrategy {
 			BidHistory opponentHist = negotiationSession.getOpponentBidHistory();
 			
 			// Load the list of distinct bids from the Helper
-			List<Bid> distinctBids = Helper.getDistinctBids(opponentHist);
+			List<Bid> distinctBids = ourHelper.getDistinctBids(opponentHist);
 			
 			// Number of total opponent bids
 			double numBids = 		 (double)opponentHist.size();
