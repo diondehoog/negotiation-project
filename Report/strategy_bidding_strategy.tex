@@ -7,8 +7,6 @@ After determining our openings bid and receiving the initial bid from the oppone
 
 We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
 
-\clearpage
-
 \begin{lstlisting}[caption=Code for calculating bid range as function of normalized time, label=code:getrangefunctionfirstphase]
 public Range getBidRange (double t, double margin) {
   double normTime = t/this.phaseEnd; // Normalized time
@@ -46,3 +44,14 @@ public Range getBidRange (double t, double margin) {
 \subsubsection{Second Phase}
 
 \subsubsection{Third Phase}
+
+The third phase only consists of the very last part of the negotiation session (usually from $t = 0.95$). The strategy that is employed here relies on the opponent model strategy. Our method \texttt{getOpponentModel()} from the OMS returns whether the opponent is assumed to be \emph{HardHeaded} or \emph{Conceder}. Based on what is returned by the OMS the next bid is determined as described below.
+
+\begin{description}
+  \item[Opponent is assumed to be Conceder] \hfill \\
+  In this case the next bid that is offered is the Kalai Point.
+
+  \item[Opponent is assumed to be HardHeaded] \hfill \\
+  Analyzing the opponents behaviour is...\todo{Fix after Olli changed his things...}
+\end{description}
+
