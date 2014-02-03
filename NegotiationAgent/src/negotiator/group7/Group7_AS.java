@@ -87,7 +87,9 @@ public class Group7_AS extends AcceptanceStrategy {
 			|| negotiationSession.getOwnBidHistory() == null
 			|| negotiationSession.getOpponentBidHistory() == null
 			|| negotiationSession.getOwnBidHistory().getWorstBidDetails() == null 
-			|| negotiationSession.getOpponentBidHistory().getWorstBidDetails() == null)
+			|| negotiationSession.getOpponentBidHistory().getWorstBidDetails() == null
+			|| negotiationSession.getOpponentBidHistory().getHistory() == null
+			|| negotiationSession.getOpponentBidHistory().getHistory().size() < 1)
 		{
 			return Actions.Reject;
 		}
@@ -150,6 +152,15 @@ public class Group7_AS extends AcceptanceStrategy {
 		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede /*&& !isHardHeaded*/) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + " && hisLast >= hisBest - panicConcede: " + ourHelper.getBidsLeft() + "; " + hisLast + "; " + (hisBest - panicConcede) + "\n\n");
+			return Actions.Accept;
+		} 
+		
+		/** --------------------- AC_horror ----------------------------- 
+		  * last bid... just accept man... just accept... :(
+		  * -------------------------------------------------------------- */
+		else if (ourHelper.getBidsLeft() == 1) 
+		{
+			Log.newLine("\n\n ACCEPT! @ Last bid.... just accept man... just accept :( \n\n");
 			return Actions.Accept;
 		} 
 		
