@@ -117,11 +117,16 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 
 		// get some historical facts
-		BidDetails hisLastBid = bhOpp.getHistory().get(0);
-		double hisLast = hisLastBid.getMyUndiscountedUtil();
+		double hisLast = bhOpp.getHistory().get(0).getMyUndiscountedUtil();
 		double hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
+		
+		// checks
+		boolean isHardHeaded = Helper.getOMStrategy() == null ? false : Helper.getOMStrategy().isOpponentHardHeaded();
+		double kalaiUtility = Helper.getKalaiPoint() == null ? 1.0 : Helper.getKalaiPoint().getMyUndiscountedUtil();
+		double nashUtility = Helper.getNashPoint() == null ? 1.0 : Helper.getNashPoint().getMyUndiscountedUtil();
+		double range = 0.005;
 		
 		// adjust ourWorst so that it can never go lower than the line from 0.9 at t=0 to 0.6 at t=1
 		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal);
@@ -142,9 +147,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		/** --------------------- AC_panic ----------------------------- 
 		  * AC_time, but only opponent's better offers (AC_max)
 		  * Here we accept the opponents best with a conceding factor, only when 
-		  * less than 'panicWhenBidsLeft' bids are left
+		  * less than 'panicWhenBidsLeft' bids are left.
+		  * But(!) never do this when opponent is hardheaded
 		  * -------------------------------------------------------------- */
-		else if (Helper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede) 
+		else if (Helper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede && !isHardHeaded) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + "\n\n");
 			return Actions.Accept;
@@ -153,8 +159,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		/** --------------------- AC_kalai ----------------------------- 
 		  * automatically a reliable kalai
 		  * -------------------------------------------------------------- */
-		else if (Helper.getKalaiPoint() != null 
-				&& hisLastBid.getBid().equals(Helper.getKalaiPoint().getBid())
+		else if (kalaiUtility - range <= hisLast && hisLast <= kalaiUtility + range
 				&& Helper.isOpponentModelReliable()) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
@@ -164,8 +169,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		/** --------------------- AC_nash ----------------------------- 
 		  * automatically a reliable nash
 		  * -------------------------------------------------------------- */
-		else if (Helper.getNashPoint() != null 
-				&& hisLastBid.getBid().equals(Helper.getNashPoint().getBid())
+		else if (nashUtility - range <= hisLast && hisLast <= nashUtility + range
 				&& Helper.isOpponentModelReliable()) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Nash!!! :9 \n\n");
