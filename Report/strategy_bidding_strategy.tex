@@ -41,13 +41,9 @@ as the opponent utility, to ensure we don't concede too much by accident.
 
 \subsubsection{Third Phase}
 
-The third phase only consists of the very last part of the negotiation session (usually from $t=0.95$). The strategy that is employed here relies on the opponent model strategy. Our method \texttt{getOpponentModel()} from the OMS returns whether the opponent is assumed to be \emph{HardHeaded} or \emph{Conceder}. Based on what is returned by the OMS the next bid is determined as described below.
+The third phase only consists of the very last part of the negotiation session (usually from $t=0.95$). The strategy that is employed here offers bids that are decreasing when time elapses towards the end of the negotiation session, also the approximated opponent model strategy is used from our method \texttt{getOpponentModel()} in the OMS. \\
 
-\begin{description}
-  \item[Opponent is assumed to be Conceder] \hfill \\
-  In this case the next bids that are offered will all be at the Kalai Point.
+When this method returns that the opponent behaves as \emph{conceder} then our agent chooses the best from two possibilities; the \emph{Kalai-Smodorinsky} point and the generated bid that decreases over time. When the opponent is assumed to be \emph{hardheaded}, then we just use the latter one. When this utility $u$ is determined we choose the best bid within the range $[u-0.01, u+0.01]$. Choosing the best bid is done by fetching all possible bids within this utility range and choosing the one that is best for the opponent by exploiting the information from our opponent model. This of course, increases the probability that the opponent accepts our bid. \\
 
-  \item[Opponent is assumed to be HardHeaded] \hfill \\
-  Analyzing the opponents behaviour is...\todo{Fix after Olli changed his things...}
-\end{description}
+Finding the best bid within the calculated utility range is not garantueed to succes, therefore we have also implemented a fallback mechanism. When determining the next bid has been tried for $15$ times, then a fallback bid is randomly chosen from already offered bids. This way we are sure that a bid is offered without wasting too much time.
 
