@@ -32,7 +32,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private final double meanBidSkip = 3d;
 	private final double rightMargin = 0.05;
 	private final double leftMargin = 0.10;
-	private final int maxLearnValueAddition = 100;
+	private final int maxLearnValueAddition = 75;
 	
 	public Group7_FrequencyOM() {
 		super();

@@ -78,5 +78,6 @@
 		<omstrategy description="Best bid" classpath="negotiator.boaframework.omstrategy.BestBid">
 			<parameter name="t" default="1.0" description="Time after which the OM should not be updated"/>
 		</omstrategy>
+<omstrategy description="Group7_OMS" classpath="negotiator.group7.Group7_OMS">
 	</omstrategy>
 </repository>
