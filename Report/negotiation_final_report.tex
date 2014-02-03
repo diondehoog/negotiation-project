@@ -135,30 +135,27 @@ itself, and we play Boulware vs Conceder and explain the outcome.
 When we play simple agent against itself, we notice the behaviour is quite random.
 This is explained by the code: it always offers a random bid higher than a certain threshold,
 by default this threshold is zero. Therefore it performs a random walk through the 
-bidding space. It's acceptance strategy is as follows: it accepts higher bids with 
-higher probability, and if the deadline is closer it will also accept bids with higher probability.
-It will never accept bids with a utility of zero. The equation that determines the 
+bidding space. It's acceptance strategy is as follows: it calculates a probability for each bid, the higher the bid, the higher the probability. If the deadline is getting closer it will accept all bids with higher probability. It will however never accept bids with a utility of zero. The equation that determines the 
 probability of acceptance is:
 
 \begin{equation}
 P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
 \end{equation}
 
-Where $P$ denotes the chance of acceptance.
+Where $P$ denotes the chance of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0,1]$.
 
-Because of this behaviour 
-we found the average utility playing against itself is around $0.68$, and the
+Because of this behaviour we found the average utility playing against itself is around $0.68$, and the
 time needed to reach an agreement was very short: $0.03$ (averaged
 over 20 negotiations on the party domain).
-This is quite logical, since because both sides offer random bids, it is very soon the
-case that either bid is quite acceptable for the opposing party.
-When this agent negotiates with other agents, it performs horrible, because
-it offers random bids. Smart agents will accept good offers, and deny other offers,
-and because of this the obtained utility for this agent will be quite low.
-We confirm this by letting simple agent play against boulware, here it obtains 
-an average utility of $0.6$ while boulware scores on average $1.0$.
+This is quite logical, since both sides offer random bids, it is the
+case quite soon that either bid has a high probability of acceptance for the opposing party.
+When this agent negotiates with other agents, it performs badly, because
+it offers random bids. Smart agents will accept good offers and deny other offers,
+and because of this the obtained utility for the simple agent will be quite low.
+We confirm this by letting simple agent play against boulware. In these tests the simple agent obtains 
+an average utility of $0.6$ while the boulware agent scores on average $1.0$.
 
-Finally, we play boulware against conceder. A typical negotiation trace is displayed below:
+Finally, we play with the boulware agent against the conceder agent. A typical negotiation trace is displayed below:
 
 %\begin{figure}[ht]
 \begin{center}
@@ -167,12 +164,9 @@ Finally, we play boulware against conceder. A typical negotiation trace is displ
 % \label{fig:pareto} 
 \end{center}
 %\end{figure}
-
-Boulware chooses the best bid for itself, and keeps offering this bid. This agent
-only concedes at the very last moments before the deadline. Conceder on the other hand
-starts conceding directly, conceding more and more with every new bid. 
-We also ran simulations on the party domain using these agents. 
-Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
+In the figure, the green and blue lines are the bidding-traces for respectively the boulware and the conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent
+only concedes at the very last moments before the deadline. The conceder agent on the other hand
+starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
 boulware $0.99$. 
  
 \subsection{PEAS Description}
@@ -184,7 +178,7 @@ The first step in designing an agent is to specify the environment as fully as p
     \hline
     \textbf{Agent} & \textbf{Performance \mbox{Measure}} & \textbf{Environment} & \textbf{Actuators} & \textbf{Sensors} \\
     \hline
-    OurAgent & Own discounted utility at the end of the negotiation session & Negotiation space defined by Genius & Java classes that offer new bids to the opponent and the possibility to \mbox{accept/reject} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
+    BOA Agent & Own $($versus \mbox{opponents}$)$ discounted final utility & Negotiation space defined by Genius, \mbox{Opponents} & New bid offering, \mbox{Accepting/rejecting} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
     \hline
     \end{tabular}
     
