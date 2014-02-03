@@ -17,6 +17,8 @@ import negotiator.boaframework.OfferingStrategy;
 public class Group7_AS extends AcceptanceStrategy {
 	
 	private Helper ourHelper;
+	
+	public Group7_AS() { }
 
 	public Group7_AS(NegotiationSession negoSession, OfferingStrategy strat) {
 		this.negotiationSession = negoSession;

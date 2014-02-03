@@ -21,6 +21,8 @@ public class Helper {
 		return osToHelper.get(os);
 	}
 	
+	public Helper() { }
+	
 	private BidDetails kalaiPoint;
 	private BidDetails nashPoint;
 	private NegotiationSession session;
