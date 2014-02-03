@@ -5,7 +5,7 @@ The agents first bid is determined by the method \texttt{determineOpeningBid()}.
 
 After determining our opening bid and receiving the initial bid from the opponent, our agent continues by generating random bids. These random bids are generated within a small own-utility range. The (average) upperbound of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
 
-We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
+We set the parameters such that in the beginning of the negotiation bids are generated around an utility of $1$ $($in practice this is $[0.98, 1.0])$ and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ $($ in practice this is $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
 
 \subsubsection{Second Phase}
 
@@ -16,7 +16,7 @@ However, as noted in the referenced paper, we should not play too nice,
 and try to exploit other opponents. We use the following strategy. \\
 
 We use the distance to the \emph{Kalai-Smorodinsky} point as reference to calculate
-the amount of concessions. When conceding, we aim for this point.
+the amount of concession for both the opponent as our own agent. When conceding, we aim for this point.
 We decided to use this distance instead of our own utility, since when looking
 at our own utility for offers of the opponent, we can hardly see whether or not
 our opponent is conceding (since these utilities will have large variation).
