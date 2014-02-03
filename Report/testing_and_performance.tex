@@ -49,18 +49,18 @@ The distance to the Nash point, Pareto frontier and Kalai point are especially i
 
 \subsection{Performance In Different Domains}
 In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition IS prof domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}.
-\begin{table}
+\begin{table}[H]
   \centering
   \small
   \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    ~ & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    ~                     & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
     \hline
-    HardHeaded & 0.807 & 0.750 & 0.142 & 0.032 & 0.150 \\
-  Gahboninho & 0.731 & 0.807 & 0.065 & 0.004 & 0.165 \\
-  The Negotiator & 0.694 & 0.646 & 0.288 & 0.000 & 0.220 \\
-  Self & 0.744 & 0.712 & 0.165 & 0.012 & 0.179 
+    \emph{HardHeaded}     & 0.807 & 0.750 & 0.142 & 0.032 & 0.150 \\ \hline
+    \emph{Gahboninho}     & 0.731 & 0.807 & 0.065 & 0.004 & 0.165 \\ \hline
+    \emph{The Negotiator} & 0.694 & 0.646 & 0.288 & 0.000 & 0.220 \\ \hline
+    \emph{Self}           & 0.744 & 0.712 & 0.165 & 0.012 & 0.179 \\ \hline
   \end{tabular}
-
+ \caption{Performance of our agent using a set of diverse domains (Runtime: $30$s) \label{table:anac2011-domains}}
 \end{table}
 
 
