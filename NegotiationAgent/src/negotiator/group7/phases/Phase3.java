@@ -17,6 +17,7 @@ public class Phase3 extends Phase {
 	public Phase3(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		ourHelper = Helper.get(negotiationSession);
+		this.phaseStart = phaseStart; 
 	}
 
 	@Override
