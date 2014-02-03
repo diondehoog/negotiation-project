@@ -110,6 +110,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		BidHistory bhOpp = negotiationSession.getOpponentBidHistory();
 		BidHistory bhOwn = negotiationSession.getOwnBidHistory();
 		
+		// get the distinct bid count of the opponent. If it is low, then the OM is probably not
+		// that reliable
+		//int distinctOppBids = Helper.getDistinctBids(bhOpp).size();
+		
 		// only look within certain time window
 		if (window < 1.0) {
 			bhOpp = bhOpp.filterBetweenTime(window, time);
