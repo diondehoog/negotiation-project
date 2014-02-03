@@ -170,8 +170,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
-		Boolean wasReliableNullable = Helper.isOpponentModelReliable();
-		boolean wasReliable = wasReliableNullable == null ? false : wasReliableNullable;
+		boolean wasReliable = Helper.isOpponentModelReliable();
 		Helper.setOpponentModelReliable(distinctBids.size() > opponentModelReliableThreshold);
 		if (!wasReliable && Helper.isOpponentModelReliable())
 			Log.newLine("The opponent model is now assumed to be reliable");
