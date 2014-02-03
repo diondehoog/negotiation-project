@@ -1,24 +1,39 @@
 After designing and implementing our agent the BOAconstructor it is time to put it to the test in various situations. In the next two subsections we quantify the performance of our agent. We present the results of a wide range of tests and discuss the effeciency of the agent in terms of reaching \emph{Nash solutions} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
 
-\subsection{Performance against ANAC 20122 agents}
+\subsection{Performance against \texttt{ANAC 2011} agents}
 
-In this part we compare our agent to three of the agents that attended in the ANAC 2011 competitio: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. In addition to those agents we also negotiate with ourself. 
+In this part we compare our agent to three of the agents that attended in the ANAC 2011 competitio: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. In addition to those agents we also negotiate with ourself. The results have been obtained by running a tournament using multiple utility profiles for the Party domain and setting the negotiation time to $30$ seconds. \\
 
 \begin{table}
+	\centering
 	\small
     \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    ~              & Average Discounted Util & Average Time Agreement & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    ~              & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
     \hline
-    HardHeaded     & 0.858                & 0.851               & 0.101              & 0.007                & 0.085               \\ \hline
-    Gaber          & 0.890                & 0.882               & 0.059              & 0.006                & 0.054               \\ \hline
-    The Negotiator & 0.800                & 0.772               & 0.107              & 0.000                & 0.109               \\ \hline
-    Self           & 0.877                & 0.841               & 0.087              & 0.005                & 0.080               \\ 
+    \emph{HardHeaded}		& 0.858  & 0.927  & 0.102  & 0.017  & 0.084   \\ \hline
+    \emph{Gahboninho}   	& 0.887  & 0.918  & 0.032  & 0.001  & 0.035   \\ \hline
+    \emph{The Negotiator} 	& 0.725  & 0.871  & 0.050  & 0.003  & 0.052   \\ \hline
+    \emph{Self}             & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ 
     \hline
     \end{tabular}
-    \caption{Performance of our agent against ANAC 2011 agents (Runtime: $30$s)}
+    \caption{Performance of our agent against \texttt{ANAC 2011} agents (Runtime: $30$s) \label{table:anac2011-results}}
 \end{table}
 
-\subsection{Choosing Different Acceptactance Strategies}
+From the results in Table~\ref{table:anac2011-results} we notice a fairly high average discounted utility against the other agents. Regarding the effiency of the negotiation we observe that the average distance to the \emph{Pareto Optimal Frontier} upon agreement is very small. When playing against \texttt{The Negotiator} we see than on average the agreement lies on the frontier.
+
+\todo{Check these conclusions!}
+
+\subsection{Choosing Different Acceptance Strategies}
+
+The next test consists of running our agent with varying \emph{acceptance strategies}. We perform those test so we are able to compare our acceptance strategy with other available ones (our strategy is discussed in Section~\ref{sec:strategyAS}). Again these tests are performed by starting a small tournament. \\
+
+\todo{Insert results and discuss them...}
 
 \subsection{Comparison with HardHeaded Frequency Model}
+
+\subsection{How Generic is our Agent?}
+
+In the previous tests we only observed the behaviour of the agent on the party domain. In order to test how generic our agent is we also perform a number of tests on other scenarios. In addition to different domains we also incorporate \emph{discounts} for the utility. \\
+\todo{Insert test results and discuss results...}
+
 
