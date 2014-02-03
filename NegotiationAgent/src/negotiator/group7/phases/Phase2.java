@@ -82,7 +82,6 @@ public class Phase2 extends Phase{
 		ourUtilitySpace = negotiationSession.getUtilitySpace();
 		
 		updateBidSpace();
-		
 	}
 	
 	@Override
@@ -96,7 +95,7 @@ public class Phase2 extends Phase{
 		
 		// Last bid of the opponent
 		BidDetails bidB = negotiationSession.getOpponentBidHistory().getLastBidDetails();
-		// Calculate our utility and that of the opponent
+		// Calculate our utility and that of the opponent of the last bid
 		Double[] utilities = {bidB.getMyUndiscountedUtil(), opponentModel.getBidEvaluation(bidB.getBid())};
 		// Create BidPoint using the opponents bid and the two utilities
 		BidPoint bidPointB = new BidPoint(bidB.getBid(), utilities);
@@ -120,6 +119,7 @@ public class Phase2 extends Phase{
 
 		double theirMaxDist = getDistanceToKalaiSmorodinsky(theirBB);
 		double theirDist = ksDist;
+		ourMaxDist = getDistanceToKalaiSmorodinsky(myBB);
 		
 		if (ourDist < -0.05) { // if first time ever
 			ourDist = (ourMaxDist/theirMaxDist)*ksDist; // match their concession
@@ -144,7 +144,9 @@ public class Phase2 extends Phase{
 			}
 		}
 		
-		ourDist += (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist); // add their difference distance to our distance
+		double dDist = (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist);
+		Log.vln("x: " + String.format("%5.4f", x) + " Ddist: " + String.format("%5.4f",dDist));
+		ourDist += dDist; // add their difference distance to our distance
 		
 		if (ourDist > ourMaxDist) {
 			ourDist = ourMaxDist;
@@ -153,7 +155,7 @@ public class Phase2 extends Phase{
 		double W = ourDist/ourMaxDist;
 		//double W = theirDist/theirMaxDist;
 		
-		//Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
+		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
 		
 		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
@@ -180,7 +182,7 @@ public class Phase2 extends Phase{
 					minDist = dist;
 					closest = B;
 				}
-				Log.vln("Finding pareto bid...");
+				//Log.vln("Finding pareto bid...");
 			}
 			
 			if (closest == null) {
@@ -201,7 +203,7 @@ public class Phase2 extends Phase{
 		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		for (BidDetails B2: bidsInRange) {
-			Log.vln("Finding biddetails...");
+			//Log.vln("Finding biddetails...");
 			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
 				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
 					return B2;
@@ -325,15 +327,10 @@ public class Phase2 extends Phase{
 	
 	//Returns the average difference to the KS between the N last bids
 	public double getAvgDifferenceKS (int N) {
-		
-		// [1 3 4 5 3] 	length = N
-		// [ 2 1 1 2 ]	diff list, length N-1 
-		
 		int curSize = distOpponentBidsToKS.size();
 
-//TODO waarom dan <= 2 ipv <2
 		// No difference is less than 2 values
-		if (curSize <= 2) return 0.0;
+		if (curSize < 2) return 0.0;
 		
 		// Determine lower bound
 		int lower = 0;
@@ -344,23 +341,12 @@ public class Phase2 extends Phase{
 		List<Double> sub = distOpponentBidsToKS.subList(lower, curSize-1);
 		double[] diffs = new double[sub.size()-1];
 		
+		double val2 = sub.get(0) - sub.get(sub.size()-1);
+		
 		// Calculate differences, diffs goes from old [0] to new [sub.size-1] bids
 		for (int i = 0; i < sub.size()-1; i++) {
-			Log.vln("Runia loop 2");
 			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
-		
-		// Perform smoothing using convolution
-		/*double[] k = {1.0/6.0, 4.0/6.0, 1.0/6.0};
-		double[] smooth;
-		
-		try {
-			smooth = Convolution.apply(diffs, k, "valid");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			smooth = null;
-			e.printStackTrace();
-		}*/
 		
 		double val = 0;
 		
@@ -368,7 +354,7 @@ public class Phase2 extends Phase{
 			Log.vln("Some loop");
 			val += diffs[j];
 		}
-		
+		//System.out.println("val1/val2: " + val + ", " + val2);
 		return val/(double)diffs.length;
 	}
 	
@@ -394,23 +380,25 @@ public class Phase2 extends Phase{
 	 * For e = 1 it will behave as a linear agent
 	 * For e > 1 it will behave as a conceder (it will give low utilities faster than linear)                 
 	 */
-	public double f(double t)
-	{
-		if (e == 0)
-			return k;
-		if (t < this.phaseStart)
-			return 1;
-		if (t > this.phaseEnd)
-			return 1;
+	
+//TODO Weggooien
+//	public double f(double t)
+//	{
+//		if (e == 0)
+//			return k;
+//		if (t < this.phaseStart)
+//			return 1;
+//		if (t > this.phaseEnd)
+//			return 1;
 		
 		// scale t
-		double torig = t;
-		t = (t - this.phaseStart) * (this.phaseEnd -  this.phaseStart);
+//		double torig = t;
+//		t = (t - this.phaseStart) * (this.phaseEnd -  this.phaseStart);
 		//Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
 		
-		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
-		return ft;
-	}
+//		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
+//		return ft;
+//	}
 
 	/**
 	 * Makes sure the target utility with in the acceptable range according to the domain
@@ -418,12 +406,11 @@ public class Phase2 extends Phase{
 	 * @param t
 	 * @return double
 	 */
-	public double p(double t) {
+//	public double p(double t) {
 		
-		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
-		//Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
-		return pt;
-	}
+//		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
+//		return pt;
+//	}
 	
 	/**
 	 * This method returns the average difference over the last n bids.
@@ -432,8 +419,6 @@ public class Phase2 extends Phase{
 	 * @param n
 	 * @return
 	 */
-	
-	
 	
 	public BidDetails getNearestBidDetailsFromUtilities(double UA, double UB, double maxR) {
 
@@ -446,7 +431,7 @@ public class Phase2 extends Phase{
 			curR /= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-			Log.vln("Making radius smaller...");
+			//Log.vln("Making radius smaller...");
 		}
 		
 		while (bidsInRange.size() < 1) {
@@ -463,7 +448,7 @@ public class Phase2 extends Phase{
 		double minDist = 2.0;
 		BidDetails bestBid = null;
 		for (BidDetails B : bidsInRange) { // look for bid with smallest euclidean distance
-			Log.vln("Loop over bid too find nearest bid");
+			//Log.vln("Loop over bid too find nearest bid");
 			double myU = B.getMyUndiscountedUtil();
 			double theirU = opponentModel.getBidEvaluation(B.getBid());
 			double dist = Math.sqrt(Math.pow(UA-myU,2) + Math.pow(UB-theirU,2));
@@ -530,7 +515,7 @@ public class Phase2 extends Phase{
 		// TODO: Smooth the values
 		
 		for (int i = 0; i < n-1; i++) {
-			Log.vln("Another runialoop");
+			//Log.vln("Another runialoop");
 			//BidDetails bd = h.get(i);
 			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
 			vals[i] = h.get(i).getMyUndiscountedUtil() - h.get(i+1).getMyUndiscountedUtil();
@@ -540,7 +525,7 @@ public class Phase2 extends Phase{
 		avg = avg/((double)n-1.0);
 		
 		
-		Log.sln("Average concede over last " + n + " bids = " + avg);
+		//Log.sln("Average concede over last " + n + " bids = " + avg);
 /*
 		double[] smooth = new double[n];
 		
@@ -563,7 +548,8 @@ public class Phase2 extends Phase{
 	
 	public BidPoint getKalaiSmorodisky () {
 		// Build bidSpace
-		BidSpace bs = getCurrentBidSpace();
+		//BidSpace bs = getCurrentBidSpace();
+		BidSpace bs = bidSpace;
 		
 		BidPoint ks;
 		try {
@@ -599,26 +585,25 @@ public class Phase2 extends Phase{
 		
 	}
 	
+	//updates BidSpace: 
 	public void updateBidSpace () {
 		
 		//ourUtilitySpace
-		UtilitySpace utilitySpaceOpponent = 	opponentModel.getOpponentUtilitySpace();
+		UtilitySpace utilitySpaceOpponent = opponentModel.getOpponentUtilitySpace();
 		
-		// BidSpace build from ours/opponents 
-		BidSpace bs;
+		// BidSpace is build from ours and opponents 
 		try {
 			// Compute the bid space from our and their utility space
 			bidSpace = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public BidSpace getCurrentBidSpace () {
-		return bidSpace;
-	}
+
+//TODO Weggooien
+//	public BidSpace getCurrentBidSpace () {
+//		return bidSpace;
+//	}
 
 	
 
