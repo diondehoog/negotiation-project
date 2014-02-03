@@ -9,7 +9,7 @@ We set the parameters such that in the beginning bids are generated around an ut
 
 \subsubsection{Second Phase}
 
-For phase $2$ we decided to implement the \emph{Tit-for-Tat} strategy \ref{titfortat}.
+For phase $2$ we decided to implement the \emph{Tit-for-Tat} strategy \cite{titfortat}.
 This because it works fairly well against different agents, since you will play
 hard against hardheaded opponents and more nice against conceding agents.
 However, as noted in the referenced paper, we should not play too nice,
@@ -43,7 +43,7 @@ as the opponent utility, to ensure we don't concede too much by accident.
 
 \subsubsection{Third Phase}
 
-The third phase only consists of the very last part of the negotiation session (usually from $t = 0.95$). The strategy that is employed here relies on the opponent model strategy. Our method \texttt{getOpponentModel()} from the OMS returns whether the opponent is assumed to be \emph{HardHeaded} or \emph{Conceder}. Based on what is returned by the OMS the next bid is determined as described below.
+The third phase only consists of the very last part of the negotiation session (usually from $t=0.95$). The strategy that is employed here relies on the opponent model strategy. Our method \texttt{getOpponentModel()} from the OMS returns whether the opponent is assumed to be \emph{HardHeaded} or \emph{Conceder}. Based on what is returned by the OMS the next bid is determined as described below.
 
 \begin{description}
   \item[Opponent is assumed to be Conceder] \hfill \\
