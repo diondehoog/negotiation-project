@@ -34,6 +34,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private final double leftMargin = 0.10;
 	private final int maxLearnValueAddition = 75;
 	
+	private int opponentModelReliableThreshold;
+	
 	public Group7_FrequencyOM() {
 		super();
 		Helper.setOpponentModel(this);
@@ -45,6 +47,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	 */
 	@Override
 	public void init(NegotiationSession negotiationSession, HashMap<String, Double> parameters) throws Exception {
+		super.init(negotiationSession, parameters);
 		this.negotiationSession = negotiationSession;
 		if (parameters != null && parameters.get("l") != null) {
 			learnCoef = parameters.get("l");
@@ -55,6 +58,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 		initializeModel();
 		Helper.setOpponentModel(this);
 		Helper.setSession(negotiationSession);
+		
+		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.03);
 	}
 	
 	private void initializeModel(){
@@ -138,8 +143,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
 		}
 		
+		List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		try {
-			List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
 			double expectedUtil = ExpectedNewBidUtil();
 			int actualLearnRate = learnValueAddition;
@@ -165,6 +170,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
+		Boolean wasReliableNullable = Helper.isOpponentModelReliable();
+		boolean wasReliable = wasReliableNullable == null ? false : wasReliableNullable;
+		Helper.setOpponentModelReliable(distinctBids.size() > opponentModelReliableThreshold);
+		if (!wasReliable && Helper.isOpponentModelReliable())
+			Log.newLine("The opponent model is now assumed to be reliable");
 	}
 	
 	private void UpdateValues(BidDetails oppBid, int learnRate) throws Exception
