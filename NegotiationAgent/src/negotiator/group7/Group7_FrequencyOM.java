@@ -27,9 +27,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 	private int learnValueAddition;
 	private int amountOfIssues;
 	
-	private final double meanBidSkip = 3d;
+	private final double meanBidSkip = 1D;
 	private final double rightMargin = 0.05;
 	private final double leftMargin = 0.10;
+	private final double mu = 0.6;
+	private final double sigma = 0.019;
 	private final int maxLearnValueAddition = 150;
 	
 	private int opponentModelReliableThreshold;
@@ -212,10 +214,43 @@ public class Group7_FrequencyOM extends OpponentModel {
 		// The expected minimum utility is a function of the number of different offers we have received and the number 
 		//of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
 		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
-		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
-		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
+		double distinctBidCount = (double)distinctBids.size() * meanBidSkip;
+		//double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
+		//return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
+		double percentageOfBidsSeen = 1D - (distinctBidCount * meanBidSkip / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids()));
+		return Math.min(normInverseCdf(percentageOfBidsSeen, mu, sigma), 1D);
 	}
-
+	
+//	private static double normcdf(double x, double mu, double sigmaSquared) {
+//		return 0.5 * (1 + erf((x - mu)/ Math.sqrt(2 * sigmaSquared)));
+//	}
+//	/**
+//	 * 
+//	 */
+//	private static double erf(double x) {
+//		// Approximation of the erf function (from wikipedia: http://en.wikipedia.org/wiki/Error_function)
+//		double a1 = 0.278393, a2 = 0.230389, a3 = 0.000972, a4 = 0.078108;
+//		return 1D - (1D/Math.pow(1 + a1 * x + Math.pow(a2 * x, 2) + Math.pow(a3 * x, 3) + Math.pow(a4 * x, 4), 4));
+//	}
+	
+	private static double normInverseCdf(double p, double mu, double sigmaSquared) {
+		double ie  = inverseErf(2D * p - 1D);
+		//Log.dln("p = " + p + ", inverseErf=" + ie + ", x = " + (2D * p - 1D));
+		return mu + Math.sqrt(sigmaSquared) * Math.sqrt(2D) * ie;
+	}
+	
+	private static double inverseErf(double x) {
+		double sgn = x < 0 ? -1 : (x == 0 ? 0 : 1);
+		double a = 0.147;
+		double pia = 2D / (Math.PI * a);
+		double logpart = Math.log(1D - Math.pow(x, 2D));
+		return sgn * Math.sqrt(
+				Math.sqrt( Math.pow(pia + logpart/2D, 2D) - (logpart/ a) ) - 
+				(pia + (logpart/2D))
+				);
+	}
+	
+	
 	@Override
 	public double getBidEvaluation(Bid bid) {
 		double result = 0;
