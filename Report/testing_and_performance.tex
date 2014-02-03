@@ -1,1 +1,24 @@
-\todo{a section documenting the tests you performed to improve the negotiation strength of your agent. You must include scores of various tests over multiple sessions that you performed while testing your agent. Describe how you set up the testing situation and how you used the results to modify your agent.}
+After designing and implementing our agent the BOAconstructor it is time to put it to the test in various situations. In the next two subsections we quantify the performance of our agent. We present the results of a wide range of tests and discuss the effeciency of the agent in terms of reaching \emph{Nash solutions} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
+
+\subsection{Performance against ANAC 20122 agents}
+
+In this part we compare our agent to three of the agents that attended in the ANAC 2011 competitio: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. In addition to those agents we also negotiate with ourself. 
+
+\begin{table}
+	\small
+    \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+    ~              & Average Discounted Util & Average Time Agreement & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \hline
+    HardHeaded     & 0.858                & 0.851               & 0.101              & 0.007                & 0.085               \\ \hline
+    Gaber          & 0.890                & 0.882               & 0.059              & 0.006                & 0.054               \\ \hline
+    The Negotiator & 0.800                & 0.772               & 0.107              & 0.000                & 0.109               \\ \hline
+    Self           & 0.877                & 0.841               & 0.087              & 0.005                & 0.080               \\ 
+    \hline
+    \end{tabular}
+    \caption{Performance of our agent against ANAC 2011 agents (Runtime: $30$s)}
+\end{table}
+
+\subsection{Choosing Different Acceptactance Strategies}
+
+\subsection{Comparison with HardHeaded Frequency Model}
+
