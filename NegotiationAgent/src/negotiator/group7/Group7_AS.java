@@ -125,7 +125,8 @@ public class Group7_AS extends AcceptanceStrategy {
 		double range = 0.005;
 		
 		// adjust ourWorst so that it can never go lower than the line from 0.9 at t=0 to 0.6 at t=1
-		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal);
+		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal) - (0.05 * time);
+		Log.hln(Log.format(ourWorst) + " ; " +Log.format ((1 - time) * -capWorstSlope + capWorstMinimal));
 		
 		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
 		double acceptCurve = getAcceptCurveValue(time);
@@ -177,6 +178,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * If he bids higher than our worst, we will simply accept right away
 		  * and since we don't go down with our utility that quickly, this should work fine
 		  * Also, this value is capped above some line (see comment for 'ourWorstCapped')
+		  * Also, this capped value has a time dependent conceding factor
 		  * -------------------------------------------------------------- */
 		else if (hisLast > ourWorstCapped) 
 		{
