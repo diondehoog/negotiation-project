@@ -22,7 +22,7 @@ public class Phase3 extends Phase {
 	@Override
 	public BidDetails determineNextBid() {
 		
-		int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
+		//int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
 
 		Random randgen = new Random();
 		BidDetails fallback;
@@ -44,7 +44,8 @@ public class Phase3 extends Phase {
 				if (ourHelper.getBidsLeft() == null || ourHelper.getBidsLeft() > 3) {
 					u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
 				} else {
-					u = randgen.nextDouble() * 0.1 + 0.6;
+					Log.newLine("\n Panic!! Conceding faster..\n");
+					u = randgen.nextDouble() * 0.2 + 0.5;
 				}
 				Range r = new Range(u - 0.01, u + 0.01);
 				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
