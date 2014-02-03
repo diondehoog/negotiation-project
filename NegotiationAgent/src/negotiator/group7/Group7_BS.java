@@ -99,10 +99,10 @@ public class Group7_BS extends OfferingStrategy {
 		ourHelper.setSession(negoSession);
 		
 		if (parameters.get("phase2") != null)
-			phaseBoundary[0] = parameters.get("phase2");
+			phaseBoundary[0] = parameters.get("phase2"); // used!!
 		
 		if (parameters.get("phase3") != null)
-			phaseBoundary[1] = parameters.get("phase3");
+			phaseBoundary[1] = parameters.get("phase3"); // used!!
 
 		if (parameters.get("phase1lowerbound") != null)
 			phase1LowerBound = parameters.get("phase1lowerbound");

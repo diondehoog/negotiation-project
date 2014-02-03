@@ -25,6 +25,8 @@
 			<parameter name="concedeFactor" default="0.3" description="amount to concede"/>
 			<parameter name="concedeSteps" default="10.0" description="how many steps it takes to concede"/>
 			<parameter name="discount" default="0.0" description="whether to adapt strategy to discounts"/>
+			<parameter name="phase2" default="0.1" description="when to start phase 2?"/>
+			<parameter name="phase3" default="0.95" description="when to start phase 3?"/>
 		</biddingstrategy>
 	</biddingstrategies>
 	<acceptanceconditions>
@@ -46,8 +48,8 @@
 			<parameter name="timeWindow" default="0.2" description="how big is the time window in which to search for our/his best/worst bids? [=timeWindow]"/>
 			<parameter name="capWorstSlope" default="-0.3" description="the slope from t=0 to t=1 with which to cap our worst bid utility [=capWorstSlope]"/>
 			<parameter name="capWorstMinimal" default="0.6" description="the minimal value that our worst utility should be, otherwise capped [=capWorstMinimal]"/>
-			<parameter name="acceptCurveStart" default="0.8" description="the starting value of the accept curve if type == 1. Otherwise, this is the percentage between 1.0 and the value the curve has to approach that the curves starts at. If 0.8 and type is 3 (kalai), then start is 0.8 + 0.2 * kalai [=acceptCurveStart]"/>
-			<parameter name="acceptCurveApproach" default="0.6" description="the value that the accept curve will approach if type == 1 [=acceptCurveApproach]"/>
+			<parameter name="acceptCurveStart" default="1.0" description="the starting value of the accept curve if type == 1. Otherwise, this is the percentage between 1.0 and the value the curve has to approach that the curves starts at. If 0.8 and type is 3 (kalai), then start is 0.8 + 0.2 * kalai [=acceptCurveStart]"/>
+			<parameter name="acceptCurveApproach" default="0.8" description="the value that the accept curve will approach if type == 1 [=acceptCurveApproach]"/>
 			<parameter name="acceptCurveType" default="2" description="1 = static, surve simply reaches the 'acceptCurveApproach' value and starts at 'acceptCurveStart'. 2 = curve approach avg of 1.0 and first bid opponent. 3 = curve approach kalai. 4 = curve approach nash. [=acceptCurveType]"/>
 			<parameter name="percentDurationWeight" default="0.25" description="how much the duration of the last bid weighs in with the current running average [=percentDurationWeight]"/>
 			<parameter name="panicConcede" default="0.05" description="amount of utility we allow ourself to concede from opponents best bid during panic mode (from time window) [=panicConcede]"/>
