@@ -1,7 +1,6 @@
 package negotiator.group7.phases;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import misc.Range;
@@ -12,45 +11,19 @@ import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
-import negotiator.group7.Convolution;
-import negotiator.group7.Log;
 import negotiator.group7.Helper;
-import negotiator.group7.OpponentBidCompare;
-import negotiator.group7.OpponentType;
-import negotiator.group7.OpponentTypeEstimator;
 import negotiator.utility.UtilitySpace;
 
-public class Phase2 extends Phase{
-	private double tft1;
-	private double tft2;
-	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
-	private double k ;
-	/** Maximum target utility */
-	private double Pmax;
-	/** Minimum target utility */
-	private double Pmin;
-	/** Concession factor */
-	private double e;
-	
-	/** Phase boundaries */
-	private double[] phaseBoundary;
-	private double   phase2LowerBound;
-	private double   phase2range;
-	private double   lastWantedUtil = 1;
-	private double   lastWantedUtilOpp = 0;
-	private double 	 lastDistance2Kalai = 0;
-	
+public class Phase2 extends Phase {
+
 	/** Initialize variables */
 	private double Ppareto = 0.5; // probability of offering pareto
 	private int averageOver = 5; // how many bids to average over to determine concession of opponent
 	private double niceFactor = 0.33; // when opponent concedes, their concession is multiplied by this
 	private double Pconcede = 0.05; // probability of conceding to make opponent happy
 	private double concedeFactor = 0.3; // amount of distance to concede to KS
-	
-//TODO explain these two
 	private int concedeSteps = 10; // concession steps taken after each other
-	
-	private int concedeStep = -1;
+	private int concedeStep = -1; // current concession step
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
@@ -64,18 +37,13 @@ public class Phase2 extends Phase{
 	private double ourDist = -1.0;
 	private double ourMaxDist = -1.0;
 	
+	private BidPoint ks = null;
+	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 			double Ppareto, int averageOver, double niceFactor, double Pconcede, double concedeFactor, int concedeSteps, 
 			double k, double e, double[] phaseBoundary, double phase2LowerBound, double phase2range,
 			SortedOutcomeSpace outcomespace) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
-		this.tft1 = tft1;
-		this.tft2 = tft2;
-		this.k = k;
-		this.e = e;
-		this.phaseBoundary = phaseBoundary;
-		this.phase2LowerBound = phase2LowerBound;
-		this.phase2range = phase2range;
 		this.outcomespace = outcomespace;
 		
 		// Set our utility space once
@@ -90,248 +58,77 @@ public class Phase2 extends Phase{
 		// Update bid space every iteration
 		updateBidSpace();
 		
-		// By default return best current bid
-		BidDetails nextBid = negotiationSession.getOwnBidHistory().getBestBidDetails();
-		
 		// Last bid of the opponent
-		BidDetails bidB = negotiationSession.getOpponentBidHistory().getLastBidDetails();
-		// Calculate our utility and that of the opponent of the last bid
-		Double[] utilities = {bidB.getMyUndiscountedUtil(), opponentModel.getBidEvaluation(bidB.getBid())};
-		// Create BidPoint using the opponents bid and the two utilities
-		BidPoint bidPointB = new BidPoint(bidB.getBid(), utilities);
+		BidDetails lastBid = negotiationSession.getOpponentBidHistory().getLastBidDetails();
+		BidPoint lastBidPoint = getBidPointFromBidDetails(lastBid);
 		
 		// Calculate distance between last opponents bid to estimated KS
-		double ksDist = getDistanceToKalaiSmorodinsky(bidPointB);
+		double ksDist = ks.getDistance(lastBidPoint);
 		distOpponentBidsToKS.add(ksDist);
 		
-		//System.out.println("Opponents distance to KS point = " + ksDist);
-		
-		double x = getAvgDifferenceKS(averageOver);
-		//System.out.println("Average difference to KS over last 5 bids = " + x);
-		
+		double avg = getAvgDifferenceKS(averageOver);
 		
 		UtilitySpace utilitySpaceOpponent = opponentModel.getOpponentUtilitySpace();
 		
 		BidPoint myBB = getBestBidPointFromUtilitySpace(ourUtilitySpace);
 		BidPoint theirBB = getBestBidPointFromUtilitySpace(utilitySpaceOpponent);
 		BidPoint ks = getKalaiSmorodisky();
-		
 
-		double theirMaxDist = getDistanceToKalaiSmorodinsky(theirBB);
-		double theirDist = ksDist;
-		ourMaxDist = getDistanceToKalaiSmorodinsky(myBB);
+		double theirMaxDist = ks.getDistance(theirBB);
+		ourMaxDist = ks.getDistance(myBB);
 		
 		if (ourDist < -0.05) { // if first time ever
 			ourDist = (ourMaxDist/theirMaxDist)*ksDist; // match their concession
-			//ourDist = getDistanceToKalaiSmorodinsky(myBB);
-			ourMaxDist = getDistanceToKalaiSmorodinsky(myBB);
+			ourMaxDist = ks.getDistance(myBB); // find our max distance to kalai
 		}
 		
-		
-		// ourDist = theirDist; // just mirror the opponent bid 
-		
-		if ((concedeStep == -1)&&(Math.random()<this.Pconcede)) {
+		double deltaDist = 0; 
+		double concedestep = 0;
+		if ((concedeStep == -1) && (Math.random()<this.Pconcede)) { // sometimes randomly concede
 			concedeStep = 1;
 		}
-		double dDist = 0;
-		double xconcede = 0;
-		if (concedeStep > 0) {
-			Log.vln("Concede! Just because we are nice. :) Step: " + concedeStep);
-			xconcede = concedeStep/concedeSteps*concedeFactor;
+		if (concedeStep > 0) { // concede
+			concedestep = concedeStep/concedeSteps*concedeFactor;
 			concedeStep++;
 			if (concedeStep >= this.concedeSteps) {
 				concedeStep = -1;
-				for (int i = 1; i < 10; i++) {
-					dDist += i/concedeSteps*concedeFactor*(ourMaxDist/theirMaxDist);
+				for (int i = 1; i < 10; i++) { // walk back after conceding
+					deltaDist += i/concedeSteps*concedeFactor*(ourMaxDist/theirMaxDist);
 				}
 			}
 		}
 		
-		dDist += (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist);
-		Log.vln("x: " + String.format("%5.4f", x) + " Ddist: " + String.format("%5.4f",dDist));
-		ourDist += dDist; // add their difference distance to our distance
+		// play tit for tat and concede sometimes
+		deltaDist += (avg*niceFactor-concedestep)*(ourMaxDist/theirMaxDist);
+		ourDist += deltaDist; // add their difference distance to our distance
 		
-		if (ourDist > ourMaxDist) {
+		if (ourDist > ourMaxDist) 
 			ourDist = ourMaxDist;
-		}
+		if (ourDist < 0) 
+			ourDist = 0;
 		
 		double W = ourDist/ourMaxDist;
-		//double W = theirDist/theirMaxDist;
+		BidDetails nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
-		Log.vln("Percentage: " + String.format("%3.2f",W) + " (1 means bad, 0 means KS)");
-		
-		nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
-		
-		// TODO: this might be bad, since we might concede alot because of this! :(
-		if (Math.random()<this.Ppareto) { // 50% of time offer pareto outcome that is closest to our offer
-			Log.vln("Offer pareto, just because were nice! :) ");
-			List<BidPoint> pareto = null;
-			try {
-				pareto = bidSpace.getParetoFrontier();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			BidPoint nextBidPoint = getBidPointFromBidDetails(nextBid);
-			
-			double minDist = 5.0; 
-			BidPoint closest = null;
-			for (BidPoint B : pareto) { // loop over pareto to find closest bid
-				
-				// our utility distance is more important than theirs
-				double dist = getAdjustedDistanceBetweenBidPoints(B, nextBidPoint, 2.0, 1.0);
-				if (dist < minDist) {
-					minDist = dist;
-					closest = B;
-				}
-				//Log.vln("Finding pareto bid...");
-			}
-			
-			if (closest == null) {
-				System.out.println("Closest bid not found");
-			}
-			// TODO: check if our utility is not TOO high
-			
-			nextBid = findBidDetailsFromBidPoint(closest);
-			
+		if (Math.random() < this.Ppareto) { // sometimes offer pareto outcome that is closest to our offer
+			BidPoint closest = FindClosestParetoBidPoint(nextBid);
+			if (closest != null)
+				nextBid = findBidDetailsFromBidPoint(closest);
 		}
-				
 		return nextBid;
-		
 	}
 	
-	public BidDetails findBidDetailsFromBidPoint(BidPoint B) {
-		double curR = 0.005;
-		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
-		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-		for (BidDetails B2: bidsInRange) {
-			//Log.vln("Finding biddetails...");
-			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
-				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
-					return B2;
-		}
-		return null;
-	}
+	// ----------------------- AVERAGING FUNCTION KS ------------------------- //
 	
-	public double getDistanceBetweenBidPoints(BidPoint B1, BidPoint B2) {
-		double U1A = B1.getUtilityA();
-		double U1B = B2.getUtilityB();
-		double U2A = B2.getUtilityA();
-		double U2B = B2.getUtilityB();
-		return Math.sqrt(Math.pow(U1A-U2A,2) + Math.pow(U1B-U2B, 2));
-	}
-	
-	public double getAdjustedDistanceBetweenBidPoints(BidPoint B1, BidPoint B2, double W1, double W2) {
-		double U1A = B1.getUtilityA();
-		double U1B = B2.getUtilityB();
-		double U2A = B2.getUtilityA();
-		double U2B = B2.getUtilityB();
-		return Math.sqrt(W1*Math.pow(U1A-U2A,2) + W2*Math.pow(U1B-U2B, 2));
-	}
-	
-	public BidDetails getBidDetailsFromBidPoint(BidPoint A) { // this function does not work :(
-		Bid B = A.getBid();
-		if (B == null) {
-			System.out.println("JA DAS NULL HE!"); // jammer genius
-		}
-		return getBidDetailsFromBid(B);
-	}
-	
-	public BidDetails getBidDetailsFromBid(Bid B) {
-		BidDetails C = null;
-		try {
-			C = new BidDetails(B, ourUtilitySpace.getUtility(B));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return C;
-	}
-	
-	public BidDetails interpolateBidPoints(BidPoint B1, BidPoint B2, double W1) {
-		double U1A = B1.getUtilityA();
-		double U1B = B2.getUtilityB();
-		double U2A = B2.getUtilityA();
-		double U2B = B2.getUtilityB();
-		double wantedUtilA = U1A*(1-W1) + U2A*W1;
-		double wantedUtilB = U1B*(1-W1) + U2B*W1;
-//trash		ArrayList<Bid> koe = new ArrayList<Bid>();
-		
-		return getNearestBidDetailsFromUtilities(wantedUtilA, wantedUtilB, 0.025);
-		
-		//BidPoint WantedBidPoint = bidSpace.getNearestBidPoint(wantedUtilA, wantedUtilB, 0.75, 0.25, koe);
-		//Bid WantedBid = WantedBidPoint.getBid();
-		//BidDetails WantedBidDetails = new BidDetails(WantedBid, WantedBidPoint.getUtilityA());
-		//return WantedBidDetails;
-	}
-	
-	public BidPoint getBidPointFromBid(Bid A) {
-		Double[] utilities2 = new Double[2];
-		try {
-			utilities2[0] = ourUtilitySpace.getUtility(A);
-			utilities2[1] = opponentModel.getBidEvaluation(A);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new BidPoint(A, utilities2);
-	}
-	
-	public BidPoint getBidPointFromBidDetails(BidDetails A) {
-		return getBidPointFromBid(A.getBid());
-	}
-	
-	public BidPoint getBestBidPointFromUtilitySpace(UtilitySpace A) {
-		
-		Bid BB = null;
-		try {
-			BB = A.getMaxUtilityBid();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Double[] utilities2 = new Double[2];
-		try {
-			utilities2[0] = ourUtilitySpace.getUtility(BB);
-			utilities2[1] = opponentModel.getBidEvaluation(BB);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		BidPoint best = new BidPoint(BB, utilities2);
-		return best;
-	}
-	
-	public double getMaxDistToKalai() {
-		double max = -1.0;
-		for (double dist : distOpponentBidsToKS) {
-			if (dist > max)
-				max = dist;
-		}
-		return max;
-	}
-	
-	public double getDistToKalaiLastNBids (int N) {
-		
-		int curSize = distOpponentBidsToKS.size();
-		
-		// Determine lower bound
-		int lower = 0;
-		if (curSize >= N) lower = curSize-N-1;
-		if (lower < 0) lower = 0;
-		
-		List<Double> sub = distOpponentBidsToKS.subList(lower, curSize-1);
-		
-		return getListAverage(sub);
-	}
-	
+	/**
+	 * Get the average difference between the distances of the opponent bid
+	 * to the kalai point
+	 * @param N amount of bids to average over
+	 * @return average difference (positive if walking away, negative if walking towards KS)
+	 */
 	public double getAvgDifferenceKS (int N) {
-		
 		// [1 3 4 5 3] 	length = N
 		// [ 2 1 1 2 ]	diff list, length N-1 
-		
 		int curSize = distOpponentBidsToKS.size();
 		
 		// No difference is less than 2 values
@@ -349,114 +146,113 @@ public class Phase2 extends Phase{
 		for (int i = 0; i < sub.size()-1; i++) {
 			diffs[i] = sub.get(i+1)-sub.get(i);
 		}
-		
-		// Perform smoothing using convolution
-		/*double[] k = {1.0/6.0, 4.0/6.0, 1.0/6.0};
-		double[] smooth;
-		
-		try {
-			smooth = Convolution.apply(diffs, k, "valid");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			smooth = null;
-			e.printStackTrace();
-		}*/
-		
 		double val = 0;
-		
 		for (int j = 0; j < diffs.length; j++) {
-			val += diffs[j];
+			val += diffs[j]; // sum
 		}
 		
 		return val/(double)diffs.length;
 	}
-	
-	public double getListAverage(List<Double> input) {
-		if (input.isEmpty()) return 0.0;
-		double val = 0;
-		for (Double d : input)	val += d;
-		return val/(double)input.size();
-	}
-	
-	/**
-	 * From [1]:
-	 * 
-	 * A wide range of time dependent functions can be defined by varying the way in
-	 * which f(t) is computed. However, functions must ensure that 0 <= f(t) <= 1,
-	 * f(0) = k, and f(1) = 1.
-	 * 
-	 * That is, the offer will always be between the value range, 
-	 * at the beginning it will give the initial constant and when the deadline is reached, it
-	 * will offer the reservation value.
-	 * 
-	 * For 0 < e < 1 it will behave as a Hardliner / Hardheader / Boulware
-	 * For e = 1 it will behave as a linear agent
-	 * For e > 1 it will behave as a conceder (it will give low utilities faster than linear)                 
-	 */
-	public double f(double t)
-	{
-		if (e == 0)
-			return k;
-		if (t < this.phaseStart)
-			return 1;
-		if (t > this.phaseEnd)
-			return 1;
-		
-		// scale t
-		double torig = t;
-		t = (t - this.phaseStart) * (this.phaseEnd -  this.phaseStart);
-		//Log.dln("Original t:" + torig + ", t between " + this.phaseBoundary[0] + " and " + this.phaseBoundary[1] + ": " + t);
-		
-		double ft = k + (1 - k) * Math.pow(t, 1.0/e);
-		return ft;
-	}
 
+	
+	// ----------------------- BID FINDING FUNCTIONS ------------------------- //
+	
 	/**
-	 * Makes sure the target utility with in the acceptable range according to the domain
-	 * Goes from Pmax to Pmin!
-	 * @param t
-	 * @return double
+	 * Find closest pareto bidpoint
+	 * @param bid - the bid of which we want to find the closest pareto bid for
+	 * @return closest pareto bidpoint
 	 */
-	public double p(double t) {
+	public BidPoint FindClosestParetoBidPoint(BidDetails bid) {
+		List<BidPoint> pareto = null;
+		try {
+			pareto = bidSpace.getParetoFrontier();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		BidPoint nextBidPoint = getBidPointFromBidDetails(bid);
 		
-		double pt = phase2LowerBound + (Pmax - phase2LowerBound) * (1 - f(t));
-		//Log.dln("p is: " + pt + " en dat is " + (pt > 1 ? "KUT" : "NICE"));
-		return pt;
+		double minDist = 5.0; 
+		BidPoint closest = null;
+		for (BidPoint B : pareto) { // loop over pareto to find closest bid
+			// our utility distance is more important than theirs
+			// so we weight our distance with weight 2 and theirs with 1
+			double dist = getAdjustedDistanceBetweenBidPoints(B, nextBidPoint, 2.0, 1.0);
+			if (dist < minDist) {
+				minDist = dist;
+				closest = B;
+			}
+		}
+		return closest;
 	}
 	
 	/**
-	 * This method returns the average difference over the last n bids.
-	 * Can be used to see the behavior the agent over time.
-	 * 
-	 * @param n
-	 * @return
+	 * Interpolates between two bidpoints, and returns the bid details of the interpolated found (nearest) bid
+	 * @param B1 
+	 * @param B2
+	 * @param W1 if 1: B2 is returned, if 0: B1 is returned
+	 * @return found biddetails
 	 */
+	public BidDetails interpolateBidPoints(BidPoint B1, BidPoint B2, double W1) {
+		double U1A = B1.getUtilityA();
+		double U1B = B2.getUtilityB();
+		double U2A = B2.getUtilityA();
+		double U2B = B2.getUtilityB();
+		double wantedUtilA = U1A*(1-W1) + U2A*W1;
+		double wantedUtilB = U1B*(1-W1) + U2B*W1;
+		return getNearestBidDetailsFromUtilities(wantedUtilA, wantedUtilB, 0.025);
+	}
 	
+	/**
+	 * Finds the best bid point in utility space A
+	 * @param A the utility space (can be of our agent or opponent)
+	 * @return best bid point
+	 */
+	public BidPoint getBestBidPointFromUtilitySpace(UtilitySpace A) {
+		Bid BB = null;
+		try {
+			BB = A.getMaxUtilityBid();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Double[] utilities2 = new Double[2];
+		try {
+			utilities2[0] = ourUtilitySpace.getUtility(BB);
+			utilities2[1] = opponentModel.getBidEvaluation(BB);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		BidPoint best = new BidPoint(BB, utilities2);
+		return best;
+	}
 	
-	
+	/** 
+	 * Find the biddetails nearest to these utilities
+	 * @param UA utility of our agent
+	 * @param UB utility of opponent
+	 * @param maxR maximum range
+	 * @return bidDetails of the nearest bid
+	 */
 	public BidDetails getNearestBidDetailsFromUtilities(double UA, double UB, double maxR) {
-
 		double curR = 0.05;
 		// find bids in this range
 		Range r = new Range(UA-curR, UA+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		
-		while (bidsInRange.size() > 500) {
+		while (bidsInRange.size() > 500) { // not too many bids
 			curR /= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		}
-		
-		while (bidsInRange.size() < 50) {
+		while (bidsInRange.size() < 5) { // not enough bids
 			curR *= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		}
-		
 		if (bidsInRange.size() == 0) { // do bid nearest to this utility because there are none
 			return outcomespace.getBidNearUtility(UA);
-		} 
-		//System.out.println("Found: " + bidsInRange.size() + " bids in range " + curR);
+		} 	
 		double minDist = 2.0;
 		BidDetails bestBid = null;
 		for (BidDetails B : bidsInRange) { // look for bid with smallest euclidean distance
@@ -468,153 +264,134 @@ public class Phase2 extends Phase{
 				bestBid = B;
 			}
 		}
-			
 		return bestBid;
 	}
 	
-	/* Decide bid closest to optimal frontier */
-	public BidDetails close2Pareto(double nextBidUtil){ 							
+	// ------------------------- OPPONENT FUNCTIONS -------------------------------------------
 	
-		Range r = new Range(nextBidUtil-phase2range, nextBidUtil+phase2range);
-	
-		Double temp = new Double(nextBidUtil);
-		Double range2 = new Double(phase2range);
-		BidDetails nextBid;
-
-		//Log.vln("I want an utility of: " + temp.toString() + " range: " + range2);
-
-		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-
-		if (bidsInRange.size() == 0) { // do standard bid because we dont have any choices
-	
-			nextBid =  outcomespace.getBidNearUtility(nextBidUtil);
-		
-		} else {
-			OpponentBidCompare comparebids = new OpponentBidCompare();
-			comparebids.setOpponentModel(opponentModel);
-		
-			Collections.sort(bidsInRange, comparebids);
-		
-			//Log.v("Max: " + opponentModel.getBidEvaluation(bidsInRange.get(0).getBid()) + ", ");
-			//Log.vln("Min: " + opponentModel.getBidEvaluation(bidsInRange.get(bidsInRange.size()-1).getBid()));
-			nextBid = bidsInRange.get(0);
-			
-		}
-		
-		return nextBid;
-	}
-	
-	
-	public double getAverageDiffLastNBids (int n) {
-		
-		// Get list of opponent bids sorted on time
-		List<BidDetails> h = negotiationSession.getOpponentBidHistory().sortToTime().getHistory();
-
-		if (n > negotiationSession.getOpponentBidHistory().size()) {
-			// Not enough bids in history! n is set to the size-1
-			n = negotiationSession.getOpponentBidHistory().size()-1;
-		}
-		if (n <= 1) {
-			return 0;
-		}
-		
-		// Save values
-		double[] vals = new double[n];
-		
-		double avg = 0;
-		
-		// TODO: Smooth the values
-		
-		for (int i = 0; i < n-1; i++) {
-			//BidDetails bd = h.get(i);
-			//Log.rln("Bid at time " + bd.getTime() + " has utility " + bd.getMyUndiscountedUtil());
-			vals[i] = h.get(i).getMyUndiscountedUtil() - h.get(i+1).getMyUndiscountedUtil();
-			avg += vals[i];
-		}
-		
-		avg = avg/((double)n-1.0);
-		
-		
-		Log.sln("Average concede over last " + n + " bids = " + avg);
-/*
-		double[] smooth = new double[n];
-		
-		Log.rln("###################################");
-		
-		// Smoothing kernel 
-		double[] kernel = {1.0/6.0, 4.0/6.0, 1.0/6.0};
-		
-		for (int i = 0; i < n; i++) {
-			smooth[i] = Convolution.apply(vals, i, kernel);
-			Log.rln("Value at index = " + i + " has value " + vals[i] + " and after smoothing " + smooth[i]);
-		}
-		
-		
-		//Log.rln("Average concede over last " + n + " bids = " + avg);
-	*/	
-				
-		return avg;
-	}
-	
-	public BidPoint getKalaiSmorodisky () {
-		// Build bidSpace
-		BidSpace bs = getCurrentBidSpace();
-		
-		BidPoint ks;
-		try {
-			ks = bs.getParetoFrontier().get(0); // FALLBACK
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			ks = bs.bidPoints.get(0); // worst fallback ever ?
-		}
-		
-		try {
-			// Calculate Kalai-Smorodinsky
-			ks = bs.getKalaiSmorodinsky();
-			Helper.get(negotiationSession).setKalaiPoint(ks);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return ks;
-	}
-	
-	public double getDistanceToKalaiSmorodinsky (BidPoint input) {
-		
-		// Calculate Kalai-Smorodinsky
-		BidPoint ks = getKalaiSmorodisky();
-		
-		if (ks != null) {
-			// Return the distance from the bid point to the KS
-			return ks.getDistance(input);
-		} else {
-			return 0.0;
-		}
-		
-	}
-	
+	/**
+	 * Updates the bidspace
+	 */
 	public void updateBidSpace () {
-		
-		//ourUtilitySpace
 		UtilitySpace utilitySpaceOpponent = 	opponentModel.getOpponentUtilitySpace();
-		
-		// BidSpace build from ours/opponents 
-		BidSpace bs;
+		// BidSpace build from ours/opponents
 		try {
 			// Compute the bid space from our and their utility space
 			bidSpace = new BidSpace(ourUtilitySpace, utilitySpaceOpponent);
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		ks = getKalaiSmorodisky();
 	}
 	
-	public BidSpace getCurrentBidSpace () {
-		return bidSpace;
+	/**
+	 * Finds the kalai point using the bidspace
+	 * @return
+	 */
+	public BidPoint getKalaiSmorodisky () {
+		// Build bidSpace
+		if (bidSpace == null)
+			updateBidSpace();
+		BidSpace bs = bidSpace;
+		BidPoint ks = null;
+		try {
+			// Calculate Kalai
+			ks = bs.getKalaiSmorodinsky();
+			Helper.get(negotiationSession).setKalaiPoint(ks);	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ks;
 	}
 
+	// --------------------------- DISTANCE FUNCTIONS -------------------------- //
 	
-
+	/**
+	 * Find regular euclidean distance between two bidpoints
+	 * @param B1
+	 * @param B2
+	 * @return
+	 */
+	public double getDistanceBetweenBidPoints(BidPoint B1, BidPoint B2) {
+		double U1A = B1.getUtilityA();
+		double U1B = B2.getUtilityB();
+		double U2A = B2.getUtilityA();
+		double U2B = B2.getUtilityB();
+		return Math.sqrt(Math.pow(U1A-U2A,2) + Math.pow(U1B-U2B, 2));
+	}
+	
+	/**
+	 * Find weighted euclidean distance between B1 and B2.
+	 * @param B1
+	 * @param B2
+	 * @param W1 weight for our utility distance
+	 * @param W2 weight for opponent utility distance
+	 * @return
+	 */
+	public double getAdjustedDistanceBetweenBidPoints(BidPoint B1, BidPoint B2, double W1, double W2) {
+		double U1A = B1.getUtilityA();
+		double U1B = B2.getUtilityB();
+		double U2A = B2.getUtilityA();
+		double U2B = B2.getUtilityB();
+		return Math.sqrt(W1*Math.pow(U1A-U2A,2) + W2*Math.pow(U1B-U2B, 2));
+	}
+	
+	// ------------------ CONVERSION FUNCTIONS --------------------------- //
+	
+	/**
+	 * Searches outcomespace for the biddetails of bidpoint B
+	 * @param B bidpoint 
+	 * @return the biddetails of this bid
+	 */
+	public BidDetails findBidDetailsFromBidPoint(BidPoint B) {
+		double curR = 0.005;
+		Range r = new Range(B.getUtilityA()-curR, B.getUtilityA()+curR);	
+		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+		for (BidDetails B2: bidsInRange) {
+			if (B2.getMyUndiscountedUtil() == B.getUtilityA())
+				if (opponentModel.getBidEvaluation(B2.getBid()) == B.getUtilityB())
+					return B2;
+		}
+		return null;
+	}
+	
+	/**
+	 * Find biddetails from bid
+	 * @param B bid
+	 * @return biddetails
+	 */
+	public BidDetails getBidDetailsFromBid(Bid B) {
+		BidDetails C = null;
+		try {
+			C = new BidDetails(B, ourUtilitySpace.getUtility(B));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return C;
+	}
+	
+	/**
+	 * Finds the bidpoint from the bid A
+	 * @param A bid
+	 * @return bidpoint
+	 */
+	public BidPoint getBidPointFromBid(Bid A) {
+		Double[] utilities2 = new Double[2];
+		try {
+			utilities2[0] = ourUtilitySpace.getUtility(A);
+			utilities2[1] = opponentModel.getBidEvaluation(A);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new BidPoint(A, utilities2);
+	}
+	
+	/**
+	 * Finds the bidpoint from biddetails
+	 * @param A biddetails
+	 * @return bidpoint
+	 */
+	public BidPoint getBidPointFromBidDetails(BidDetails A) {
+		return getBidPointFromBid(A.getBid());
+	}
 }

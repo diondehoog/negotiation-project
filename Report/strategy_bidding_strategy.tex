@@ -47,3 +47,11 @@ public Range getBidRange (double t, double margin) {
 
 The third phase only consists of the very last part of the negotiation session (usually from $t = 0.95$). The strategy that is employed here relies on the opponent model strategy. Our method \texttt{getOpponentModel()} from the OMS returns whether the opponent is assumed to be \emph{HardHeaded} or \emph{Conceder}. Based on what is returned by the OMS the next bid is determined as described below.
 
+\begin{description}
+  \item[Opponent is assumed to be Conceder] \hfill \\
+  In this case the next bid that is offered is the Kalai Point.
+
+  \item[Opponent is assumed to be HardHeaded] \hfill \\
+  Analyzing the opponents behaviour is...\todo{Fix after Olli changed his things...}
+\end{description}
+
