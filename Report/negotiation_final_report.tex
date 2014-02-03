@@ -175,14 +175,14 @@ The first step in designing an agent is to specify the environment as fully as p
     \hline
     \textbf{Agent} & \textbf{Performance \mbox{Measure}} & \textbf{Environment} & \textbf{Actuators} & \textbf{Sensors} \\
     \hline
-    BOA Agent & Own $($versus \mbox{opponents}$)$ discounted final utility & Negotiation space defined by Genius, \mbox{Opponents} & New bid offering, \mbox{Accepting/rejecting} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
+    BOA Agent & Own $($versus opponents$)$ discounted final utility & Negotiation space defined by Genius, \mbox{Opponents} & New bid offering, \mbox{accepting/rejecting} offers & Biddings of the \mbox{opponent} agent \\
     \hline
     \end{tabular}
     
     \caption{PEAS description for our negotiation agent \label{table:peas-description}}
 \end{table}
 
-Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. \todo{Check the PEAS description I came up with and finish the additional description} 
+Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The performance is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two actuators. Firstly, the agent offers a new bid based on the environment. Secondly, the agent can accept or reject a bid of an opponent.  
 
 \subsection{BOA Framework}
 
