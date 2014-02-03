@@ -126,7 +126,7 @@ public class Group7_OMS extends OMStrategy {
 
 		try {
 			// Fetch the bid history of the opponent
-			BidHistory opponentHist = negotiationSession.getOpponentBidHistory();
+			BidHistory opponentHist = negotiationSession.getOpponentBidHistory().filterBetweenTime(0.0, 0.6);
 			
 			// Load the list of distinct bids from the Helper
 			List<Bid> distinctBids = ourHelper.getDistinctBids(opponentHist);
