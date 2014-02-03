@@ -95,10 +95,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-A relatively new and evolving branch of Artificial Intelligence is automated negotiation. In automated negotiation, two or more agents negotiate about a multi-issue problem in order to find a solution that maximizes their utility. The utilities for each possible bid are determined using a human-defined preference profile, which consists of weights for each of the issues and a utility for each possible value of the issues. 
-
-In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:exercises} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. 
-\Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
+\include{introduction}
 
 \newpage
 \tableofcontents
@@ -135,30 +132,27 @@ itself, and we play Boulware vs Conceder and explain the outcome.
 When we play simple agent against itself, we notice the behaviour is quite random.
 This is explained by the code: it always offers a random bid higher than a certain threshold,
 by default this threshold is zero. Therefore it performs a random walk through the 
-bidding space. It's acceptance strategy is as follows: it accepts higher bids with 
-higher probability, and if the deadline is closer it will also accept bids with higher probability.
-It will never accept bids with a utility of zero. The equation that determines the 
+bidding space. It's acceptance strategy is as follows: it calculates a probability for each bid, the higher the bid, the higher the probability. If the deadline is getting closer it will accept all bids with higher probability. It will however never accept bids with a utility of zero. The equation that determines the 
 probability of acceptance is:
 
 \begin{equation}
 P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
 \end{equation}
 
-Where $P$ denotes the chance of acceptance.
+Where $P$ denotes the chance of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0,1]$.
 
-Because of this behaviour 
-we found the average utility playing against itself is around $0.68$, and the
+Because of this behaviour we found the average utility playing against itself is around $0.68$, and the
 time needed to reach an agreement was very short: $0.03$ (averaged
 over 20 negotiations on the party domain).
-This is quite logical, since because both sides offer random bids, it is very soon the
-case that either bid is quite acceptable for the opposing party.
-When this agent negotiates with other agents, it performs horrible, because
-it offers random bids. Smart agents will accept good offers, and deny other offers,
-and because of this the obtained utility for this agent will be quite low.
-We confirm this by letting simple agent play against boulware, here it obtains 
-an average utility of $0.6$ while boulware scores on average $1.0$.
+This is quite logical, since both sides offer random bids, it is the
+case quite soon that either bid has a high probability of acceptance for the opposing party.
+When this agent negotiates with other agents, it performs badly, because
+it offers random bids. Smart agents will accept good offers and deny other offers,
+and because of this the obtained utility for the simple agent will be quite low.
+We confirm this by letting simple agent play against boulware. In these tests the simple agent obtains 
+an average utility of $0.6$ while the boulware agent scores on average $1.0$.
 
-Finally, we play boulware against conceder. A typical negotiation trace is displayed below:
+Finally, we play with the boulware agent against the conceder agent. A typical negotiation trace is displayed below:
 
 %\begin{figure}[ht]
 \begin{center}
@@ -167,12 +161,9 @@ Finally, we play boulware against conceder. A typical negotiation trace is displ
 % \label{fig:pareto} 
 \end{center}
 %\end{figure}
-
-Boulware chooses the best bid for itself, and keeps offering this bid. This agent
-only concedes at the very last moments before the deadline. Conceder on the other hand
-starts conceding directly, conceding more and more with every new bid. 
-We also ran simulations on the party domain using these agents. 
-Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
+In the figure, the green and blue lines are the bidding-traces for respectively the boulware and the conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent
+only concedes at the very last moments before the deadline. The conceder agent on the other hand
+starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
 boulware $0.99$. 
  
 \subsection{PEAS Description}
@@ -184,7 +175,7 @@ The first step in designing an agent is to specify the environment as fully as p
     \hline
     \textbf{Agent} & \textbf{Performance \mbox{Measure}} & \textbf{Environment} & \textbf{Actuators} & \textbf{Sensors} \\
     \hline
-    OurAgent & Own discounted utility at the end of the negotiation session & Negotiation space defined by Genius & Java classes that offer new bids to the opponent and the possibility to \mbox{accept/reject} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
+    BOA Agent & Own $($versus \mbox{opponents}$)$ discounted final utility & Negotiation space defined by Genius, \mbox{Opponents} & New bid offering, \mbox{Accepting/rejecting} offers & Java classes that return the bidding history of the \mbox{opponent} agent \\
     \hline
     \end{tabular}
     
@@ -267,24 +258,24 @@ public Range getBidRange (double t, double margin) {
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
+\include{strategy_opponent_model}
 
 \subsection{Acceptance Strategy}
 \label{sec:strategyAS}
+\include{strategy_acceptance_strategy}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
+\include{strategy_opponent_strategy_model}
 
 \section{Testing \& Performance}
 \label{sec:performance}
-\todo{a section documenting the tests you performed to improve the negotiation strength of your agent. You must include scores of various tests over multiple sessions that you performed while testing your agent. Describe how you set up the testing situation and how you used the results to modify your agent.}
+\include{testing_and_performance}
 
 
 \section{Conclusion}
 \label{sec:conclusion}
-\todo{a conclusion in which you summarize your experience as a team with regards to building the negotiating agent and discuss what extensions are required to use your agent in real-life negotiations to support (or even take over) negotiations performed by humans.} \\ 
-
-\todo{Het lijkt me hier op zijn plaats om het BOA framework te bekritiseren zoals het nu is. Dat je sommige componenten niet makkelijk kan bereiden (BS/AS) is echt heel onhandig...}
-
+\include{conclusion}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
