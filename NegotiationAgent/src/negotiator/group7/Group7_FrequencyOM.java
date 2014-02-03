@@ -54,6 +54,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		learnValueAddition = 1;
 		initializeModel();
 		Helper.setOpponentModel(this);
+		Helper.setSession(negotiationSession);
 	}
 	
 	private void initializeModel(){
