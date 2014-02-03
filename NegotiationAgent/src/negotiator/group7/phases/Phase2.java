@@ -12,6 +12,7 @@ import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
 import negotiator.boaframework.SortedOutcomeSpace;
 import negotiator.group7.Helper;
+import negotiator.group7.Log;
 import negotiator.utility.UtilitySpace;
 
 public class Phase2 extends Phase {
@@ -235,20 +236,27 @@ public class Phase2 extends Phase {
 	 * @return bidDetails of the nearest bid
 	 */
 	public BidDetails getNearestBidDetailsFromUtilities(double UA, double UB, double maxR) {
-		double curR = 0.05;
+		double curR = 0.02;
 		// find bids in this range
 		Range r = new Range(UA-curR, UA+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 		
-		while (bidsInRange.size() > 500) { // not too many bids
+		int maxTries = 4;
+		
+		while (bidsInRange.size() > 500 && maxTries > 0) { // not too many bids
 			curR /= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+			Log.h("!");
+			maxTries--;
 		}
-		while (bidsInRange.size() < 5) { // not enough bids
+		maxTries = 4;
+		while (bidsInRange.size() < 5 && maxTries > 0) { // not enough bids
 			curR *= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+			Log.h("i");
+			maxTries--;
 		}
 		if (bidsInRange.size() == 0) { // do bid nearest to this utility because there are none
 			return outcomespace.getBidNearUtility(UA);
