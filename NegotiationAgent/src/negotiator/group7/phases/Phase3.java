@@ -8,17 +8,20 @@ import negotiator.group7.Log;
 
 public class Phase3 extends Phase {
 	
+	private Helper ourHelper;
+
 	private static double lowerBound = 0.7;
 	private static double upperBound = 0.8;
 	
 	public Phase3(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
+		ourHelper = Helper.get(negotiationSession);
 	}
 
 	@Override
 	public BidDetails determineNextBid() {
 		
-		int opponentStrategy = Helper.getOMStrategy().getOpponentModel();
+		int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
 		
 		if (opponentStrategy == 1) {
 			// Opponent is assumed to be HardHeaded
@@ -39,7 +42,7 @@ public class Phase3 extends Phase {
 		} else {
 			// Opponent is assumed to be Conceder
 			Log.rln("Opponent is assumed to be Conceder, offering KS point");
-			return Helper.getKalaiPoint();
+			return ourHelper.getKalaiPoint();
 		}
 		
 	}

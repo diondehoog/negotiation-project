@@ -3,7 +3,6 @@ package negotiator.group7;
 import java.util.HashMap;
 
 import negotiator.BidHistory;
-import negotiator.bidding.BidDetails;
 import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
@@ -16,23 +15,19 @@ import negotiator.boaframework.OfferingStrategy;
  * @version 13/01/14
  */
 public class Group7_AS extends AcceptanceStrategy {
-
-	/**
-	 * Empty constructor for the BOA framework.
-	 * 
-	 * @return
-	 */
-	public Group7_AS() {
-		Helper.setAcceptanceStrategy(this);
-	}
+	
+	private Helper ourHelper;
+	
+	public Group7_AS() { }
 
 	public Group7_AS(NegotiationSession negoSession, OfferingStrategy strat) {
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
-		Helper.setBidsLeft(0);
-		Helper.setBidsMade(0);
-		Helper.setBidsTotal(0);
-		Helper.setAcceptanceStrategy(this);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setBidsLeft(0);
+		ourHelper.setBidsMade(0);
+		ourHelper.setBidsTotal(0);
+		ourHelper.setAcceptanceStrategy(this);
 		//Helper.setSession(negoSession);
 	}
 
@@ -41,11 +36,12 @@ public class Group7_AS extends AcceptanceStrategy {
 			HashMap<String, Double> parameters) throws Exception {
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
-		Helper.setBidsLeft(0);
-		Helper.setBidsMade(0);
-		Helper.setBidsTotal(0);
-		Helper.setAcceptanceStrategy(this);
-		//Helper.setSession(negoSession);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setBidsLeft(0);
+		ourHelper.setBidsMade(0);
+		ourHelper.setBidsTotal(0);
+		ourHelper.setAcceptanceStrategy(this);
+		ourHelper.setSession(negoSession);
 		
 		if (parameters != null) {
 			if (parameters.containsKey("timeWindow"))
@@ -123,13 +119,14 @@ public class Group7_AS extends AcceptanceStrategy {
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
 		
 		// checks
-		boolean isHardHeaded = Helper.getOMStrategy() == null ? false : Helper.getOMStrategy().isOpponentHardHeaded();
-		double kalaiUtility = Helper.getKalaiPoint() == null ? 1.0 : Helper.getKalaiPoint().getMyUndiscountedUtil();
-		double nashUtility = Helper.getNashPoint() == null ? 1.0 : Helper.getNashPoint().getMyUndiscountedUtil();
+		boolean isHardHeaded = ourHelper.getOMStrategy() == null ? false : ourHelper.getOMStrategy().isOpponentHardHeaded();
+		double kalaiUtility = ourHelper.getKalaiPoint() == null ? 1.0 : ourHelper.getKalaiPoint().getMyUndiscountedUtil();
+		double nashUtility = ourHelper.getNashPoint() == null ? 1.0 : ourHelper.getNashPoint().getMyUndiscountedUtil();
 		double range = 0.005;
 		
 		// adjust ourWorst so that it can never go lower than the line from 0.9 at t=0 to 0.6 at t=1
-		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal);
+		double ourWorstCapped = Math.max(ourWorst, (1 - time) * -capWorstSlope + capWorstMinimal) - (0.05 * time);
+		Log.hln(Log.format(ourWorst) + " ; " +Log.format ((1 - time) * -capWorstSlope + capWorstMinimal));
 		
 		// This curve is build to gradually become lower with increasing speed so that at the end we are more allowing
 		double acceptCurve = getAcceptCurveValue(time);
@@ -150,7 +147,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * less than 'panicWhenBidsLeft' bids are left.
 		  * But(!) never do this when opponent is hardheaded
 		  * -------------------------------------------------------------- */
-		else if (Helper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede && !isHardHeaded) 
+		else if (ourHelper.getBidsLeft() < panicWhenBidsLeft && hisLast >= hisBest - panicConcede && !isHardHeaded) 
 		{
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + "\n\n");
 			return Actions.Accept;
@@ -160,7 +157,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * automatically a reliable kalai
 		  * -------------------------------------------------------------- */
 		else if (kalaiUtility - range <= hisLast && hisLast <= kalaiUtility + range
-				&& Helper.isOpponentModelReliable()) 
+				&& ourHelper.isOpponentModelReliable()) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Kalai!!! :D \n\n");
 			return Actions.Accept;
@@ -170,7 +167,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * automatically a reliable nash
 		  * -------------------------------------------------------------- */
 		else if (nashUtility - range <= hisLast && hisLast <= nashUtility + range
-				&& Helper.isOpponentModelReliable()) 
+				&& ourHelper.isOpponentModelReliable()) 
 		{
 			Log.newLine("\n\n ACCEPT! @ hisLast == Nash!!! :9 \n\n");
 			return Actions.Accept;
@@ -181,6 +178,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		  * If he bids higher than our worst, we will simply accept right away
 		  * and since we don't go down with our utility that quickly, this should work fine
 		  * Also, this value is capped above some line (see comment for 'ourWorstCapped')
+		  * Also, this capped value has a time dependent conceding factor
 		  * -------------------------------------------------------------- */
 		else if (hisLast > ourWorstCapped) 
 		{
@@ -236,10 +234,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		{
 			if (negotiationSession.getOpponentBidHistory().getFirstBidDetails() != null) 
 				first = negotiationSession.getOpponentBidHistory().getFirstBidDetails().getMyUndiscountedUtil();
-			if (Helper.getKalaiPoint() != null)
-				kalai = Helper.getKalaiPoint().getMyUndiscountedUtil();
-			if (Helper.getNashPoint() != null)
-				nash = Helper.getNashPoint().getMyUndiscountedUtil();
+			if (ourHelper.getKalaiPoint() != null)
+				kalai = ourHelper.getKalaiPoint().getMyUndiscountedUtil();
+			if (ourHelper.getNashPoint() != null)
+				nash = ourHelper.getNashPoint().getMyUndiscountedUtil();
 		}
 		catch (Exception e) 
 		{ 
@@ -304,9 +302,9 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 		previousTime = time;
 
-		Helper.setBidsMade(Helper.getBidsMade() + 1);
-		Helper.setBidsLeft((int) ((1.0 - time) / (averageDeltaTime + 0.00001)));
-		Helper.setBidsTotal(Helper.getBidsMade() + Helper.getBidsLeft());
+		ourHelper.setBidsMade(ourHelper.getBidsMade() + 1);
+		ourHelper.setBidsLeft((int) ((1.0 - time) / (averageDeltaTime + 0.00001)));
+		ourHelper.setBidsTotal(ourHelper.getBidsMade() + ourHelper.getBidsLeft());
 	}
 	
 	/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

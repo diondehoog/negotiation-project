@@ -1,12 +1,10 @@
 package negotiator.group7;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
 import negotiator.Bid;
-import negotiator.BidHistory;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -36,10 +34,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	
 	private int opponentModelReliableThreshold;
 	
-	public Group7_FrequencyOM() {
-		super();
-		Helper.setOpponentModel(this);
-	}
+	private Helper ourHelper;
 	
 	/**
 	 * Initializes the utility space of the opponent such that all value
@@ -56,8 +51,9 @@ public class Group7_FrequencyOM extends OpponentModel {
 		}
 		learnValueAddition = 1;
 		initializeModel();
-		Helper.setOpponentModel(this);
-		//Helper.setSession(negotiationSession);
+		ourHelper = Helper.get(negotiationSession);
+		ourHelper.setOpponentModel(this);
+		ourHelper.setSession(negotiationSession);
 		
 		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.025);
 		opponentModelReliableThreshold = Math.max(opponentModelReliableThreshold, 5);
@@ -144,7 +140,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
 		}
 		
-		List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
+		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		try {
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
 			double expectedUtil = ExpectedNewBidUtil();
@@ -173,9 +169,9 @@ public class Group7_FrequencyOM extends OpponentModel {
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
-		boolean wasReliable = Helper.isOpponentModelReliable();
-		Helper.setOpponentModelReliable(distinctBids.size() > opponentModelReliableThreshold);
-		if (!wasReliable && Helper.isOpponentModelReliable())
+		boolean wasReliable = ourHelper.isOpponentModelReliable();
+		ourHelper.setOpponentModelReliable(distinctBids.size() > opponentModelReliableThreshold);
+		if (!wasReliable && ourHelper.isOpponentModelReliable())
 			Log.newLine("The opponent model is now assumed to be reliable");
 	}
 	
@@ -215,7 +211,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 	{
 		// The expected minimum utility is a function of the number of different offers we have received and the number 
 		//of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
-		List<Bid> distinctBids = Helper.getDistinctBids(negotiationSession.getOpponentBidHistory());
+		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
 		return 1D - (((double)distinctBids.size()) * meanBidSkip * meanConcessionPerNewBid);
 	}

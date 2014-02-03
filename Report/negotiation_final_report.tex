@@ -18,6 +18,7 @@
 \usepackage{enumerate}
 \usepackage{courier}
 \usepackage{graphicx}
+\usepackage{newclude}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
@@ -95,7 +96,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-\include{introduction}
+\include*{introduction}
 
 \newpage
 \tableofcontents
@@ -124,7 +125,7 @@ we compute the outcome space and the pareto frontier and plot this in the figure
 \end{center}
 %\end{figure}
 
-\subsubsection{Analyse simple opponents}
+\subsubsection{Analyze simple opponents}
 
 Finally, we perform two negotiation sessions: we play with the agent SimpleAgent against
 itself, and we play Boulware vs Conceder and explain the outcome. 
@@ -182,18 +183,18 @@ The first step in designing an agent is to specify the environment as fully as p
     \caption{PEAS description for our negotiation agent \label{table:peas-description}}
 \end{table}
 
-Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The performance is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two actuators. Firstly, the agent offers a new bid based on the environment. Secondly, the agent can accept or reject a bid of an opponent.  
+Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The \emph{performance} is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two \emph{actuators}, first of all the acceptance or rejection of a bid of an opponent. The second actuator is the offering of a new bid. The bid is based on the biddings of the opponent, which is the only \emph{sensor} the agent has. Under the surface of the PEAS elements, different java-classes, algorithms and calculations are performed, like the \textit{nash-point} and the \textit{Kalai-Smorodinsky solution}. These will be explained in more detail in the next sections.
 
 \subsection{BOA Framework}
 
-Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model}, \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
+Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy is arguably the most important component. Its goal is to determine the next bid that is offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation sessions is split up in multiple phases and each of the phases uses a different bidding strategy.
+  The bidding strategy is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases uses a different bidding strategy.
 
   \item[Opponent Model] \hfill \\
-  Learning the opponents behaviour is essential in a good negotiation session. It allows for adapting to the way the other party provides its bids. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
+  Learning the opponents behaviour is essential for being able to determine more customized bids, depending on the bidding strategy of the opponent. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
 
   \item[Acceptance Strategy] \hfill \\
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
@@ -205,77 +206,28 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
-Our bidding strategy is time dependent, we have implemented three phases each of which uses its own strategy for offering bids. The main \texttt{Group7\_BS} class chooses the strategy by evaluating the normalized time (\texttt{getTime()}) and the two hard-coded phase thresholds stored in the array \texttt{phaseBoundary}. In this section we discuss the strategy behind each of the phases separately.
-
-\subsubsection{First Phase}
-Our agents first bid is determined by the method \texttt{determineOpeningBid()}. By offering a bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $0.9$. The best bid of this utility is obtained by calling \texttt{getBidNearUtility()} of the \texttt{OutcomeSpace} class. \\
-
-After determining our openings bid and receiving the initial bid from the opponent our agent continues by generating random bids. These random bids are generated within a small utility range. The (average) height of this range decreases by a small amount when time passes. The range is calculated by the method \texttt{getBidRange()} given in Listing~\ref{code:getrangefunctionfirstphase}. After calculating the range, the \texttt{getRandomBid()} method is used to generate a bid within this range. \\
-
-We set the parameters such that in the beginning bids are generated around an utility of $1$, that is $[0.98, 1.0]$, and then gradually decreases towards the end. At the end of the phase the bids are centered around an utility of $0.9$ which corresponds to $[0.88, 0.92]$. As these numbers indicate, we set the margin of the bid range to $0.02$. \todo{Update this, we now also look at the best bid of the opponent.}
-
-\clearpage
-
-\begin{lstlisting}[caption=Code for calculating bid range as function of normalized time, label=code:getrangefunctionfirstphase]
-public Range getBidRange (double t, double margin) {
-  double normTime = t/this.phaseEnd; // Normalized time
-  
-  // Center of the utility range
-  double val = 1-(normTime/10);
-  
-  // Best bid that the opponent has offered so far
-  BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
-  
-  // Set the bounds for the range
-  double lb = val-margin;
-  double ub = val+margin;
-  
-  if (bestOpponent.getMyUndiscountedUtil() > val){
-    // The opponent has offered a better bid (for us)
-    // than the center of our bid range, we counter this
-    // by choosing a bid higher (+0.05) than the opponents bid.
-    val = bestOpponent.getMyUndiscountedUtil()+0.05;
-    
-    // Update boundaries
-    lb = val; ub = val+margin;
-  }
-  
-  // Range in which bids are randomly generated
-  Range r = new Range(lb, ub); 
-  
-  // Set upper bound to 1 if it exceeds upper bound
-  if (r.getUpperbound() > 1) r.setUpperbound(1.0);
-  
-  return r;
-}
-\end{lstlisting}
-
-\subsubsection{Second Phase}
-
-\subsubsection{Third Phase}
-
-
+\include*{strategy_bidding_strategy}
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
-\include{strategy_opponent_model}
+\include*{strategy_opponent_model}
 
 \subsection{Acceptance Strategy}
 \label{sec:strategyAS}
-\include{strategy_acceptance_strategy}
+\include*{strategy_acceptance_strategy}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
-\include{strategy_opponent_strategy_model}
+\include*{strategy_opponent_strategy_model}
 
 \section{Testing \& Performance}
 \label{sec:performance}
-\include{testing_and_performance}
+\include*{testing_and_performance}
 
 
 \section{Conclusion}
 \label{sec:conclusion}
-\include{conclusion}
+\include*{conclusion}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
