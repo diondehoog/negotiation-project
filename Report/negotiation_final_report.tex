@@ -18,15 +18,14 @@
 \usepackage{enumerate}
 \usepackage{courier}
 \usepackage{graphicx}
-\usepackage{newclude}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
 \newcommand{\authortr}{Tom Runia (1517996)}
 \newcommand{\authoras}{Arnold Schutter (4260724)}
 \newcommand{\authortv}{Tom Viering (4333055)}
-\newcommand{\maintitle}{IN4010: Negotiation Project}
-\newcommand{\subtitle}{Group 7 - BOAconstructor}
+\newcommand{\maintitle}{Artificial Intelligence}
+\newcommand{\subtitle}{BOAconstructor -- An Automated Negotiation Agent}
 
 \title{\maintitle\\\subtitle}
 \author{\authorbd\\\authoroh\\\authortr\\\authoras\\\authortv}
@@ -96,7 +95,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-\include*{introduction}
+\input{introduction}
 
 \newpage
 \tableofcontents
@@ -191,13 +190,16 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases uses a different bidding strategy.
+  The bidding strategy is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases use a different bidding strategy.
 
   \item[Opponent Model] \hfill \\
-  Learning the opponents behaviour is essential for being able to determine more customized bids, depending on the bidding strategy of the opponent. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
+  Analyzing the opponents behaviour is essential for being able to determine the opponent's preference profile.  With a well defined opponent model, the opponent's utility of a bid can be determined more accurate. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modeling} or \emph{frequency analysis}. 
 
   \item[Acceptance Strategy] \hfill \\
-  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
+  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies is available with combinations of time-dependend, utility-dependent and threshold-dependent strategies.
+
+\item[Opponent Model Strategy] \hfill \\
+  Analyzing the opponents behaviour could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like hardheaded, conceder, tit-for-tat, etc. The own bidding strategy can be adapted to the opponent's strategy, to derive a maximum possible outcome for the own utility.
 
 \end{description}
 
@@ -206,28 +208,28 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
-\include*{strategy_bidding_strategy}
+\input{strategy_bidding_strategy}
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
-\include*{strategy_opponent_model}
+\input{strategy_opponent_model}
 
 \subsection{Acceptance Strategy}
 \label{sec:strategyAS}
-\include*{strategy_acceptance_strategy}
+\input{strategy_acceptance_strategy}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
-\include*{strategy_opponent_strategy_model}
+\input{strategy_opponent_strategy_model}
 
 \section{Testing \& Performance}
 \label{sec:performance}
-\include*{testing_and_performance}
+\input{testing_and_performance}
 
 
 \section{Conclusion}
 \label{sec:conclusion}
-\include*{conclusion}
+\input{conclusion}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}

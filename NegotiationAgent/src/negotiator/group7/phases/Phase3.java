@@ -1,5 +1,9 @@
 package negotiator.group7.phases;
 
+import java.util.List;
+import java.util.Random;
+
+import misc.Range;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OpponentModel;
@@ -7,12 +11,9 @@ import negotiator.group7.Helper;
 import negotiator.group7.Log;
 
 public class Phase3 extends Phase {
-	
-	private Helper ourHelper;
 
-	private static double lowerBound = 0.7;
-	private static double upperBound = 0.8;
-	
+	private double phaseStart = 0.95;
+	private Helper ourHelper;
 	public Phase3(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		ourHelper = Helper.get(negotiationSession);
@@ -22,27 +23,53 @@ public class Phase3 extends Phase {
 	public BidDetails determineNextBid() {
 		
 		int opponentStrategy = ourHelper.getOMStrategy().getOpponentModel();
+
+		Random randgen = new Random();
+		BidDetails fallback;
+		List<BidDetails> bh = negotiationSession.getOwnBidHistory().getHistory();
+		fallback = bh.get(randgen.nextInt(bh.size()));
 		
-		if (opponentStrategy == 1) {
-			// Opponent is assumed to be HardHeaded
+		if (opponentStrategy == 1) // Opponent is assumed to be HardHeaded
+		{
 			
-			// Get the best bid so far offered by the opponent
-			BidDetails bestBid = negotiationSession.getOpponentBidHistory().getBestBidDetails();
+			Log.rln("Opponent is assumed to be HardHeaded, decreasingly offering random bid that approaches the pareto");
+
+			BidDetails best = null;
+			double time = (negotiationSession.getTime() - phaseStart) * (1 / (1 - phaseStart));
+			int tries = 15;
 			
-			// Go the the best bid offered by the opponent if this is higher than 'upperBound',
-			// if his bid is lower than this bound, then offer random bid between 'lowerBound' and 'upperBound'
-			if (bestBid.getMyUndiscountedUtil() > upperBound) {
-				Log.rln("Opponent is assumed to be HardHeaded, best bid of opponent ["+bestBid.getMyUndiscountedUtil()+"]");
-				return bestBid;
-			} else {
-				Log.rln("Opponent is assumed to be HardHeaded, offering random bid ["+lowerBound+", "+upperBound+"]");
-				return getRandomBid(0.7, 0.8);
+			while (best == null && tries > 0) 
+			{
+				double u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
+				Range r = new Range(u - 0.01, u + 0.01);
+				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+				
+				double bestValue = 0.0;
+				for (BidDetails b : randBid) 
+				{
+					double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
+					if (value > bestValue) 
+					{
+						best = b;
+						bestValue = value;
+					}
+				}
+				tries--;
 			}
 			
-		} else {
+			if (best == null)
+				return fallback;
+			else
+				return best;
+		} 
+		else 
+		{
 			// Opponent is assumed to be Conceder
 			Log.rln("Opponent is assumed to be Conceder, offering KS point");
-			return ourHelper.getKalaiPoint();
+			if (ourHelper.getKalaiPoint() != null)
+				return ourHelper.getKalaiPoint();
+			else
+				return fallback;
 		}
 		
 	}
