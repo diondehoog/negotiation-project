@@ -59,7 +59,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 		Helper.setOpponentModel(this);
 		Helper.setSession(negotiationSession);
 		
-		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.03);
+		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.025);
+		opponentModelReliableThreshold = Math.max(opponentModelReliableThreshold, 5);
 	}
 	
 	private void initializeModel(){
