@@ -3,6 +3,7 @@ package negotiator.group7;
 import java.util.HashMap;
 
 import negotiator.BidHistory;
+import negotiator.bidding.BidDetails;
 import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
@@ -32,6 +33,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		Helper.setBidsMade(0);
 		Helper.setBidsTotal(0);
 		Helper.setAcceptanceStrategy(this);
+		Helper.setSession(negoSession);
 	}
 
 	@Override
@@ -43,6 +45,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		Helper.setBidsMade(0);
 		Helper.setBidsTotal(0);
 		Helper.setAcceptanceStrategy(this);
+		Helper.setSession(negoSession);
 		
 		if (parameters != null) {
 			if (parameters.containsKey("timeWindow"))
@@ -136,6 +139,7 @@ public class Group7_AS extends AcceptanceStrategy {
 			Log.newLine("\n\n ACCEPT! @ hisLast > acceptCurve: " + hisLast + "; " + acceptCurve + "\n\n");
 			return Actions.Accept;
 		}
+		
 		/** --------------------- AC_panic ----------------------------- 
 		  * AC_time, but only opponent's better offers
 		  * Here we accept the opponents best with a conceding factor, only when 
@@ -146,6 +150,7 @@ public class Group7_AS extends AcceptanceStrategy {
 			Log.newLine("\n\n ACCEPT! @ bidsLeft < " + panicWhenBidsLeft + "\n\n");
 			return Actions.Accept;
 		} 
+		
 		/** --------------------- AC_worst ----------------------------- 
 		  * AC_next, but we don't look at our next bid, but our recent worst.
 		  * If he bids higher than our worst, we will simply accept right away
@@ -157,6 +162,7 @@ public class Group7_AS extends AcceptanceStrategy {
 			Log.newLine("\n\n ACCEPT! @ hisLast > ourWorstFixed: " + hisLast + "; " + ourWorstCapped + "\n\n");
 			return Actions.Accept;
 		}
+		
 		/** --------------------- AC_next ----------------------------- 
 		  * Here we simply apply the AC_next acceptance strategy
 		  * If he bids higher than our worst, we will simply accept right away
@@ -203,10 +209,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		// Retrieve base values
 		try 
 		{
-			if (negotiationSession.getOpponentBidHistory().getFirstBidDetails() != null)
+			if (negotiationSession.getOpponentBidHistory().getFirstBidDetails() != null) 
 				first = negotiationSession.getOpponentBidHistory().getFirstBidDetails().getMyUndiscountedUtil();
 			if (Helper.getKalaiPoint() != null)
-				kalai = negotiationSession.getUtilitySpace().getUtility(Helper.getKalaiPoint().getBid());
+				kalai = Helper.getKalaiPoint().getMyUndiscountedUtil();
 			if (Helper.getNashPoint() != null)
 				nash = Helper.getNashPoint().getMyUndiscountedUtil();
 		}
@@ -228,7 +234,7 @@ public class Group7_AS extends AcceptanceStrategy {
 				
 			case 3: // approach kalai
 				if (kalai == 0 || time < 0.1) return;
-				// only if nash available and time is > 0.1;
+				// only if kalai available and time is > 0.1;
 				approach = kalai;
 				break;
 				
