@@ -75,12 +75,12 @@ public class Phase2 extends Phase {
 		BidPoint theirBB = getBestBidPointFromUtilitySpace(utilitySpaceOpponent);
 		BidPoint ks = getKalaiSmorodisky();
 
-		double theirMaxDist = ks.getDistance(theirBB);
-		ourMaxDist = ks.getDistance(myBB);
+		double theirMaxDist = ks.getDistance(theirBB) + 0.000001;
+		ourMaxDist = ks.getDistance(myBB) + 0.000001;
 		
 		if (ourDist < -0.05) { // if first time ever
 			ourDist = (ourMaxDist/theirMaxDist)*ksDist; // match their concession
-			ourMaxDist = ks.getDistance(myBB); // find our max distance to kalai
+			ourMaxDist = ks.getDistance(myBB) + 0.000001; // find our max distance to kalai
 		}
 		
 		double deltaDist = 0; 
@@ -109,6 +109,7 @@ public class Phase2 extends Phase {
 			ourDist = 0;
 		
 		double W = ourDist/ourMaxDist;
+		W = Double.isNaN(W) ? 1.0 : W;
 		BidDetails nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
 		
 		if (Math.random() < this.Ppareto) { // sometimes offer pareto outcome that is closest to our offer
@@ -199,6 +200,7 @@ public class Phase2 extends Phase {
 		double U1B = B2.getUtilityB();
 		double U2A = B2.getUtilityA();
 		double U2B = B2.getUtilityB();
+		
 		double wantedUtilA = U1A*(1-W1) + U2A*W1;
 		double wantedUtilB = U1B*(1-W1) + U2B*W1;
 		return getNearestBidDetailsFromUtilities(wantedUtilA, wantedUtilB, 0.025);
@@ -236,11 +238,11 @@ public class Phase2 extends Phase {
 	 * @return bidDetails of the nearest bid
 	 */
 	public BidDetails getNearestBidDetailsFromUtilities(double UA, double UB, double maxR) {
-		double curR = 0.02;
+		double curR = 0.025;
 		// find bids in this range
 		Range r = new Range(UA-curR, UA+curR);	
 		List<BidDetails> bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-		
+
 		int maxTries = 4;
 		
 		while (bidsInRange.size() > 500 && maxTries > 0) { // not too many bids
@@ -250,8 +252,8 @@ public class Phase2 extends Phase {
 			Log.h("!");
 			maxTries--;
 		}
-		maxTries = 4;
-		while (bidsInRange.size() < 5 && maxTries > 0) { // not enough bids
+		maxTries = 10;
+		while (bidsInRange.size() < 1 && maxTries > 0) { // not enough bids
 			curR *= 2;
 			r = new Range(UA-curR, UA+curR);	
 			bidsInRange = negotiationSession.getOutcomeSpace().getBidsinRange(r);
