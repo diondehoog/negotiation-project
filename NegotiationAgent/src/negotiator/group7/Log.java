@@ -1,5 +1,7 @@
 package negotiator.group7;
 
+import java.text.DecimalFormat;
+
 public class Log {
 	
 	/**
@@ -71,5 +73,9 @@ public class Log {
 		if (type == PRINT || PRINT == ALL) {
 			newLine(msg);
 		}
+	}
+	public static String format(double d) {
+		DecimalFormat f = new DecimalFormat("##.000");  // this will helps you to always keeps in two decimal places
+        return f.format(d);
 	}
 }
