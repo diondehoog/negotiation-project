@@ -12,17 +12,21 @@ Since the mediator has both preference profiles, it is able to calculate all the
 
 This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
 
-\subsubsection{Other Capabilities}
+\subsubsection{Other capabilities}
+Extending agents with more communication abilities would probably not increase the performance significantly. They could
+communicate about certain issues, for example if they would concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. \\
 
-Extending agents with more communication abilities would probably not increase the performance significantly. For automated negotiators are protocols needed to communicate. They could communicate about things where they can concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. 
-However, using the current method of exchanging bids, this already becomes apparent. The advantage of working with bids is that agents are sure and that they are final,
-when communicating, agents can lie and take advantage of each other. We think that this will lead to no communication at all because of this danger.
-One type of communication that would be useful is maybe that agents tell each other what bids they deem unacceptable. 
-After communicating this, the agents will never offer these bids because they know their opponent will never accept these. This way, 
-agents will know what bids are unacceptable for the opponent, and this way the domain size can be reduced. 
-However, another way to look at this is that the domain is not specified well for the negotiation if this is the case. Before you negotiate, you need to specify the issues
-and values for these issues, and if you include values that are not acceptable to yourself as negotiator, this is useless. However, one can imagine cases where
-there is a default domain. For example, when buying a car, one could have a default domain where all possible values for all possible cars are specified, and that this domain is 
-downloaded to your pocket negotiator. Then this would be very useful, to make negotiations much faster.
+Communication that however could be useful, is communication about what agents do not want. After communicating this, agents could neglect certain offers to shrink the negotiation space. This could save time, and could be useful when there is a time constraint or a discount factor. \\
+
+However, another way to look at this is that the domain could be specified better at the start of the negotiation, by filtering the issues which never would be accepted by the opponent beforehand. For example, when buying a car, one could have a default domain where all possible values for all possible cars are specified, which is 
+downloaded to your pocket negotiator. Then it would be useful to remove all the cars without certain features, so which are not matching your preferences, beforehand. \\
+
+There are also other possibilities. Considering humans when negotiating, they are able to offer issues outside the negotiation domain, to convince the opponent to get this deal. Well known examples are money or, in the case of cars, extra tires. In the current Genius environment it is impossible to offer new issues in a negotiation session, maybe this could be a feature in the future when negotiators are able to rate unknown issues or when they can ask for input of a human. 
+
+\subsection{Conclusions}
+
+For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Finding outcomes that are a win-win situation for both parties can be hard. The complexity of the BOA components are expressed in the amount of different parameters, depending on a lot of factors. These factors are optimized in the testing phase.  \\
+
+Our agent, the BOAconstructor, combines multiple existing ideas.
 
 

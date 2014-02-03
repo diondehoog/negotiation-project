@@ -255,16 +255,12 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	public int getNegotiationPhase () {
 		double time = negotiationSession.getTime(); // Normalized time [0,1]
-		int p = 0;
-		
 		if (time <= phaseBoundary[0]) 
 			return 1;
-		else if (time > phaseBoundary[0] && time <= phaseBoundary[1])
+		else if (time <= phaseBoundary[1])
 			return 2;
-		else if (time > phaseBoundary[1])
+		else
 			return 3;
-		
-		return 0;
 	}
 	
 //	public boolean isAlreadyOffered(BidDetails bd) {

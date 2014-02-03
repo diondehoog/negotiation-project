@@ -54,16 +54,21 @@ public class Phase3 extends Phase {
 				Range r = new Range(u - 0.01, u + 0.01);
 				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
 				
-				double bestValue = 0.0;
-				for (BidDetails b : randBid) 
-				{
-					double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
-					if (value > bestValue) 
+				if (ourHelper.getOpponentModel() != null) {
+					double bestValue = 0.0;
+					for (BidDetails b : randBid) 
 					{
-						best = b;
-						bestValue = value;
+						double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
+						if (value > bestValue) 
+						{
+							best = b;
+							bestValue = value;
+						}
 					}
+				} else {
+					best = randBid.get(randgen.nextInt(randBid.size()));
 				}
+				
 				tries--;
 			}
 			
