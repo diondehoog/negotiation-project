@@ -18,7 +18,6 @@
 \usepackage{enumerate}
 \usepackage{courier}
 \usepackage{graphicx}
-\usepackage{newclude}
 
 \newcommand{\authorbd}{Bas Dado (4033736)}
 \newcommand{\authoroh}{Olivier Hokke (1352679)}
@@ -96,7 +95,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-\include*{introduction}
+\input{introduction}
 
 \newpage
 \tableofcontents
@@ -206,28 +205,28 @@ Most negotiation agents consist of three components: \emph{Bidding strategy}, \e
 
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
-\include*{strategy_bidding_strategy}
+\input{strategy_bidding_strategy}
 
 \subsection{Opponent Model}
 \label{sec:strategyOM}
-\include*{strategy_opponent_model}
+\input{strategy_opponent_model}
 
 \subsection{Acceptance Strategy}
 \label{sec:strategyAS}
-\include*{strategy_acceptance_strategy}
+\input{strategy_acceptance_strategy}
 
 \subsection{Opponent Strategy Model}
 \label{sec:strategyOMS}
-\include*{strategy_opponent_strategy_model}
+\input{strategy_opponent_strategy_model}
 
 \section{Testing \& Performance}
 \label{sec:performance}
-\include*{testing_and_performance}
+\input{testing_and_performance}
 
 
 \section{Conclusion}
 \label{sec:conclusion}
-\include*{conclusion}
+\input{conclusion}
 
 \bibliography{negotiation_final_report}
 \bibliographystyle{plain}
