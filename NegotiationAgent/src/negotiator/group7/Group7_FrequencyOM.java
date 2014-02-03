@@ -19,20 +19,52 @@ import negotiator.utility.UtilitySpace;
 public class Group7_FrequencyOM extends OpponentModel {
 
 
-	// the learning coefficient is the weight that is added each turn to the issue weights
-	// which changed. It's a trade-off between concession speed and accuracy.
+	/** 
+	* The learning coefficient is the weight that is added each turn to the issue weights
+	* which changed. It's a trade-off between concession speed and accuracy.
+	*/
 	private double learnCoef;
-	// value which is added to a value if it is found. Determines how fast
-	// the value weights converge.
+	
+	/**
+	 * value which is added to a value if it is found. Determines how fast the value weights (within issues) converge.
+	 */
 	private int learnValueAddition;
+	/**
+	 * The number of issues in the negotiation
+	 */
 	private int amountOfIssues;
 	
-	private final double meanBidSkip = 1D;
+	/**
+	 * The mean number of bids we assume the opponent skips during the time it's conceding
+	 */
+	private final double meanBidSkip = 1.5;
+	/**
+	 * The maximum difference we allow the estimated utility to have from the expected utility before we start adapting the learning rate.
+	 * The right margin means the maximum difference lower than the expected utility (e.g. if the expected utility is 0.90 and the rightMargin is 0.05,
+	 * then we use an adaptive learning rate if the cur utility < 0.90 - 0.05 = 0.85
+	 */
 	private final double rightMargin = 0.03;
+	/**
+	 * The maximum difference we allow the estimated utility to have from the expected utility before we start adapting the learning rate.
+	 * The left margin means the maximum difference higher than the expected utility (e.g. if the expected utility is 0.90 and the leftMargin is 0.05,
+	 * then we use an adaptive learning rate if the cur utility > 0.90 + 0.05 = 0.95
+	 */
 	private final double leftMargin = 0.05;
+	
+	/**
+	 * The mean value of the normal distribution we assume the utility space has
+	 */
 	private final double mu = 0.6;
+	/**
+	 * The variance of the normal distribution we assume the utility space has
+	 */
 	private final double sigma = 0.019;
+	
+	/**
+	 * The maximum learn rate that adaptive modeling can use.
+	 */
 	private final int maxLearnValueAddition = 100;
+	
 	
 	private int opponentModelReliableThreshold;
 	
@@ -154,7 +186,8 @@ public class Group7_FrequencyOM extends OpponentModel {
 				// U(offer) = sum_i(w_i (v_{i,j} + x)/(sum_j(v_{i,j}) + x))
 				// However this is a bit hard to solve algebraically, so we just try some values for x and choose the best one.
 				double closestUtil = 0;
-				double utilToApproach = curUtil < expectedUtil - rightMargin ? expectedUtil - rightMargin : expectedUtil + leftMargin;
+				double utilToApproach = expectedUtil //curUtil < expectedUtil - rightMargin ? expectedUtil - rightMargin : expectedUtil + leftMargin
+						;
 					
 				// Estimate the utility for all possible learn rates
 				for (int i = 1; i <= maxLearnValueAddition; i++) {
@@ -166,17 +199,28 @@ public class Group7_FrequencyOM extends OpponentModel {
 				}
 			}
 			
+			// Then update the values using the optimal learn found above
 			UpdateValues(oppBid, actualLearnRate);
+			
 			Log.dln("expectedUtil: " + Log.format(expectedUtil, "0.000") + ", estimatedUtil: " + Log.format(curUtil, "0.000") + ", New estimated util: " + Log.format(this.getBidEvaluation(oppBid.getBid()), "0.000") + ", ActualLearnRate: " + actualLearnRate );
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
+		
+		// If we had a certain number of original (distinct) bids, then we assume the opponent model is now reliable.
 		boolean wasReliable = ourHelper.isOpponentModelReliable();
 		ourHelper.setOpponentModelReliable(distinctBids.size() > opponentModelReliableThreshold);
 		if (!wasReliable && ourHelper.isOpponentModelReliable())
 			Log.newLine("The opponent model is now assumed to be reliable");
 	}
 	
+	/**
+	 * Updates the value weights (within each issue) using the given learnRate and opponent bid. This method 
+	 * is the most important method for the frequency model value weights.
+	 * @param oppBid The bid for which the values need to be adjusted
+	 * @param learnRate The learn rate to use for adjusting the weights.
+	 * @throws Exception
+	 */
 	private void UpdateValues(BidDetails oppBid, int learnRate) throws Exception
 	{
 		// Then for each issue value that has been offered last time, a constant value is added to its corresponding ValueDiscrete.
@@ -191,6 +235,13 @@ public class Group7_FrequencyOM extends OpponentModel {
 		}
 	}
 	
+	/**
+	 * Calculates the utility a certain bid would get if we applied frequency modeling with the given learn rate. Issue weights remain unchanged
+	 * @param oppBid The bid for which the utility should be calculated
+	 * @param learnRate The learn rate to use for calculating the utility
+	 * @return The expected utility of the given bid if frequency modeling with the given learn-rate is used.
+	 * @throws Exception Throws exception thrown by the BOA framework function on oppBid.getBid().getValue()
+	 */
 	private double calculateUtilityUsingLearnRate(BidDetails oppBid, int learnRate) throws Exception {
 		double utility = 0;
 		for (Entry<Objective, Evaluator> e: opponentUtilitySpace.getEvaluators()) { // Iterates over all issues
@@ -207,12 +258,12 @@ public class Group7_FrequencyOM extends OpponentModel {
 	
 	/**
 	 * Finds the minimum util we currently expect from the opponent (e.g. what strategy we expect)
-	 * @return
+	 * @return The expected utility of a new bid if the opponent makes one
 	 */
 	public double ExpectedNewBidUtil()
 	{
 		// The expected minimum utility is a function of the number of different offers we have received and the number 
-		//of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
+		// of different offers possible. Note that we assume the opponents utility space is sort of uniformly distributed
 		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		double distinctBidCount = (double)distinctBids.size() * meanBidSkip;
 		//double meanConcessionPerNewBid = 1D / ((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids());
@@ -221,24 +272,24 @@ public class Group7_FrequencyOM extends OpponentModel {
 		return Math.min(normInverseCdf(percentageOfBidsSeen, mu, sigma), 1D);
 	}
 	
-//	private static double normcdf(double x, double mu, double sigmaSquared) {
-//		return 0.5 * (1 + erf((x - mu)/ Math.sqrt(2 * sigmaSquared)));
-//	}
-//	/**
-//	 * 
-//	 */
-//	private static double erf(double x) {
-//		// Approximation of the erf function (from wikipedia: http://en.wikipedia.org/wiki/Error_function)
-//		double a1 = 0.278393, a2 = 0.230389, a3 = 0.000972, a4 = 0.078108;
-//		return 1D - (1D/Math.pow(1 + a1 * x + Math.pow(a2 * x, 2) + Math.pow(a3 * x, 3) + Math.pow(a4 * x, 4), 4));
-//	}
-	
+	/**
+	 * Calculates the quantile function at a given probability for a normal distribution.
+	 * @param p The probability for which the quantile function needs to be evaluated
+	 * @param mu The mean of the normal distribution
+	 * @param sigmaSquared The variance of the normal distribution
+	 * @return The location of the quantile
+	 */
 	private static double normInverseCdf(double p, double mu, double sigmaSquared) {
 		double ie  = inverseErf(2D * p - 1D);
 		//Log.dln("p = " + p + ", inverseErf=" + ie + ", x = " + (2D * p - 1D));
 		return mu + Math.sqrt(sigmaSquared) * Math.sqrt(2D) * ie;
 	}
 	
+	/**
+	 * Calculates the approximate inverse error function (Erf^-1 (x))
+	 * @param x The value for which we want to know the erf
+	 * @return The inverse error function value
+	 */
 	private static double inverseErf(double x) {
 		double sgn = x < 0 ? -1 : (x == 0 ? 0 : 1);
 		double a = 0.147;
@@ -264,6 +315,6 @@ public class Group7_FrequencyOM extends OpponentModel {
 	
 	@Override
 	public String getName() {
-		return "HardHeaded Frequency Model";
+		return "Group7 Adaptive Frequency Model";
 	}
 }
