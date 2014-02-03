@@ -15,6 +15,7 @@ public class Phase3 extends Phase{
 		// Final negotiation phase
 		// TODO: implemented this based on Acceptance Strategy
 		
+		boolean conseder = false; // need function here
 		
 		
 		// For now, we just return a random bid...
