@@ -155,9 +155,9 @@ The issues and possible options are good for a total of $3072$ possible outcomes
 Finally, we perform two negotiation sessions: we play with the agent \texttt{SimpleAgent} against itself, and we play Boulware vs Conceder and discuss the outcome. When we play SimpleAgent against itself, we notice the behaviour is quite random. This is explained by having a loo at the code; it always offers a random bid higher than a certain threshold,
 by default this threshold is zero. Therefore it performs a \emph{random walk} through the 
 bidding space. The acceptance strategy works as follows: it calculates a probability for each bid and the higher the bid, the higher the probability. If the deadline approaches it will accept all bids with higher probability. It will however never accept bids with a utility of zero. The equation that determines the probability of acceptance is:
-\begin{align*}
+\begin{align}
 P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
-\end{align*}
+\end{align}
 
 Where $P$ denotes the probability of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0, 1]$. Because of this behaviour we found the average utility playing against itself is around $0.68$, and the time needed to reach an agreement was very short: $0.03$ (averaged over $20$ negotiations on the party domain).
 This is quite logical, since both sides offer random bids, it is the
@@ -171,13 +171,11 @@ Finally, we play with the Boulware agent against the conceder agent. A typical n
 
 \begin{figure}[H]
 \begin{center}
- \includegraphics[width=1.0\textwidth]{traceConcederBoulware.png}
+ \includegraphics[width=0.9\textwidth]{traceConcederBoulware.png}
  \caption{The \emph{Pareto Optimal Frontier} is displayed with a red line in this figure.}
  \label{fig:pareto} 
 \end{center}
 \end{figure}
-
-\clearpage
 
 In this figure, the green and blue lines are the bidding-traces for respectively the Boulware and the Conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent only concedes at the very last moments before the deadline. The conceder agent on the other hand starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the Conceder reached an utility of $0.67$ and
 Boulware $0.99$. 
