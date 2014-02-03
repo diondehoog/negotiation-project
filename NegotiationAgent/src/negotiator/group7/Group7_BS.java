@@ -83,16 +83,26 @@ public class Group7_BS extends OfferingStrategy {
 	 * The parameter "e" is the only parameter which is required (concession factor).
 	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
-
+		
+		double d = negoSession.getDiscountFactor(); 
+		
+		// rescale boundraries for discounts
+		if (parameters.get("discount") != null)
+			if (parameters.get("discount") > 0.5)
+				if ((d != 1)&&(d != 0)) {
+					phaseBoundary[0] = phaseBoundary[0]*d;
+					phaseBoundary[1] = phaseBoundary[1]*d;
+				}
+			
 		ourHelper = Helper.get(negotiationSession);
 		ourHelper.setBiddingStrategy(this);
 		ourHelper.setSession(negoSession);
 		
 		if (parameters.get("phase2") != null)
-			phaseBoundary[0] = parameters.get("phase2");
+			phaseBoundary[0] = parameters.get("phase2"); // used!!
 		
 		if (parameters.get("phase3") != null)
-			phaseBoundary[1] = parameters.get("phase3");
+			phaseBoundary[1] = parameters.get("phase3"); // used!!
 
 		if (parameters.get("phase1lowerbound") != null)
 			phase1LowerBound = parameters.get("phase1lowerbound");
