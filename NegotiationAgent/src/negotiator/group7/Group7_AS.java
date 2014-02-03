@@ -115,8 +115,10 @@ public class Group7_AS extends AcceptanceStrategy {
 		}
 
 		// get some historical facts
-		double hisLast = bhOpp.getHistory().get(0).getMyUndiscountedUtil();
-		double hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
+		double hisLast = 0.0;
+		double hisBest = 0.0;
+		if (bhOpp.getHistory().size() > 0) hisLast = bhOpp.getHistory().get(0).getMyUndiscountedUtil();
+		if (bhOpp.getHistory().size() > 0) hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
 		
