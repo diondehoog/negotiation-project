@@ -1,7 +1,12 @@
 package negotiator.group7;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import negotiator.Bid;
@@ -65,6 +70,9 @@ public class Group7_FrequencyOM extends OpponentModel {
 	 */
 	private final int maxLearnValueAddition = 100;
 	
+	private Map<Integer, Double> expectedUtils; 
+	private ArrayList<ArrayList<String>> values;
+	private ArrayList<BidMap> expectedUtils2;
 	
 	private int opponentModelReliableThreshold;
 	
@@ -91,6 +99,13 @@ public class Group7_FrequencyOM extends OpponentModel {
 		
 		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.025);
 		opponentModelReliableThreshold = Math.max(opponentModelReliableThreshold, 5);
+		
+		expectedUtils = new HashMap<Integer, Double>();
+		values = new ArrayList<ArrayList<String>>(amountOfIssues);
+		for(int i = 0; i < amountOfIssues; i++) {
+			values.add(new ArrayList<String>());
+		}
+		expectedUtils2 = new ArrayList<BidMap>();
 	}
 	
 	private void initializeModel(){
@@ -177,9 +192,20 @@ public class Group7_FrequencyOM extends OpponentModel {
 		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		try {
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
-			double expectedUtil = ExpectedNewBidUtil();
+			
+			BidMap match = null;
+			for (BidMap bm: expectedUtils2) {
+				if (bm.bid.equals(oppBid.getBid()))
+					match = bm;
+			}
+			if (match == null) {
+				match = new BidMap(oppBid.getBid(), ExpectedNewBidUtil());
+				expectedUtils2.add(match);
+			}
+			double expectedUtil = match.util;
+			
 			int actualLearnRate = learnValueAddition;
-			if (!distinctBids.contains(oppBid) && (curUtil < expectedUtil - rightMargin || curUtil > expectedUtil + leftMargin)) { // We have a new original bid!
+			if (curUtil < expectedUtil - rightMargin || curUtil > expectedUtil + leftMargin) { // Check if we're outside the boundaries
 				// Algebra to find the new learnValueAddition (where w_i is the weight of issue i, and v_i,j is the value item j from issue i:
 				// U(offer) = sum_i(w_i (v_{i,j}/sum_j(v_{i,j}))
 				// Frequency modeling will add the following:
@@ -202,7 +228,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 			// Then update the values using the optimal learn found above
 			UpdateValues(oppBid, actualLearnRate);
 			
-			Log.dln("expectedUtil: " + Log.format(expectedUtil, "0.000") + ", estimatedUtil: " + Log.format(curUtil, "0.000") + ", New estimated util: " + Log.format(this.getBidEvaluation(oppBid.getBid()), "0.000") + ", ActualLearnRate: " + actualLearnRate );
+			Log.dln(", expectedUtil: " + Log.format(expectedUtil, "0.000") + ", estimatedUtil: " + Log.format(curUtil, "0.000") + ", New estimated util: " + Log.format(this.getBidEvaluation(oppBid.getBid()), "0.000") + ", ActualLearnRate: " + actualLearnRate );
 		} catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -301,7 +327,6 @@ public class Group7_FrequencyOM extends OpponentModel {
 				);
 	}
 	
-	
 	@Override
 	public double getBidEvaluation(Bid bid) {
 		double result = 0;
@@ -316,5 +341,15 @@ public class Group7_FrequencyOM extends OpponentModel {
 	@Override
 	public String getName() {
 		return "Group7 Adaptive Frequency Model";
+	}
+	
+	private class BidMap {
+		public Bid bid;
+		public Double util;
+		
+		public BidMap(Bid bid, Double util) {
+			this.bid = bid;
+			this.util = util;
+		}
 	}
 }
