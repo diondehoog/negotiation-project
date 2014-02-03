@@ -133,7 +133,7 @@ public class Phase2 extends Phase{
 		if ((concedeStep == -1)&&(Math.random()<this.Pconcede)) {
 			concedeStep = 1;
 		}
-		
+		double dDist = 0;
 		double xconcede = 0;
 		if (concedeStep > 0) {
 			Log.vln("Concede! Just because we are nice. :) Step: " + concedeStep);
@@ -141,10 +141,13 @@ public class Phase2 extends Phase{
 			concedeStep++;
 			if (concedeStep >= this.concedeSteps) {
 				concedeStep = -1;
+				for (int i = 1; i < 10; i++) {
+					dDist += i/concedeSteps*concedeFactor*(ourMaxDist/theirMaxDist);
+				}
 			}
 		}
 		
-		double dDist = (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist);
+		dDist += (x*niceFactor-xconcede)*(ourMaxDist/theirMaxDist);
 		Log.vln("x: " + String.format("%5.4f", x) + " Ddist: " + String.format("%5.4f",dDist));
 		ourDist += dDist; // add their difference distance to our distance
 		

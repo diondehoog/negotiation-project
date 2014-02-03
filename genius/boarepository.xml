@@ -16,6 +16,15 @@
 			<parameter name="min" default="0.0" description="Minimum utility"/>
 			<parameter name="max" default="0.99" description="Maximum utility"/>
 		</biddingstrategy>
+		<biddingstrategy description="Group7_BS2" classpath="negotiator.group7.Group7_BS">
+			<parameter name="e" default="0.3" description="concession factor unused"/>
+			<parameter name="Ppareto" default="0.5" description="chance to offer pareto bid"/>
+			<parameter name="averageOver" default="5.0" description="bids to average over to determine concession"/>
+			<parameter name="niceFactor" default="0.33" description="how to weigh opponent concessions"/>
+			<parameter name="Pconcede" default="0.05" description="chance to concede a bit"/>
+			<parameter name="concedeFactor" default="0.3" description="amount to concede"/>
+			<parameter name="concedeSteps" default="10.0" description="how many steps it takes to concede"/>
+		</biddingstrategy>
 	</biddingstrategies>
 	<acceptanceconditions>
 		<acceptancecondition description="Other - Time" classpath="negotiator.boaframework.acceptanceconditions.other.AC_Time">
@@ -33,6 +42,21 @@
 			<parameter name="a" default="1.0" description="Accept when the opponent's utility * a + b is greater than the utility of our current bid"/>
 			<parameter name="b" default="0.0" description="Accept when the opponent's utility * a + b is greater than the utility of our current bid"/>
 		</acceptancecondition>
+		<acceptancecondition description="Group7_AS" classpath="negotiator.group7.Group7_AS"/>
+			<parameter name="timeWindow" default="0.2" description="how big is the time window in which to search for our/his best/worst bids? [=timeWindow]"/>
+			<parameter name="capWorstSlope" default="-0.3" description="the slope from t=0 to t=1 with which to cap our worst bid utility [=capWorstSlope]"/>
+			<parameter name="capWorstMinimal" default="0.6" description="the minimal value that our worst utility should be, otherwise capped [=capWorstMinimal]"/>
+			<parameter name="acceptCurveStart" default="0.8" description="the starting value of the accept curve if type == 1. Otherwise, this is the percentage between 1.0 and the value the curve has to approach that the curves starts at. If 0.8 and type is 3 (kalai), then start is 0.8 + 0.2 * kalai [=acceptCurveStart]"/>
+			<parameter name="acceptCurveApproach" default="0.6" description="the value that the accept curve will approach if type == 1 [=acceptCurveApproach]"/>
+			<parameter name="acceptCurveType" default="2" description="1 = static, surve simply reaches the 'acceptCurveApproach' value and starts at 'acceptCurveStart'. 2 = curve approach avg of 1.0 and first bid opponent. 3 = curve approach kalai. 4 = curve approach nash. [=acceptCurveType]"/>
+			<parameter name="percentDurationWeight" default="0.25" description="how much the duration of the last bid weighs in with the current running average [=percentDurationWeight]"/>
+			<parameter name="panicConcede" default="0.05" description="amount of utility we allow ourself to concede from opponents best bid during panic mode (from time window) [=panicConcede]"/>
+			<parameter name="panicWhenBidsLeft" default="3" description="amount of bids left after which we should panic and accept ASAP [=panicWhenBidsLeft]"/>
+		</acceptancecondition>
+		<acceptancecondition description="Other - Next" classpath="negotiator.boaframework.acceptanceconditions.other.AC_Next">
+			<parameter name="a" default="1.0" description="Accept when the opponent's utility * a + b is greater than the utility of our current bid"/>
+			<parameter name="b" default="0.0" description="Accept when the opponent's utility * a + b is greater than the utility of our current bid"/>
+		</acceptancecondition>
 		<acceptancecondition description="Other - Constant" classpath="negotiator.boaframework.acceptanceconditions.other.AC_Const">
 			<parameter name="c" default="0.9" description="If utility of opponent's bid greater than c, then accept"/>
 		</acceptancecondition>
@@ -41,14 +65,14 @@
 		<opponentmodel description="IAMhaggler Bayesian Model" classpath="negotiator.boaframework.opponentmodel.IAMhagglerBayesianModel"/>
 		<opponentmodel description="Smith Frequency Model V2" classpath="negotiator.boaframework.opponentmodel.SmithFrequencyModelV2"/>
 		<opponentmodel description="CUHKFrequencyModelV2" classpath="negotiator.boaframework.opponentmodel.CUHKFrequencyModelV2"/>
+		<opponentmodel description="Group7_HH_OM" classpath="negotiator.group7.Group7_HH_OM"/>
+		<opponentmodel description="Group7_OM: Adaptive Frequency Model" classpath="negotiator.group7.Group7_FrequencyOM"/>
 		<opponentmodel description="Nash Frequency Model" classpath="negotiator.boaframework.opponentmodel.NashFrequencyModel"/>
 		<opponentmodel description="Scalable Bayesian Model" classpath="negotiator.boaframework.opponentmodel.ScalableBayesianModel"/>
 		<opponentmodel description="HardHeaded Frequency Model" classpath="negotiator.boaframework.opponentmodel.HardHeadedFrequencyModel">
 			<parameter name="l" default="0.2" description="The learning coefficient determines how quickly the issue weights are learned"/>
 		</opponentmodel>
-		<opponentmodel description="Logging Frequency Model" classpath="negotiator.group7.BidSaverFrequencyModel"/>
 		<opponentmodel description="No Model" classpath="negotiator.boaframework.opponentmodel.NoModel"/>
-		<opponentmodel description="Group7_FrequencyOM" classpath="negotiator.group7.Group7_FrequencyOM"/>
 	</opponentmodels>
 	<omstrategy>
 		<omstrategy description="Best bid" classpath="negotiator.boaframework.omstrategy.BestBid">

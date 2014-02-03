@@ -97,7 +97,8 @@
 \label{sec:introduction}
 A relatively new and evolving branch of Artificial Intelligence is automated negotiation. In automated negotiation, two or more agents negotiate about a multi-issue problem in order to find a solution that maximizes their utility. The utilities for each possible bid are determined using a human-defined preference profile, which consists of weights for each of the issues and a utility for each possible value of the issues. 
 
-In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. \Autoref{sec:questions} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
+In this report we describe the process of creating an agent for automated negotiation. \Autoref{sec:exercises} contains the answers to the questions posed in the assignment concerning the party domain and genius in general. 
+\Autoref{sec:strategy} describes the strategy our agent uses. The main chapter contains the high-level description of the agent. In it's subsections, \autoref{sec:strategyAS}, \autoref{sec:strategyBS}, \autoref{sec:strategyOM} and \autoref{sec:strategyOMS}, we go into more detail about the specific BOA components. \Autoref{sec:performance} shows the results of performance tests of our final agent against some other agents that were included in genius. In \Autoref{sec:conclusion} we describe our experience regarding building the agent and decide what is needed in order to use our agent in real world negotiations.
 
 \newpage
 \tableofcontents
@@ -105,6 +106,7 @@ In this report we describe the process of creating an agent for automated negoti
 
 
 \section{Exercises}
+\label{sec:exercises}
 
 \subsection{Party domain analysis}
 
@@ -127,13 +129,13 @@ we compute the outcome space and the pareto frontier and plot this in the figure
 
 \subsubsection{Analyse simple opponents}
 
-Finally, we perform two negotation sessions: we play with the agent SimpleAgent against
+Finally, we perform two negotiation sessions: we play with the agent SimpleAgent against
 itself, and we play Boulware vs Conceder and explain the outcome. 
 
 When we play simple agent against itself, we notice the behaviour is quite random.
 This is explained by the code: it always offers a random bid higher than a certain threshold,
 by default this threshold is zero. Therefore it performs a random walk through the 
-biddingspace. It's acceptance strategy is as follows: it accepts higher bids with 
+bidding space. It's acceptance strategy is as follows: it accepts higher bids with 
 higher probability, and if the deadline is closer it will also accept bids with higher probability.
 It will never accept bids with a utility of zero. The equation that determines the 
 probability of acceptance is:
@@ -147,7 +149,7 @@ Where $P$ denotes the chance of acceptance.
 Because of this behaviour 
 we found the average utility playing against itself is around $0.68$, and the
 time needed to reach an agreement was very short: $0.03$ (averaged
-over 20 negotations on the party domain).
+over 20 negotiations on the party domain).
 This is quite logical, since because both sides offer random bids, it is very soon the
 case that either bid is quite acceptable for the opposing party.
 When this agent negotiates with other agents, it performs horrible, because
@@ -170,7 +172,7 @@ Boulware chooses the best bid for itself, and keeps offering this bid. This agen
 only concedes at the very last moments before the deadline. Conceder on the other hand
 starts conceding directly, conceding more and more with every new bid. 
 We also ran simulations on the party domain using these agents. 
-Averaging over 20 negotations the conceder reached an utility of $0.67$ and
+Averaging over 20 negotiations the conceder reached an utility of $0.67$ and
 boulware $0.99$. 
  
 \subsection{PEAS Description}
@@ -186,30 +188,33 @@ The first step in designing an agent is to specify the environment as fully as p
     \hline
     \end{tabular}
     
-    \caption{PEAS decription for our negotiation agent \label{table:peas-description}}
+    \caption{PEAS description for our negotiation agent \label{table:peas-description}}
 \end{table}
 
-Table~\ref{table:peas-description} displays the PEAS descrition for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. \todo{Check the PEAS description I came up with and finish the additional description} 
+Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. \todo{Check the PEAS description I came up with and finish the additional description} 
 
 \subsection{BOA Framework}
 
-Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model}, \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of seperating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual compontents and analyze the interaction between the components. Below we provide a small description for the three required components.
+Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model}, \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy is arguably the most important compontent. Its goal is to determine the next bid that is offered to the oponent. In determining the next bid the agent can interact with the opponent model to provice a suitable offer. Sometimes the negotiation sessions is split up in multiple phases and each of the phases uses a different bidding strategy.
+  The bidding strategy is arguably the most important component. Its goal is to determine the next bid that is offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation sessions is split up in multiple phases and each of the phases uses a different bidding strategy.
 
   \item[Opponent Model] \hfill \\
-  Learning the opponents behavior is essential in a good negotiation session. It allows for adapting to the way the other party provides its bids. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
+  Learning the opponents behaviour is essential in a good negotiation session. It allows for adapting to the way the other party provides its bids. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modelling} or \emph{frequency analysis}.
 
   \item[Acceptance Strategy] \hfill \\
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy decides whether the opponents offer should be accepted. A broad variety of acceptance strategies is available reaching from postponing acceptance until the last step and aiming at fast decisions.
 
 \end{description}
 
+\section{Strategy}
+\label{sec:strategy}
+
 \subsection{Bidding Strategy}
 \label{sec:strategyBS}
-Our bidding strategy is time dependent, we have implemented three phases each of which uses its own strategy for offering bids. The main \texttt{Group7\_BS} class chooses the strategy by evaluating the normalized time (\texttt{getTime()}) and the two hardcoded phase thresholds stored in the array \texttt{phaseBoundary}. In this section we discuss the strategy behind each of the phases seperately.
+Our bidding strategy is time dependent, we have implemented three phases each of which uses its own strategy for offering bids. The main \texttt{Group7\_BS} class chooses the strategy by evaluating the normalized time (\texttt{getTime()}) and the two hard-coded phase thresholds stored in the array \texttt{phaseBoundary}. In this section we discuss the strategy behind each of the phases separately.
 
 \subsubsection{First Phase}
 Our agents first bid is determined by the method \texttt{determineOpeningBid()}. By offering a bid of maximal utility the opponent can easily estimate our preference profile. Due to this reason we have chosen to offer an initial bid of utility $0.9$. The best bid of this utility is obtained by calling \texttt{getBidNearUtility()} of the \texttt{OutcomeSpace} class. \\
@@ -273,16 +278,6 @@ public Range getBidRange (double t, double margin) {
 \label{sec:performance}
 \todo{a section documenting the tests you performed to improve the negotiation strength of your agent. You must include scores of various tests over multiple sessions that you performed while testing your agent. Describe how you set up the testing situation and how you used the results to modify your agent.}
 
-\section{Questions}
-\label{sec:questions}
-
-\subsection{Analysis of the Party Domain}
-
-\begin{enumerate}[(a)]
-
-\item{test}
-
-\end{enumerate}
 
 \section{Conclusion}
 \label{sec:conclusion}
