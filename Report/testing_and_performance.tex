@@ -4,6 +4,14 @@ We will let our agent compete against various agents from \texttt{ANAC 2011}, we
 we quantify how much our opponent model improves our results, and finally test it on a wide range of domains with and without discounted utilities.
 We present the results and discuss the efficiency of the agent in terms of reaching \emph{Nash solutions}, \emph{Kalai Smorodinski points} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
 
+\subsection{Intermediate tests}
+During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOAconstructor. 
+
+The initial version of the adaptive opponent model the BOAconstructor used assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
+
+Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOAconstructor agent.
+
+
 \subsection{Performance against \texttt{ANAC 2011} agents}
 
 In this part we compare our agent to three of the agents that attended in the ANAC 2011 competitio: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. The results have been obtained by running a tournament using multiple utility profiles for the (undiscounted) Party domain and setting the negotiation time to $30$ seconds,
