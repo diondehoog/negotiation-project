@@ -5,12 +5,12 @@ we quantify how much our opponent model improves our results, and finally test i
 We present the results and discuss the efficiency of the agent in terms of reaching \emph{Nash solutions}, \emph{Kalai Smorodinski points} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
 
 \subsection{Intermediate tests}
-During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOAconstructor. 
+During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOA constructor. However, implementing the tit-for-tat strategy, that also performs concessions and also projects onto the pareto optimal frontier prooved very difficult. We have optimized many of the parameters
+using tests on the party domain. In some cases conceding made our agent offer the best bid for the opponent, consequently, this feature was disabled entirely in the final tests (below) for our agent.
 
-The initial version of the adaptive opponent model the BOAconstructor used assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
+The initial version of the adaptive opponent model the BOA constructor assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
 
-Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOAconstructor agent.
-
+Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOA constructor agent. This limited our time to perform important optimizations.
 
 \subsection{Performance against \texttt{ANAC 2011} agents}
 
@@ -158,10 +158,12 @@ The laptop domain is very small; it has only two bids on the Pareto frontier. Th
   \caption{Average discounted utilities of the tested agents in the given domains (Runtime: $30$s) \label{table:anac2011-domains2}}
 \end{table}
 
-Overall we see that our agent generally performs well in domains with discounted utilities, sometimes even better than in domains without discounted utilities, yet our agent is not optimized for this. However in the IS BT Acquisition domain, the performance of our agent is suboptimal, and this might be influenced by the fact that our agent does not take the discount factor into account. To confirm this, we ran the same tests again, but we changed the agent so that the length of the phases in the bidding strategy were adjusted automatically. This should lead to faster agreement when the discount factor is high. The results of this are shown in \autoref{table:anac2011-domains3}. To adjust the phase boundraries, we simply multiplied the boundrary with the discount factor.
+Overall we see that our agent generally performs well in domains with discounted utilities, sometimes even better than in domains without discounted utilities, yet our agent is not optimized for this. In the IS BT Acquisition domain, the performance of our agent is suboptimal, and this might be influenced by the fact that our agent does not take the discount factor into account.
+To confirm this, we ran the same tests again, but we changed the agent so that the length of the phases in the bidding strategy were adjusted to the discount factor automatically. This should lead to faster agreement when the discount factor is high. 
+The results of this are shown in \autoref{table:anac2011-domains3}. 
+To adjust the phase boundraries, we simply multiplied the boundary with the discount factor.
 Because we already had so many parameters in our agent we didn't want to increase complexity, but we hope such a simple adjustment makes our agent more robust for discounted domains.
-
-It is clear from these results that the average utilities are very similar, or worse, for this discount adjusted agent compared to the original agent.
+As can be seen in the table, the average utilities are very similar for this discount adjusted agent compared to the original agent: the average utility over the domains that have a discount factor only differ by 0.008. Therefore we conclude that the discounted phase times do not significantly influence the quality of our agent.
 
 \begin{table}[H]
   \centering
@@ -170,10 +172,10 @@ It is clear from these results that the average utilities are very similar, or w
       \toprule
     Domain & HardHeaded & Gahboninho & The Negotiator & Self \\
     \midrule
-    Camera & 0.785 & 0.703 & \textbf{0.773} & 0.765 \\
-    Grocery & 0.724 & 0.705 & \textbf{0.827} & 0.733 \\
-    IS BT Acquisition BT prof & 0.768 & \textbf{0.812} & 0.810 & 0.689 \\
-    Laptop & \textbf{0.713} & 0.670 & 0.600 & 0.673 \\
+	Camera & \textbf{0.786} & 0.703 & 0.533 & 0.781 \\
+	Grocery & 0.724 & 0.705 & \textbf{0.834} & 0.735 \\
+	IS BT Acquisition & 0.762 & \textbf{0.823} & 0.813 & 0.688 \\
+	Laptop & \textbf{0.713} & 0.671 & 0.598 & 0.672 \\
    \bottomrule
   \end{tabular}
   \caption{Average discounted utilities of the tested agents in the given domains with phases scaled to bidding discount (Runtime: $30$s) \label{table:anac2011-domains3}}
