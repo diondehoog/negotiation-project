@@ -1,0 +1,34 @@
+<tournament_quality_measures> 
+<NegotiationOutcome Agent="bs: Group7_BS2 {Pconcede=0.05, Ppareto=0.5, averageOver=5.0, concedeFactor=0.0, concedeSteps=10.0, discount=1.0, e=0.3, niceFactor=0.5, phase2=0.1, phase3=0.95} as: Group7_AS {acceptCurveApproach=0.8, acceptCurveStart=1.0, acceptCurveType=2, capWorstMinimal=0.6, capWorstSlope=-0.3, panicConcede=0.05, panicWhenBidsLeft=3, percentDurationWeight=0.5, timeWindow=0.2} om: Group7_OM: Adaptive Frequency Model  oms: Group7_OMS "> 
+<TournamentQM average_time_of_agreement="0.5972471974416668" std_time_of_agreement="0.0" average_time_of_end_of_negotiation="0.5972471974416668" std_time_of_end_of_negotiation="0.0" average_rounds="3455.625" std_rounds="0.0" percentage_of_agreement="100.0" average_util="0.8607685970753624" std_util="0.0" average_util_of_agreements="0.8607685970753624" average_discounted_util="0.7187940692042903" std_discounted_util="0.0" average_discounted_util_of_agreements="0.7187940692042903"> 
+</TournamentQM> 
+<UtilityBasedQM average_nash_distance="0.10426754972000285" average_nash_distance_of_agreements="0.10426754972000285" average_pareto_distance="6.914447685656518E-4" average_pareto_distance_of_agreements="6.914447685656518E-4" average_kalai_distance="0.10790901517577121" average_kalai_distance_of_agreements="0.10790901517577121" average_social_welfare="1.7309213781652393" average_social_welfare_of_agreements="1.7309213781652393"> 
+</UtilityBasedQM> 
+<trajectorAnalysisQM average_exploration="0.20495081018518516" average_joint_exploration="0.2478110532407407" perc_pareto_bids="0.7388167706710648" average_unfortunate_moves="0.07881607745735422" average_fortunate_moves="0.07058665056252404" average_nice_moves="0.00863479657491799" average_selfish_moves="0.09524094931328068" average_concession_moves="0.09718603388462073" average_silent_moves="0.6495354922073023"> 
+</trajectorAnalysisQM> 
+</NegotiationOutcome> 
+<NegotiationOutcome Agent="HardHeaded"> 
+<TournamentQM average_time_of_agreement="0.6872955169083333" std_time_of_agreement="0.0" average_time_of_end_of_negotiation="0.6872955169083333" std_time_of_end_of_negotiation="0.0" average_rounds="3898.75" std_rounds="0.0" percentage_of_agreement="100.0" average_util="0.92674331232493" std_util="0.0" average_util_of_agreements="0.92674331232493" average_discounted_util="0.7463586913946778" std_discounted_util="0.0" average_discounted_util_of_agreements="0.7463586913946778"> 
+</TournamentQM> 
+<UtilityBasedQM average_nash_distance="0.08989880183168888" average_nash_distance_of_agreements="0.08989880183168888" average_pareto_distance="0.0020743343056969553" average_pareto_distance_of_agreements="0.0020743343056969553" average_kalai_distance="0.088801404732083" average_kalai_distance_of_agreements="0.088801404732083" average_social_welfare="1.7364583184898381" average_social_welfare_of_agreements="1.7364583184898381"> 
+</UtilityBasedQM> 
+<trajectorAnalysisQM average_exploration="0.09421585648148148" average_joint_exploration="0.3340190972222222" perc_pareto_bids="0.9658479440400557" average_unfortunate_moves="0.017055737792223098" average_fortunate_moves="0.010548010578657023" average_nice_moves="0.004852237711762609" average_selfish_moves="0.02308918184336022" average_concession_moves="0.02434336812448277" average_silent_moves="0.9201114639495143"> 
+</trajectorAnalysisQM> 
+</NegotiationOutcome> 
+<NegotiationOutcome Agent="Gahboninho V3"> 
+<TournamentQM average_time_of_agreement="0.5402071251291666" std_time_of_agreement="0.0" average_time_of_end_of_negotiation="0.5402071251291666" std_time_of_end_of_negotiation="0.0" average_rounds="3167.875" std_rounds="0.0" percentage_of_agreement="100.0" average_util="0.8299435775934797" std_util="0.0" average_util_of_agreements="0.8299435775934797" average_discounted_util="0.7254249773525152" std_discounted_util="0.0" average_discounted_util_of_agreements="0.7254249773525152"> 
+</TournamentQM> 
+<UtilityBasedQM average_nash_distance="0.1015555481831687" average_nash_distance_of_agreements="0.1015555481831687" average_pareto_distance="0.0" average_pareto_distance_of_agreements="0.0" average_kalai_distance="0.10139045271851194" average_kalai_distance_of_agreements="0.10139045271851194" average_social_welfare="1.7374313752125272" average_social_welfare_of_agreements="1.7374313752125272"> 
+</UtilityBasedQM> 
+<trajectorAnalysisQM average_exploration="0.026805555555555555" average_joint_exploration="0.1028660300925926" perc_pareto_bids="0.9546333273316308" average_unfortunate_moves="0.002092466486119073" average_fortunate_moves="7.409602845287492E-5" average_nice_moves="0.0" average_selfish_moves="0.0013450708338190779" average_concession_moves="0.003443385525106271" average_silent_moves="0.9930449811265026"> 
+</trajectorAnalysisQM> 
+</NegotiationOutcome> 
+<NegotiationOutcome Agent="bs: 2011 - The Negotiator  as: 2011 - The Negotiator  om: CUHKFrequencyModelV2  oms: Best bid {t=1.0}"> 
+<TournamentQM average_time_of_agreement="0.5642389502874999" std_time_of_agreement="0.0" average_time_of_end_of_negotiation="0.5642389502874999" std_time_of_end_of_negotiation="0.0" average_rounds="3300.25" std_rounds="0.0" percentage_of_agreement="100.0" average_util="0.8537714533512221" std_util="0.0" average_util_of_agreements="0.8537714533512221" average_discounted_util="0.6945943181369552" std_discounted_util="0.0" average_discounted_util_of_agreements="0.6945943181369552"> 
+</TournamentQM> 
+<UtilityBasedQM average_nash_distance="0.12134829914515095" average_nash_distance_of_agreements="0.12134829914515095" average_pareto_distance="0.0" average_pareto_distance_of_agreements="0.0" average_kalai_distance="0.1335351880767186" average_kalai_distance_of_agreements="0.1335351880767186" average_social_welfare="1.718874440793353" average_social_welfare_of_agreements="1.718874440793353"> 
+</UtilityBasedQM> 
+<trajectorAnalysisQM average_exploration="0.038831018518518515" average_joint_exploration="0.3065480324074074" perc_pareto_bids="0.841978352168113" average_unfortunate_moves="0.04279001327167702" average_fortunate_moves="0.02683292510062085" average_nice_moves="0.015013404825737266" average_selfish_moves="0.022120357946904663" average_concession_moves="0.023804324273144276" average_silent_moves="0.8694389745819159"> 
+</trajectorAnalysisQM> 
+</NegotiationOutcome> 
+</tournament_quality_measures> 
