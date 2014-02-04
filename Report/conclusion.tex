@@ -12,14 +12,31 @@ We clearly started out with a too complex agent, before optimizing any parameter
 However, we think that separating a bidding strategy into phases can lead to 
 better results than just using a single bidding strategy. By adding parameters
 to each individual phase, we can explore the space of strategies even more.
+
+This might be in part, because of the too large separation between members of our project group.
+Each of us often worked on our 'own' component, and because of this, most of us made components too complex as there was no overview. Furthermore, we had some practical issues with version control, from which we learned a lot.
+Finally, we have really enjoyed this challenge, although we aren't entirely satisfied with 
+our results. We wish we could spend more time on this project looking at our mistakes.
  
 \subsection{Future Perspectives}
-\subsubsection{BOAconstructor}
+\subsubsection{Improving BOA constructor}
 During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
 
-For the Bidding Strategy ...
+\todo{For the Bidding Strategy ...}
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
+
+Our the Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
+
+\subsubsection{Future of BOA constructor for real-life negotations}
+
+Before our agent, or most negotiation agents, can be used by humans in real negotation 
+session, we think a lot has to be done. People will want more control over the 
+negotation process of the agent, and specifically in understandable terms (no hard parameters).
+Also it is important for people to understand what it is doing. 
+Tutorials to see that the agent is performing well would be important. 
+This might be realised best by letting people perform against the agent. 
+This could illustrate the different tactics / settings of the agent.
 
 \subsubsection{Using a mediator}
 In the process of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.
