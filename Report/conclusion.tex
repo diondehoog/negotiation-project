@@ -1,9 +1,28 @@
 
-For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Finding outcomes that are a win-win situation for both parties can be hard. The complexity of the BOA components are expressed in the amount of different parameters, depending on a lot of factors. These factors are optimized in the testing phase.  \\
+\subsection{Main conclusions}
 
-Our agent, the BOAconstructor, combines multiple existing ideas. \todo{not finished...}
+For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Finding outcomes that are a win-win situation for both parties can be quite hard.
 
+Our agent, the BOAconstructor, combines multiple existing ideas.
+However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters.
+Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space. Because of this, our agent is clearly performing suboptimal.
+In the tests we have seen that our acceptance strategy in combination with phase 3 
+almost always leads to acceptance, which is apparently too lenient compared to other agents.
+Furthermore, when optimizing phase 2 this resulted in parameters that were not a good
+fit for our agent at all, sometimes resulting in very early acceptance. We have decided 
+in final tests to disable concessions in phase 2 to prevent this from happening.
+
+We conclude that in automated negotation, starting out with a simple agent and 
+continueally improving this agent is a better strategy to develop agents. 
+We clearly started out with a too complex agent, before optimizing any parameters.
+However, we think that by seperating phases in a bidding strategy can lead to 
+improvements than just using a single bidding strategy. By adding parameters
+to each individual phase, we can explore the space of strategies even more,
+just like the BOA model which makes it easier to search in the space of strategies.
+ 
 \subsection{Future Perspectives}
+
+\subsubsection{Using a mediator}
 In the proces of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.\\
 
 While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they got a good utility themselves.  \\
@@ -12,9 +31,7 @@ Since the mediator has both preference profiles, it is able to calculate all the
 
 This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
 
-\clearpage
-
-\subsubsection{Further Improvements}
+\subsubsection{Other options}
 Extending agents with more communication abilities would probably not increase the performance significantly. They could
 communicate about certain issues, for example if they would concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. \\
 
@@ -25,4 +42,32 @@ downloaded to your pocket negotiator. Then it would be useful to remove all the 
 
 There are also other possibilities. Considering humans when negotiating, they are able to offer issues outside the negotiation domain, to convince the opponent to get this deal. Well known examples are money or, in the case of cars, extra tires. In the current \texttt{Genius} environment it is impossible to offer new issues in a negotiation session, maybe this could be a feature in the future when negotiators are able to rate unknown issues or when they can ask for input of a human. 
 
+\subsubsection{Feedback concerning genius}
+
+Because our agent used quite complex behaviour, we tried to use as much functions
+already in the genius API to reduce our workload. However, using the Genius API 
+sometimes was very challenging. Below we make a short list of issues we encountered,
+which we hope can be improved in next versions of Genius:
+
+\begin{itemize}
+\item It was not possible for our acceptance strategy to communicate with the 
+opponent model strategy or opponent model. This is a real problem, 
+since for acceptance we wanted to check if bids were pareto optimal and so forth
+before accepting.
+\item Conversions between bidDetails, bid and bidPoint classes can be hard. Especially 
+converting bidPoints back to bid or bidDetails seemed impossible, we had to search through
+part of the bidspace to find back the bids corresponding to bidPoints.
+\item Built in functions of the opponentSpace do not work for all default included 
+opponent models. For example, we were not able to construct bidspaces for most
+models except the hardheaded frequency model. 
+\item The function to calculate the Kalai Smorodinsky point, which we used intensively,
+does not always return the correct bid. This is best demonstrated in the domain 
+niceOrDie.
+\item Using multi acceptance strategies in parallel only displays results in the commandline window and are not written to log files. This makes using this feature very unattractive.
+\item In genius, when running tournament a second time, log files are not correctly saved.
+It will try to append the new log file to the old one, and because of this genius will throw
+an exception. 
+\item It would be very nice if one could export a whole trace of values from a negotation
+session for analysis and debugging. We have implemented a logging BOA component to do this for us, but this worked very inefficient.
+\end{itemize}
 
