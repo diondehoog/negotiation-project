@@ -106,7 +106,7 @@ public class Group7_BS extends OfferingStrategy {
 		int newPhase = getNegotiationPhase();
 		if (newPhase != curPhase)
 		{
-			System.out.println("Switching to phase " + newPhase);
+			Log.newLine("Switching to phase " + newPhase);
 			if (newPhase == 1)
 				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], 0.0, 0.0);
 			if (newPhase == 2)
