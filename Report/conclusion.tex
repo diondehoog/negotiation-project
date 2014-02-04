@@ -18,14 +18,32 @@ However, we think that by separating phases in a bidding strategy can lead to
 better results than just using a single bidding strategy. By adding parameters
 to each individual phase, we can explore the space of strategies even more,
 just like the BOA model which makes it easier to search the space of strategies.
+
+This might be in part because of the too large seperation between group members.
+A lot of the time members in our group worked on their 'own' component, 
+and because of this, most of us made components too complex because others would not interfere.
+Furthermore, we had some practical issues with version control, from which we learned a lot.
+Finally, we have really enjoyed this challenge, although we aren't entirely satisfied with 
+our results. We wish we could spend more time on this project looking at our mistakes
+on the way.
  
 \subsection{Future Perspectives}
-\subsubsection{BOAconstructor}
+\subsubsection{Improving BOA constructor}
 During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
 
 For the Bidding Strategy ...
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
+
+\subsubsection{Future of BOA constructor for real-life negotations}
+
+Before our agent, or most negotiation agents, can be used by humans in real negotation 
+session, we think a lot has to be done. People will want more control over the 
+negotation process of the agent, and specifically in understandable terms (no hard parameters).
+Also it is important for people to understand what it is doing. 
+Tutorials to see that the agent is performing well would be important. 
+This might be realised best by letting people perform against the agent. 
+This could illustrate the different tactics / settings of the agent.
 
 \subsubsection{Using a mediator}
 In the process of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.
