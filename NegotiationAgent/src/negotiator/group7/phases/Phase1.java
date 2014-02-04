@@ -8,8 +8,6 @@ import negotiator.group7.Log;
 
 
 public class Phase1 extends Phase {
-	private double phase1LowerBound;
-	private double phase1UpperBound;
 	
 	public Phase1(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 				  double phase1LowerBound, double phase1UpperBound) {
@@ -18,8 +16,8 @@ public class Phase1 extends Phase {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		
 		// Set the phase time boundaries
-		this.phase1LowerBound = phase1LowerBound;
-		this.phase1UpperBound = phase1UpperBound;
+		//this.phase1LowerBound = phase1LowerBound;
+		//this.phase1UpperBound = phase1UpperBound;
 	
 	}
 
