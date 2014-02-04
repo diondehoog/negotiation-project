@@ -96,13 +96,6 @@ Furthermore, we see that the average utilities for the opponent are also lower c
 The distance to the \emph{Nash point}, \emph{Pareto Frontier} and \emph{Kalai point} are especially interesting for evaluating the quality of the opponent model: a better opponent model allows us to offer bids closer to these optimal values. We also note here that for every agent these properties are lowest using our own opponent model.
 We conclude our opponent model is significantly better combined with our agent.
 
-
-
-
-
-
-
-
 \subsection{Performance In Different Domains}
 In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition  domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}. In this table all values are averaged over each domain. During this test, our agent was not yet adapted to perform on discounted domains.
 The next test will include this adaptiation, so we can compare the results.
@@ -163,7 +156,7 @@ To confirm this, we ran the same tests again, but we changed the agent so that t
 The results of this are shown in \autoref{table:anac2011-domains3}. 
 To adjust the phase boundraries, we simply multiplied the boundary with the discount factor.
 Because we already had so many parameters in our agent we didn't want to increase complexity, but we hope such a simple adjustment makes our agent more robust for discounted domains.
-As can be seen in the table, the average utilities are very similar for this discount adjusted agent compared to the original agent: the average utility over the domains that have a discount factor only differ by 0.008. Therefore we conclude that the discounted phase times do not significantly influence the quality of our agent.
+As can be seen in the table, the average utilities are very similar for this discount adjusted agent compared to the original agent: the average utility over the domains that have a discount factor only differ by 0.008. Therefore we conclude that the discounted phase times do not significantly influence the quality of our agent, as was expected. Our performance however, is not terrible.
 
 \begin{table}[H]
   \centering

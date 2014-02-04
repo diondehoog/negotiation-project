@@ -3,19 +3,22 @@
 For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Reaching an agreement that is a win-win situation for both parties can be quite hard.
 
 Our agent, the BOAconstructor, combines multiple existing ideas.
-However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters. Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space. Because of this, our agent is clearly performing suboptimal. In the tests we have seen that our acceptance strategy in combination with the third phase of our bidding strategy almost always leads to acceptance, which is apparently a tad too lenient when facing most other agents. Furthermore, we found that many settings we tried for phase two, led to a rapid concession compared to our opponent.  Therefore, we have decided to disable these concessions in final tests.
+However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters. Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space.
+Also because of the complexity there were a lot of bugs, which limited our testing time considerably. Because of this, our agent is clearly performing suboptimal. In the tests we have seen that our acceptance strategy in combination with the third phase of our bidding strategy almost always leads to acceptance, which is apparently a tad too lenient when facing most other agents. Furthermore, we found that many settings we tried for phase two, led to a rapid concession compared to our opponent.  Therefore, we have decided to disable these concessions in final tests. Sadly, we did not have time to optimize these parameters further.
 
 We conclude that in automated negotiation, starting out with a simple agent and 
 continually improving this agent, would have been a better strategy to develop agents. 
-We clearly started out with a too complex agent, before optimizing any parameters.
+We clearly started out with a too complex agent before optimizing any parameters.
 However, we think that separating a bidding strategy into phases can lead to 
 better results than just using a single bidding strategy. By adding parameters
-to each individual phase, we can explore the space of strategies even more.
+to each individual phase, we can explore the space of strategies even more
+than just using a BOA agent.
 
-This might be in part, because of the too large separation between members of our project group.
+Our mistakes might be in part because of the too large separation between members of our project group.
 Each of us often worked on our 'own' component, and because of this, most of us made components too complex as there was no overview. Furthermore, we had some practical issues with version control, from which we learned a lot.
 Finally, we have really enjoyed this challenge, although we aren't entirely satisfied with 
-our results. We wish we could spend more time on this project looking at our mistakes.
+our results. We wish we could spend more time on this project looking back at our mistakes,
+since we think our agent can be improved a lot.
  
 \section{Future Perspectives}
 \subsection{Improving BOA constructor}
