@@ -63,6 +63,34 @@ In order to test whether our agent can cope with different domains, we tested it
  \caption{Performance of our agent using a set of diverse domains (Runtime: $30$s) \label{table:anac2011-domains}}
 \end{table}
 
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{l|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+			    & HardHeaded     & Gahboninho     & The Negotiator & Self \\ \hline
+  Car                       & \textbf{0.972} & 0.923          & 0.960          & 0.893 \\ \hline
+  Amsterdam Party           & \textbf{0.850} & 0.843          & 0.808          & 0.834 \\ \hline
+  Camera                    & 0.766          & 0.698          & 0.732          & \textbf{0.777} \\ \hline
+  Nice or Die               & 0.500          & \textbf{1.000} & 0.160          & 0.413 \\ \hline
+  Grocery                   & 0.689          & 0.705          & 0.572          & \textbf{0.758} \\ \hline
+  IS BT Acquisition BT prof & 0.762          & \textbf{0.809} & 0.803          & 0.683 \\ \hline
+  Laptop                    & \textbf{0.711} & 0.673          & 0.489          & 0.627 \\ \hline
+  \end{tabular}
+  \caption{Average discounted utilities of the tested agents in the given domains (Runtime: $30$s) \label{table:anac2011-domains2}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{l|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+                            & HardHeaded     & Gahboninho & The Negotiator & Self \\ \hline
+  Camera                    & 0.767          & 0.703          & 0.732          & \textbf{0.773} \\ \hline
+  Grocery                   & 0.685          & 0.705          & \textbf{0.756} & 0.732          \\ \hline
+  IS BT Acquisition BT prof & 0.759          & \textbf{0.814} & 0.804          & 0.688          \\ \hline
+  Laptop                    & \textbf{0.713} & 0.673          & 0.488          & 0.627          \\ \hline
+  \end{tabular}
+  \caption{Average discounted utilities of the tested agents in the given domains (Runtime: $30$s) \label{table:anac2011-domains2}}
+\end{table}
 
 
 \subsection{How Generic is our Agent?}
