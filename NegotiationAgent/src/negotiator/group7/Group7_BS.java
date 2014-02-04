@@ -1,10 +1,7 @@
 package negotiator.group7;
 
 import java.util.HashMap;
-import java.util.List;
 
-import negotiator.Bid;
-import negotiator.analysis.BidSpace;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OMStrategy;
@@ -15,41 +12,14 @@ import negotiator.group7.phases.Phase;
 import negotiator.group7.phases.Phase1;
 import negotiator.group7.phases.Phase2;
 import negotiator.group7.phases.Phase3;
-import negotiator.utility.UtilitySpace;
 
-/**
- * This is an abstract class used to implement a TimeDependentAgent Strategy adapted from [1]
- * 	[1]	S. Shaheen Fatima  Michael Wooldridge  Nicholas R. Jennings
- * 		Optimal Negotiation Strategies for Agents with Incomplete Information
- * 		http://eprints.ecs.soton.ac.uk/6151/1/atal01.pdf
- * 
- * The default strategy was extended to enable the usage of opponent models.
- * 
- * Note that this agent is not fully equivalent to the theoretical model, loading the domain
- * may take some time, which may lead to the agent skipping the first bid. A better implementation
- * is GeniusTimeDependent_Offering. 
- * 
- */
 public class Group7_BS extends OfferingStrategy {
-
-	/** k \in [0, 1]. For k = 0 the agent starts with a bid of maximum utility */
-	private double k = 0.0;
-	/** Maximum target utility */
-	private double Pmax;
-	/** Minimum target utility */
-	private double Pmin;
-	/** Concession factor */
-	private double e = 1.0;
 	
 	/** Outcome space */
 	SortedOutcomeSpace outcomespace;
 	
 	/** Phase boundaries */
 	private double[] phaseBoundary = {0.1, 0.95};
-	private double   phase1LowerBound = 0.8;
-	private double   phase1UpperBound = 1.0;
-	private double   phase2LowerBound = 0.6;
-	private double   phase2range = 0.05;
 	
 	private double Ppareto = 0.5; // probability of offering pareto
 	private int averageOver = 5; // how many bids to average over to determine concession of opponent
@@ -57,31 +27,16 @@ public class Group7_BS extends OfferingStrategy {
 	private double Pconcede = 0.05; // probability of conceding to make opponent happy
 	private double concedeFactor = 0.3; // amount of distance to concede to KS
 	private int concedeSteps = 10; // concession steps taken after eachother
+	private double hardcodefix = 1.0;
 	
 	/** Keep track of the current phase */
 	private int curPhase = 0;
-	
-	/** Tit-for-tat parameters: tft1 is amount of approaching, tft2 is amount of distancing*/
-	double tft1 = 0.5; //0.2;
-	double tft2 = 1.0; //0.75;
-	
-	/** Pareto frontier needs bidspace and utility space to be computed */
-	private BidSpace bidSpace; // (not implemented, does not work :( )
-	private UtilitySpace myUtilSpace;
-	private List<Bid> par; // parato frontier (not implemented)
-	private int bidNum = 0; // current bid number
-	private int recomputePar = 500; // after every 500 bids recompute the pareto frontier
-	private BidDetails nash; // nash product
 	
 	private Phase phase;
 	
 	private Helper ourHelper;
 	
 	
-	/**
-	 * Method which initializes the agent by setting all parameters.
-	 * The parameter "e" is the only parameter which is required (concession factor).
-	 */
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
 		double d = negoSession.getDiscountFactor(); 
@@ -93,53 +48,23 @@ public class Group7_BS extends OfferingStrategy {
 					phaseBoundary[0] = phaseBoundary[0]*d;
 					phaseBoundary[1] = phaseBoundary[1]*d;
 				}
-			
+		
+		// make helper class for communication between BOA components
 		ourHelper = Helper.get(negotiationSession);
 		ourHelper.setBiddingStrategy(this);
 		ourHelper.setSession(negoSession);
 		
 		if (parameters.get("phase2") != null)
-			phaseBoundary[0] = parameters.get("phase2"); // used!!
+			phaseBoundary[0] = parameters.get("phase2"); 
 		
 		if (parameters.get("phase3") != null)
-			phaseBoundary[1] = parameters.get("phase3"); // used!!
-
-		if (parameters.get("phase1lowerbound") != null)
-			phase1LowerBound = parameters.get("phase1lowerbound");
-		
-		if (parameters.get("phase1upperbound") != null)
-			phase1UpperBound = parameters.get("phase1upperbound");
-		
-		if (parameters.get("phase2lowerbound") != null)
-			phase2LowerBound = parameters.get("phase2lowerbound");
-		
-		if (parameters.get("e") != null)
-			e = parameters.get("e");
+			phaseBoundary[1] = parameters.get("phase3"); 
 		
 		negotiationSession = negoSession;
 		
-		this.myUtilSpace = negotiationSession.getUtilitySpace();
-		
-		// TODO: outcomespace is more efficient in finding bids near a known utility for us (not for opponent preferences)
 		outcomespace = new SortedOutcomeSpace(negotiationSession.getUtilitySpace());
 		
 		negotiationSession.setOutcomeSpace(outcomespace);
-		
-		// If k is given it is set to the given value, else it will have the initial value
-		if (parameters.get("k") != null)
-			k = parameters.get("k");
-		
-		if (parameters.get("min") != null)
-			Pmin = parameters.get("min");
-		else
-			Pmin = negoSession.getMinBidinDomain().getMyUndiscountedUtil();
-	
-		if (parameters.get("max") != null) {
-			Pmax= parameters.get("max");
-		} else {
-			BidDetails maxBid = negoSession.getMaxBidinDomain();
-			Pmax = maxBid.getMyUndiscountedUtil();
-		}
 		
 		// phase 2 parameters:
 		if (parameters.get("Ppareto") != null)
@@ -154,6 +79,8 @@ public class Group7_BS extends OfferingStrategy {
 			concedeFactor = parameters.get("concedeFactor");
 		if (parameters.get("concedeSteps") != null)
 			concedeSteps = parameters.get("concedeSteps").intValue();
+		if (parameters.get("hardcodefix") != null)
+			hardcodefix = parameters.get("hardcodefix");
 	
 		this.opponentModel = model;
 		this.omStrategy = oms;		
@@ -161,13 +88,10 @@ public class Group7_BS extends OfferingStrategy {
 
 	@Override
 	public BidDetails determineOpeningBid() {
-		// We can do something better here...
-		double time = negotiationSession.getTime();
+		// offer best bid:
 		BidDetails openingBid = negotiationSession.getOutcomeSpace().getBidNearUtility(1.0);
-		
 		Log.sln("openingBid = " + openingBid.toString());
 		return openingBid;
-		//return determineNextBid();
 	}
 
 	/**
@@ -178,27 +102,16 @@ public class Group7_BS extends OfferingStrategy {
 	 */
 	@Override
 	public BidDetails determineNextBid() {
-		
-		/* Tom R (2013-12-28)
-		 * Some ideas:
-		 * 	- NS.getBidHistory() and NS.getOpponentBidHistory() might be useful
-		 *  - Class 'ParetoFrontier' can be used to easily compute the PF
-		 *  - We have two bid-sorter classes: 'BidDetailsSorterTime' and 'BidDetailsSorterUtility'
-		 *  - The 'BidFilter' class has some useful methods for filtering bids on time/utility
-		 */
-		
-		double time = negotiationSession.getTime(); // Normalized time [0,1]
-			
 		// Determine current negotiation phase
 		int newPhase = getNegotiationPhase();
 		if (newPhase != curPhase)
 		{
 			System.out.println("Switching to phase " + newPhase);
 			if (newPhase == 1)
-				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], this.phase1LowerBound, this.phase1UpperBound);
+				this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], 0.0, 0.0);
 			if (newPhase == 2)
 				this.phase = new Phase2(this.negotiationSession, this.opponentModel, this.phaseBoundary[0], this.phaseBoundary[1], 
-				this.Ppareto, this.averageOver, this.niceFactor, this.Pconcede, this.concedeFactor, this.concedeSteps, this.k, this.e, this.phaseBoundary, this.phase2LowerBound, this.phase2range,
+				this.Ppareto, this.averageOver, this.niceFactor, this.Pconcede, this.concedeFactor, this.concedeSteps, 0, 0, this.phaseBoundary, 0.0, this.hardcodefix,
 						this.outcomespace);
 			if (newPhase == 3)
 				this.phase = new Phase3(this.negotiationSession, this.opponentModel, this.phaseBoundary[1], 1.0);
@@ -208,43 +121,10 @@ public class Group7_BS extends OfferingStrategy {
 		if (this.phase == null)
 		{
 			this.phase = new Phase1(this.negotiationSession, this.opponentModel, 0.0, phaseBoundary[0], 
-					this.phase1LowerBound, this.phase1UpperBound);
+					0.0, 0.0);
 			Log.newLine("Error: Phase is null. Initialized new phase1...");
 		}
 		return this.phase.determineNextBid();
-
-		/*} else if (curPhase == 3) {
-			// Final negotiation phase
-			// TODO: implemented this based on Acceptance Strategy
-			
-			
-			
-			// For now, we just return a random bid...
-			return getRandomBid(0.4, 0.6);
-			
-		}*/
-	}
-	
-	public void computeNash() {
-		
-		List<BidDetails> allOutcomes = negotiationSession.getOutcomeSpace().getAllOutcomes();
-		double max = -1;
-		BidDetails best = null;
-		
-		for (BidDetails bd : allOutcomes)
-		{
-			double myUtil = bd.getMyUndiscountedUtil();
-			double enUtil = opponentModel.getBidEvaluation(bd.getBid());
-			double prod = myUtil*enUtil;
-			if (prod > max) {
-				best = bd;
-				max = prod;
-			}
-		}
-		
-		this.nash = best;
-		ourHelper.setNashPoint(best);
-		
 	}
 	
 	/**
@@ -262,15 +142,4 @@ public class Group7_BS extends OfferingStrategy {
 		else
 			return 3;
 	}
-	
-//	public boolean isAlreadyOffered(BidDetails bd) {
-//		
-//		List<BidDetails> historyList = biddingHistory.getHistory();
-//		if (historyList.contains(bd)) return true;
-//		
-//		return false;
-//	}
-	
-
-	
 }
