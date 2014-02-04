@@ -27,25 +27,29 @@ the last phase is also not fully optimized, sometimes conceding too much.
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
-\subsection{Future of BOA constructor for real-life negotations}
-Our the Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
+Our Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
 
-Before our agent, or most negotiation agents, can be used by humans in real negotation 
-session, we think a lot has to be done. People will want more control over the 
-negotation process of the agent, and specifically in understandable terms (no hard parameters).
+\subsection{Future of BOA constructor for real-life negotations}
+Before our agent -- or most negotiation agents -- can be used by humans in real negotation 
+session, we think a lot has to be done. People probably want more control over the 
+negotiation process of the agent, and specifically in understandable terms, e.g. no hard but fuzzy parameters.
 Also it is important for people to understand what it is doing. 
 Tutorials to see that the agent is performing well would be important. 
-This might be realised best by letting people perform against the agent. 
-This could illustrate the different tactics / settings of the agent.
+This might be best realized by letting people negotiate against the agent. 
+This could illustrate the different tactics of the agent and give an idea of it's settings.
 
 \subsection{Using a mediator}
 In the process of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.
 
-While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they get a good utility themselves. 
+Since agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they get a good utility themselves. 
 
-Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \emph{Nash-point} and the \emph{Kalai-Smorodinsky solution}. An objective mediator can walk over the Pareto Optimal Frontier, offerings bids until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome.
+Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \emph{Nash-point} and the \emph{Kalai-Smorodinsky solution}. An objective mediator can walk over the Pareto Optimal Frontier, offerings bids until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point. However, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome.
 
 This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
+
+So in conclusion, we think that it can be useful if both parties want to reach an optimal outcome.
+However, if one of the negotiators wants to exploit the opponent, or just negotiate, a mediator
+is not the solution, because it hardly allows for any real negotiation.
 
 \subsection{Other possibilities to improve automated agents}
 Extending agents with more communication abilities would probably not increase the performance significantly. They could
@@ -60,19 +64,19 @@ There are also other possibilities. Considering humans when negotiating, they ar
 
 \subsection{Feedback concerning genius}
 
-Because our agent's quite complex behaviour, we tried to use as much functions
-already in the genius API to reduce our workload. However, using the Genius API 
+Because our agent's quite complex behavior, we tried to use as much functions
+already in the Genius API to reduce our workload. However, using the Genius API 
 sometimes was very challenging. Below we make a short list of issues we encountered,
-which we hope can be improved in next versions of Genius:
+which -- we hope -- can be used to improved the next versions of Genius:
 
 \begin{itemize}
 \item It was not possible for our acceptance strategy to communicate with the 
 opponent model strategy or opponent model. This is a real problem, 
 since for acceptance we wanted to check if bids were pareto optimal and so forth
-before accepting.
+before accepting. Therefore, we created our \texttt{Helper} class.
 \item Conversions between \verb-bidDetails-, \verb-bid- and \verb-bidPoint- classes can be hard. Especially 
 converting \verb-bidPoints- back to bid or \verb-bidDetails- seemed impossible, we had to search through
-part of the bidspace to find back the bids corresponding to \verb-bidPoints-.
+part of the bid-space to find back the bids corresponding to \verb-bidPoints-, as the \texttt{getBid()} method returned \texttt{null}.
 \item Built in functions of the opponents \verb-utilitySpace- do not work for all default included 
 opponent models. For example, the Bayesian model does not construct a \verb-utilitySpace- for the opponent. 
 In fact, we were not able to construct utility spaces for most models except the hardheaded frequency model. 
