@@ -25,13 +25,8 @@ During the development of the BOAconstructor agent, we found that there are feat
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
-<<<<<<< HEAD
 \subsection{Future of BOA constructor for real-life negotations}
-=======
 Our the Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
-
-\subsubsection{Future of BOA constructor for real-life negotations}
->>>>>>> 5ffcfa1231ca2dc58041c5d4e8d40bdbbd1fc2e7
 
 Before our agent, or most negotiation agents, can be used by humans in real negotation 
 session, we think a lot has to be done. People will want more control over the 
