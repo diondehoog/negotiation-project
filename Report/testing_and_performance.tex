@@ -13,7 +13,7 @@ In this part we compare our agent to three of the agents that attended in the AN
     \emph{HardHeaded}		& 0.858  & 0.927  & 0.102  & 0.017  & 0.084   \\ \hline
     \emph{Gahboninho}   	& 0.887  & 0.918  & 0.032  & 0.001  & 0.035   \\ \hline
     \emph{The Negotiator} 	& 0.725  & 0.871  & 0.050  & 0.003  & 0.052   \\ \hline
-    \emph{Self}             & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ \hline
+    \emph{Self}                 & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ \hline
     \end{tabular}
     \caption{Performance of our agent against \texttt{ANAC 2011} agents (Runtime: $30$s) \label{table:anac2011-results}}
 \end{table}
@@ -39,7 +39,7 @@ To test if our opponent model is better than the default hardheaded frequency mo
     \emph{HardHeaded}		& 0.883  & 0.916  & 0.166  & 0.055  & 0.152   \\ \hline
     \emph{Gahboninho}   	& 0.881  & 0.848  & 0.116  & 0.020  & 0.097   \\ \hline
     \emph{The Negotiator} 	& 0.756  & 0.868  & 0.092  & 0.027  & 0.079   \\ \hline
-    \emph{Self}             & 0.839  & 0.806  & 0.125  & 0.035  & 0.140   \\ \hline
+    \emph{Self}                 & 0.839  & 0.806  & 0.125  & 0.035  & 0.140   \\ \hline
     \end{tabular}
     \caption{Performance of our agent with \texttt{HardHeaded Frequency Modeling} (Runtime: $30$s) \label{table:anac2011-hh}}
 \end{table}
@@ -48,7 +48,7 @@ Furthermore, we see that the average utilities for the opponent are also lower c
 The distance to the \emph{Nash point}, \emph{Pareto Frontier} and \emph{Kalai point} are especially interesting for evaluating the quality of the opponent model: a better opponent model allows us to offer bids closer to these optimal values. We also note here that for every agent these properties are lowest using our own opponent model.
 
 \subsection{Performance In Different Domains}
-In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition IS prof domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}.
+In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition  domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}.
 \begin{table}[H]
   \centering
   \small
@@ -62,6 +62,23 @@ In order to test whether our agent can cope with different domains, we tested it
   \end{tabular}
  \caption{Performance of our agent using a set of diverse domains (Runtime: $30$s) \label{table:anac2011-domains}}
 \end{table}
+We note that in these domains the average utility of all agents is significantly lower compared to the party domain used in the other tests. We also see that the difference between the utilities is now more significant: the difference between the best and worst average utility is now almost 0.15, whereas this difference was 0.05 for the party domain. 
+
+In order to analyze these results further we decided to create a table in which we compare the average discounted utility in each domain. This allows us to compare the differences per domain. 
+
+The Car domain has a Pareto frontier that allows for high utilities for both agents. As we see in \autoref{table:anac2011-domains2}, most agents seem to exploit this fact well. What is interesting to see is that our agent has the worst average utility for this domain. This is possibly caused by us exploring utilities 0.9 to 1.0 during the initial phase. Enemies will probably not except bids that are worse then what we already offered which leads to us losing in the car domain.
+
+In the Amsterdam Party domain, the average utilities are very close together. The utility space has what looks like a normal distribution for both parties, which means that our agent should be able to construct a reliable opponent model. 
+
+The camera domain has a utility space that is a bit skewed towards low utilities. This is what causes the average utilities to be lower. However, since our strategy attempts to move towards the Kalai point, we can exploit spaces where the best option is not close to the optimal option for both players, leading to a higher average utility.
+
+The nice or die domain has only 3 possible bids: if both players concede, they get a utility of 0.3, but if only one of them concedes the utility is good for the other player, but bad for the first one. We see that The Negotiator always concedes to what is best for the other players, while HardHeaded and Gahboninho are more conservative. Since our model accepts the opponent's bid if the time has almost run out, we have a lower average utility here.
+
+The grocery domain also has what looks like a Gaussian distribution of it's utilities over the bids and a Pareto frontier that is located away from $1.0$ utility for both players. In other words: it's similar to the camera domain. This caused us to have a better utility in this domain.
+
+The LS BT Acquisition domain is concentrated at the higher utilities: all possible bids have a utility of $0.65$ or higher for both players. This probably caused our opponent model to be inaccurate, which in turn leads to a wrong approximation the Kalai-point. We think this caused us to accept offers that were in fact not very good.
+
+The laptop domain is very small and has only two bids on the Pareto frontier. The domain is laid out in such a way that conceding almost immediately leads to unfortunate bids, which makes it hard to get to the optimal agreement. This is probably what caused problems in our solution.
 
 \begin{table}[H]
   \centering
@@ -73,11 +90,13 @@ In order to test whether our agent can cope with different domains, we tested it
   Camera                    & 0.766          & 0.698          & 0.732          & \textbf{0.777} \\ \hline
   Nice or Die               & 0.500          & \textbf{1.000} & 0.160          & 0.413 \\ \hline
   Grocery                   & 0.689          & 0.705          & 0.572          & \textbf{0.758} \\ \hline
-  IS BT Acquisition BT prof & 0.762          & \textbf{0.809} & 0.803          & 0.683 \\ \hline
+  IS BT Acquisition         & 0.762          & \textbf{0.809} & 0.803          & 0.683 \\ \hline
   Laptop                    & \textbf{0.711} & 0.673          & 0.489          & 0.627 \\ \hline
   \end{tabular}
   \caption{Average discounted utilities of the tested agents in the given domains (Runtime: $30$s) \label{table:anac2011-domains2}}
 \end{table}
+
+In order to check whether taking discounts into account improved the results, we ran another test where the length of the phases in the bidding strategy were adjusted automatically. This lead to the results in \autoref{table:anac2011-domains3}. As we see, the differences are very similar or worse for our agent compared to keeping the same phases for all possible discount vectors. Therefore we decided to ignore the discount factors in our agent.
 
 \begin{table}[H]
   \centering
@@ -86,7 +105,7 @@ In order to test whether our agent can cope with different domains, we tested it
                             & HardHeaded     & Gahboninho & The Negotiator & Self \\ \hline
   Camera                    & 0.767          & 0.703          & 0.732          & \textbf{0.773} \\ \hline
   Grocery                   & 0.685          & 0.705          & \textbf{0.756} & 0.732          \\ \hline
-  IS BT Acquisition BT prof & 0.759          & \textbf{0.814} & 0.804          & 0.688          \\ \hline
+  IS BT Acquisition         & 0.759          & \textbf{0.814} & 0.804          & 0.688          \\ \hline
   Laptop                    & \textbf{0.713} & 0.673          & 0.488          & 0.627          \\ \hline
   \end{tabular}
   \caption{Average discounted utilities of the tested agents in the given domains with phases scaled to bidding discount (Runtime: $30$s) \label{table:anac2011-domains3}}

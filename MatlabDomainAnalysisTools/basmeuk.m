@@ -60,3 +60,15 @@ plot(other);
 otherAvg = conv(other, ones(20, 1) ./ 20, 'valid');
 plot(otherAvg);
 sum(conv(otherAvg, [1 -1], 'valid'))
+
+%%
+[v1, w1, issueNames, itemNames] = importUtilSpace('../genius/etc/templates/anac/y2011/Car/adg_deal.xml');
+[v2, w2, ~, ~] = importUtilSpace('../genius/"etc/templates/anac/y2011/Car/adg_deal2.xml');
+
+
+[v, w] = mergeUtilSpaces(v1, w1, v2, w2);
+v = normalizeValues(v);
+
+% Calculate all utilities/bids
+[bs, bids] = biddingSpace(v, w);
+plot(bs(1,:), bs(2,:), '.');
