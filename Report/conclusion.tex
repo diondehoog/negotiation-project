@@ -1,5 +1,4 @@
 
-\subsection{Main conclusions}
 
 For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Finding outcomes that are a win-win situation for both parties can be quite hard.
 
@@ -27,15 +26,15 @@ Finally, we have really enjoyed this challenge, although we aren't entirely sati
 our results. We wish we could spend more time on this project looking at our mistakes
 on the way.
  
-\subsection{Future Perspectives}
-\subsubsection{Improving BOA constructor}
+\section{Future Perspectives}
+\subsection{Improving BOA constructor}
 During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
 
 For the Bidding Strategy ...
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
-\subsubsection{Future of BOA constructor for real-life negotations}
+\subsection{Future of BOA constructor for real-life negotations}
 
 Before our agent, or most negotiation agents, can be used by humans in real negotation 
 session, we think a lot has to be done. People will want more control over the 
@@ -45,7 +44,7 @@ Tutorials to see that the agent is performing well would be important.
 This might be realised best by letting people perform against the agent. 
 This could illustrate the different tactics / settings of the agent.
 
-\subsubsection{Using a mediator}
+\subsection{Using a mediator}
 In the process of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.
 
 While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they get a good utility themselves. 
@@ -54,7 +53,7 @@ Since the mediator has both preference profiles, it is able to calculate all the
 
 This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
 
-\subsubsection{Other possibilities to improve automated agents}
+\subsection{Other possibilities to improve automated agents}
 Extending agents with more communication abilities would probably not increase the performance significantly. They could
 communicate about certain issues, for example if they would concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. 
 
@@ -65,7 +64,7 @@ downloaded to your pocket negotiator. Then it would be useful to remove all the 
 
 There are also other possibilities. Considering humans when negotiating, they are able to offer issues outside the negotiation domain, to convince the opponent to get this deal. Well known examples are money or, in the case of cars, extra tires. In the current \texttt{Genius} environment it is impossible to offer new issues in a negotiation session, maybe this could be a feature in the future when negotiators are able to rate unknown issues or when they can ask for input of a human. 
 
-\subsubsection{Feedback concerning genius}
+\subsection{Feedback concerning genius}
 
 Because our agent's quite complex behaviour, we tried to use as much functions
 already in the genius API to reduce our workload. However, using the Genius API 

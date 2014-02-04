@@ -29,7 +29,7 @@ From the results in Table~\ref{table:anac2011-results} we notice we rank third o
 We notice that HardHeaded and Gahboninho beat us in utility, with a difference of at least $0.04$. The times to agreement for these agents is also higher,
 indicating that our agent might accept bids too fast or is conceding too fast in the last phase.
 Regarding the effiency of the negotiation we observe that the average distance to the POF, Nash and Kalai upon agreement is very small,
-which is a very desirable propoerty for our agent. 
+which is a very desirable property for our agent. 
 
 \subsection{Performance of our acceptance strategy}
 
@@ -85,6 +85,7 @@ To test if our opponent model is better than the default hardheaded frequency mo
 We see that, compared to our own opponent model, the average utility has decreased by $0.071$, which means that our opponent model leads to  better results for our agents. 
 Furthermore, we see that the average utilities for the opponent are also lower compared to what our opponent model achieved.
 The distance to the \emph{Nash point}, \emph{Pareto Frontier} and \emph{Kalai point} are especially interesting for evaluating the quality of the opponent model: a better opponent model allows us to offer bids closer to these optimal values. We also note here that for every agent these properties are lowest using our own opponent model.
+We conclude our opponent model is significantly better combined with our agent.
 
 \subsection{Performance In Different Domains}
 In order to test whether our agent can cope with different domains, we tested it against the same selection of 2011 agents, but using different domains. More specifically, the test was run in the Car/ADG domain, the Amsterdam party domain, the Camera domain, the Nice Or Die domain, the Grocery domain, the IS BT Acquisition  domain, and the Laptop domain. The average results for all agents are shown in \autoref{table:anac2011-domains}.
@@ -109,7 +110,7 @@ In order to analyze these results further we decided to create a table in which 
 
 The Car domain has a Pareto frontier that allows for high utilities for both agents. As we see in \autoref{table:anac2011-domains2}, most agents seem to exploit this fact well. What is interesting to see is that our agent has the worst average utility for this domain. This is possibly caused by us exploring utilities 0.9 to 1.0 during the initial phase. Enemies will probably not except bids that are worse then what we already offered which leads to us losing in the car domain.
 
-In the Amsterdam Party domain, the average utilities are very close together. The utility space has what looks like a normal distribution for both parties, which means that our agent should be able to construct a reliable opponent model. 
+In the Amsterdam Party domain, the average utilities are very close together. The utility space has what looks like a normal distribution for both parties, which means that our agent should be able to construct a reliable opponent model. % TODO: DUS?
 
 The camera domain has a utility space that is a bit skewed towards low utilities. This is what causes the average utilities to be lower. However, since our strategy attempts to move towards the Kalai point, we can exploit spaces where the best option is not close to the optimal option for both players, leading to a higher average utility.
 
