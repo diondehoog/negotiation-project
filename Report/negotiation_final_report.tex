@@ -125,62 +125,49 @@
 
 \subsubsection{Bidding Space and Pareto Frontier}
 
-In this subsection we analyze the \emph{Party domain} and compute the Pareto Frontier. The party domain is a negotiation domain which consists of $6$ issues that each contain three or four possibilities: 
+In this subsection we analyze the \emph{Party domain} and compute the Pareto Frontier. The party domain is a negotiation domain which consists of $6$ issues that each contain three or four possibilities: food (4 options), drinks (4 options), location (4 options), invitations (4 options),   music (3 options), clean-up (4 options).
 
-\begin{enumerate}[itemsep=0mm]
-  \item \textbf{Food} (4 options)
-  \item \textbf{Drinks} (4 options)
-  \item \textbf{Location} (4 options)
-  \item \textbf{Invitations} (4 options)
-  \item \textbf{Music} (3 options)
-  \item \textbf{Clean-Up} (4 options)
-\end{enumerate}
-
-The issues and possible options are good for a total of $3072$ possible outcomes ($4 \times 4 \times 4 \times 4 \times 3 \times 4$). We have used the \emph{preference profiles} of users $10$ and $15$ and analyzed these to compute the \emph{outcome space} and \emph{Pareto Frontier}. Both of these are given in the figure below.
+The issues and possible options are good for a total of $4 \times 4 \times 4 \times 4 \times 3 \times 4 = 3072$ possible outcomes. We have used the \emph{preference profiles} of users $10$ and $15$ and analyzed these to compute the \emph{outcome space} and \emph{Pareto Frontier}. Both of these are given in the figure below.
 
 \begin{figure}[H]
 \begin{center}
- \includegraphics[width=0.8\textwidth]{pareto.png}
+ \includegraphics[width=0.6\textwidth]{pareto.png}
  \caption{The outcome space with the \emph{Pareto Optimal Frontier} indicated as a red line.}
  \label{fig:pareto} 
 \end{center}
 \end{figure}
 
-\clearpage
+\subsubsection{Performance of the \texttt{SimpleAgent}, \texttt{Boulware} and \texttt{Conceder}}
 
-\subsubsection{Performance of the \texttt{SimpleAgent}}
+We perform two negotiation sessions: we play with the agent \texttt{SimpleAgent} against itself, and we play \texttt{Boulware} vs \texttt{Conceder} and discuss the outcome. 
 
-Finally, we perform two negotiation sessions: we play with the agent \texttt{Simple Agent} against itself, and we play Boulware vs Conceder and discuss the outcome. When we play Simple Agent against itself, we notice the behaviour is quite random. This is explained by having a loo at the code; it always offers a random bid higher than a certain threshold,
+When we play \texttt{SimpleAgent} against itself, we notice the behavior is quite random. This is explained by having a look at the code; it always offers a random bid higher than a certain threshold,
 by default this threshold is zero. Therefore it performs a \emph{random walk} through the 
-bidding space. The acceptance strategy works as follows: it calculates a probability for each bid and the higher the bid, the higher the probability. If the deadline approaches it will accept all bids with higher probability. It will however never accept bids with a utility of zero. The equation that determines the probability of acceptance is:
-\begin{align}
-P = \frac{u - 2ut + 2(-1 + t + \sqrt{((-1 + t)^2 + u(-1 + 2t)})}{-1 + 2t}
-\end{align}
+bidding space. The acceptance strategy works as follows: it calculates a probability for each bid and the higher the bid, the higher the probability. If the deadline approaches it will accept all bids with higher probability. It will however never accept bids with a utility of zero. 
 
-Where $P$ denotes the probability of acceptance, $u$ denotes the utility of the bid and $t$ denotes the time in a range of $[0, 1]$. Because of this behaviour we found the average utility playing against itself is around $0.68$, and the time needed to reach an agreement was very short: $0.03$ (averaged over $20$ negotiations on the party domain).
-This is quite logical, since both sides offer random bids, it is the
-case quite soon that either bid has a high probability of acceptance for the opposing party. When this agent negotiates with other agents, it performs badly, because
+We found the average utility for this agent playing against itself is around $0.68$, and the time needed to reach an agreement was very short: $0.03$ (averaged over $20$ negotiations on the party domain).
+This is quite logical, since both sides offer random bids, soon a bid is offered with a high probability of acceptance for the opposing party. When this agent negotiates with other agents, it performs terrible, because
 it offers random bids. Smart agents will accept good offers and deny other offers,
-and because of this the obtained utility for the simple agent will be quite low.
-We confirm this by letting simple agent play against Boulware. In these tests the Simple Agent obtains an average utility of $0.6$ while the Boulware agent scores on average $1.0$. 
+and because of this the obtained utility for the \texttt{SimpleAgent} will be quite low.
+We confirm this by letting simple agent play against \texttt{Boulware}. In these tests \texttt{SimpleAgent} obtains an average utility of $0.6$ while \texttt{Boulware} scores on average $1.0$. 
 
-\subsubsection{Performance of the \texttt{Boulware} vs. \texttt{Conceder}}
-Finally, we play with the Boulware agent against the conceder agent. A typical negotiation trace is displayed below: \\
+We let \texttt{Boulware} negotiate against \texttt{Conceder}. A typical negotiation trace is displayed below: \\
 
 \begin{figure}[H]
 \begin{center}
- \includegraphics[width=0.9\textwidth]{traceConcederBoulware.png}
+ \includegraphics[width=0.6\textwidth]{traceConcederBoulware.png}
  \caption{The \emph{Pareto Optimal Frontier} is displayed with a red line in this figure.}
  \label{fig:pareto} 
 \end{center}
 \end{figure}
 
-In this figure, the green and blue lines are the bidding-traces for respectively the Boulware and the Conceder agent. The boulware agent chooses the best bid for itself, and keeps offering this bid. This agent only concedes at the very last moments before the deadline. The conceder agent on the other hand starts conceding directly and keeps on conceding every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations the Conceder reached an utility of $0.67$ and
-Boulware $0.99$. 
+In this figure, the green and blue lines are the bidding-traces for respectively \texttt{Boulware} and \texttt{Conceder}. \texttt{Boulware} chooses the best bid for itself, and keeps offering this bid. This agent only concedes at the very last moments before the deadline. \texttt{Conceder} on the other hand starts conceding directly and keeps on conceding with every new bid. We ran simulations on the party domain using these agents. Averaging over 20 negotiations \texttt{Conceder} reached an utility of $0.67$ and
+\texttt{Boulware} $0.99$. To get the best performance, we guess we should concede only 
+if the opponent does, and if not we should play hard headed.
  
 \subsection{PEAS Description}
 
-The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adapt their notation.
+The first step in designing an agent is to specify the environment as fully as possible. In order to do this we specify the PEAS description which lists the following aspects of the environment: \emph{Performance}, \emph{Environment}, \emph{Actuators} and \emph{Sensors}. This measure is extensively discussed in Russel and Norvig \cite{russel-norvig}, so we adopt their notation.
 
 \begin{table}[H]
   \small
@@ -195,27 +182,33 @@ The first step in designing an agent is to specify the environment as fully as p
     \caption{PEAS description for our negotiation agent \label{table:peas-description}}
 \end{table}
 
-Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. The \emph{performance} is measured by the utility for the agent, which in this project has to be as high as possible $($with a maximum of $1)$ and preferably equal to or higher than the opponents utility. There are two \emph{actuators}, first of all the acceptance or rejection of a bid of an opponent. The second actuator is the offering of a new bid. The bid is based on the biddings of the opponent, which is the only \emph{sensor} the agent has. Under the surface of the PEAS elements, different java-classes, algorithms and calculations are performed, like the \textit{nash-point} and the \textit{Kalai-Smorodinsky solution}. These will be explained in more detail in the next sections.
+Table~\ref{table:peas-description} displays the PEAS description for our agent. We will briefly discuss each of the descriptions. First the \emph{environment} our agent operates in, this is the negotiation space as defined by Genius. It contains all the possible bids, each resulting in an individual utility for the agents. It also offers extra information such as the time left and the discount factor. 
+
+The \emph{performance} is measured by the utility of the reached agreement of  the agent, which in this project has to be as high as possible and preferably equal to or higher than the opponents utility. If no agreement is reached an utility of $0.0$ is  returned.
+There are also several other measures, such as the distance to the Pareto Optimal Frontier, the Nash product and the Kalai point.
+
+There are two \emph{actuators}, first of all the acceptance or rejection of a bid of an opponent. The second actuator is the offering of a new bid. The bid is based on the biddings of the opponent, which is the only \emph{sensor} the agent has together with the remaining time 
+and discount factor. 
+
+The PEAS elements are realized by different Java-classes. These will be explained in more detail in the Strategy section.
 
 \subsection{BOA Framework}
-
-Most negotiation agents consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. Together these three components form the \emph{BOA framework}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three required components.
+In the BOA framework a negotation agent consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three components.
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
-  The bidding strategy (BS) is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. Sometimes the negotiation session is split up in multiple phases and each of the phases use a different bidding strategy.
+  The bidding strategy (BS) is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. 
 
   \item[Opponent Model] \hfill \\
-  Analyzing the opponents behavior is essential for being able to determine the opponent's preference profile.  With a well defined opponent model (OM), the opponent's utility of a bid can be determined more accurate. In practice this works by estimating the opponents \emph{preference profile}, which is usually done by adapting \emph{Bayesian modeling} or \emph{frequency analysis}. 
+  Analyzing the opponents behavior is essential for being able to determine the opponent's preference profile.  With a more accurate preference profile, the opponent's utility of a bid can be determined more accurately. This is important, because when we know the preferences of the opponent we can try to create win-win situations in a negotation.
 
   \item[Acceptance Strategy] \hfill \\
-  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy (AS) decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies is available with combinations of time-dependent, utility-dependent and threshold-dependent strategies.
+  Negotiation sessions ideally end by reaching an agreement. The acceptance strategy (AS) decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies are available. An acceptance strategy should not accept too soon, because a better agreement might be reached, but also not too late to prevent a breakoff.
 
 \item[Opponent Model Strategy] \hfill \\
   Analyzing the opponents behavior could, except for determining the opponent's preference profile, also be used to determine the strategy the opponent is using, like \emph{Hardheaded}, \emph{Conceder}, \emph{Tit-for-Tat}, etc. The own bidding strategy can be adapted to the opponent's model strategy (OMS), to derive a maximum possible outcome for the own utility.
 
 \end{description}
-
 \section{Strategy}
 \label{sec:strategy}
 
