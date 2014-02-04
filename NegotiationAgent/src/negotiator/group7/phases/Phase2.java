@@ -41,12 +41,22 @@ public class Phase2 extends Phase {
 	private BidPoint ks = null;
 	private int it = 0;
 	
+	private double hardcodefix = 0.0;
+	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 			double Ppareto, int averageOver, double niceFactor, double Pconcede, double concedeFactor, int concedeSteps, 
-			double k, double e, double[] phaseBoundary, double phase2LowerBound, double phase2range,
+			double k, double e, double[] phaseBoundary, double phase2LowerBound, double hardcodefix,
 			SortedOutcomeSpace outcomespace) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		this.outcomespace = outcomespace;
+		
+		this.Ppareto = Ppareto;
+		this.averageOver = averageOver;
+		this.niceFactor = niceFactor;
+		this.Pconcede = Pconcede;
+		this.concedeFactor = concedeFactor;
+		this.concedeSteps = concedeSteps;
+		this.hardcodefix = hardcodefix;
 		
 		// Set our utility space once
 		ourUtilitySpace = negotiationSession.getUtilitySpace();
@@ -97,7 +107,7 @@ public class Phase2 extends Phase {
 		
 		double deltaDist = 0; 
 		double concedestep = 0;
-		this.Pconcede = -1.0; // force to not concede, because this leads to worse performance
+		//this.Pconcede = -1.0; // force to not concede, because this leads to worse performance
 		if ((concedeStep == -1) && (Math.random()<this.Pconcede)) { // sometimes randomly concede
 			concedeStep = 1;
 		}
@@ -125,10 +135,12 @@ public class Phase2 extends Phase {
 		W = Double.isNaN(W) ? 1.0 : W;
 		if (W > 1) W = 1;
 		if (W < 0) W = 0;
-		if (it < 150) {
-			if (W < 0.5) {
-				W = 1;
-			}
+		if (hardcodefix > 0.5) {
+			if (it < 150) { // dont walk directly to opponent
+				if (W < 0.5) {
+					W = 1;
+				}
+			} 
 		}
 		it++;
 		Log.vln("W: " + W);
