@@ -22,7 +22,7 @@
 			<parameter name="averageOver" default="5.0" description="bids to average over to determine concession"/>
 			<parameter name="niceFactor" default="0.33" description="how to weigh opponent concessions"/>
 			<parameter name="Pconcede" default="0.05" description="chance to concede a bit"/>
-			<parameter name="concedeFactor" default="0.3" description="amount to concede"/>
+			<parameter name="concedeFactor" default="0.0" description="amount to concede"/>
 			<parameter name="concedeSteps" default="10.0" description="how many steps it takes to concede"/>
 			<parameter name="discount" default="0.0" description="whether to adapt strategy to discounts"/>
 			<parameter name="phase2" default="0.1" description="when to start phase 2?"/>
