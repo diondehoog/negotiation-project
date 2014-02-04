@@ -40,14 +40,7 @@ public class Group7_BS extends OfferingStrategy {
 	public void init(NegotiationSession negoSession, OpponentModel model, OMStrategy oms, HashMap<String, Double> parameters) throws Exception {
 		
 		double d = negoSession.getDiscountFactor(); 
-		
-		// rescale boundraries for discounts
-		if (parameters.get("discount") != null)
-			if (parameters.get("discount") > 0.5)
-				if ((d != 1)&&(d != 0)) {
-					phaseBoundary[0] = phaseBoundary[0]*d;
-					phaseBoundary[1] = phaseBoundary[1]*d;
-				}
+		if (d == 0) d = 1.0; // a discount factor of 0 is a discount factor of 1 of course :)
 		
 		// make helper class for communication between BOA components
 		ourHelper = Helper.get(negotiationSession);
@@ -59,6 +52,14 @@ public class Group7_BS extends OfferingStrategy {
 		
 		if (parameters.get("phase3") != null)
 			phaseBoundary[1] = parameters.get("phase3"); 
+		
+		// rescale boundraries for discounts
+		if (parameters.get("discount") != null)
+			if (parameters.get("discount") > 0.5)
+				if ((d != 1)&&(d != 0)) {
+					phaseBoundary[0] = phaseBoundary[0]*d;
+					phaseBoundary[1] = phaseBoundary[1]*d;
+				}
 		
 		negotiationSession = negoSession;
 		
