@@ -12,13 +12,15 @@ we use these same settings for further testing also unless otherwise specified.
 \begin{table}[H]
 	\centering
 	\small
-    \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    ~                                    & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
-    \hline
-    \emph{HardHeaded}		& 0.858  & 0.927  & 0.102  & 0.017  & 0.084   \\ \hline
-    \emph{Gahboninho}   	& 0.887  & 0.918  & 0.032  & 0.001  & 0.035   \\ \hline
-    \emph{The Negotiator} 	& 0.725  & 0.871  & 0.050  & 0.003  & 0.052   \\ \hline
-    \emph{Self}                 & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\ \hline
+    \begin{tabular}{m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}}
+    \toprule
+    Agent                       & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \midrule
+    \emph{HardHeaded}		& 0.858  & 0.927  & 0.102  & 0.017  & 0.084   \\ 
+    \emph{Gahboninho}   	& 0.887  & 0.918  & 0.032  & 0.001  & 0.035   \\ 
+    \emph{The Negotiator} 	& 0.725  & 0.871  & 0.050  & 0.003  & 0.052   \\ 
+    \emph{Self}                 & 0.823  & 0.877  & 0.061  & 0.007  & 0.057   \\
+    \bottomrule
     \end{tabular}
     \caption{Performance of our agent against \texttt{ANAC 2011} agents (Runtime: $30$s) \label{table:anac2011-results}}
 \end{table}
@@ -35,19 +37,24 @@ The next test consists of running our agent with varying \emph{acceptance strate
 
 \begin{table}[H]
 	\centering
-\begin{tabular}{l|lll}
-Agent                         & \begin{tabular}[c]{@{}c@{}}Average\\   time to agreement\end{tabular} & \begin{tabular}[c]{@{}c@{}}Percentage\\   of agreement\end{tabular} & \begin{tabular}[c]{@{}c@{}}Average\\   utility\end{tabular} \\ \hline
-Our Acceptance Strategy       & 0.777                                                                 & 100 $\%$                                                             & 0.870                                                       \\ \hline
-Nice-Tit-For-Tat              & 0.867                                                                 & 100 $\%$                                                             & 0.866                                                       \\ \hline
-Agent K2                      & 0.865                                                                 & 97 $\%$                                                             & 0.865                                                       \\ \hline
-IAMHaggler2011                & 0.633                                                                 & 97 $\%$                                                             & 0.865                                                       \\ \hline
-Other - Time \{t=0.99\}       & 0.837                                                                 & 100 $\%$                                                             & 0.855                                                       \\ \hline
-Other - False                 & 0.851                                                                 & 94 $\%$                                                             & 0.855                                                       \\ \hline
-Other - Next \{a=1.0. b=0.0\} & 0.873                                                                 & 94 $\%$                                                              & 0.847                                                       \\ \hline
-Other - Constant \{c=0.9\}    & 0.592                                                                 & 91 $\%$                                                              & 0.814                                                       \\ \hline
-The Negotiator                & 0.862                                                                 & 100  $\%$                                                            & 0.743                                                       \\ \hline
-BRAMAgent                     & 0.847                                                                 & 100 $\%$                                                             & 0.729                                                       \\ \hline
-HardHeaded                    & 0.923                                                                 & 75 $\%$                                                              & 0.680                                                      
+	\small
+\begin{tabular}{m{4.0cm}m{3.0cm}m{3.0cm}m{3.0cm}}
+  \toprule 
+  Agent                         & Average time to agreement & Percentage of agreement & Average utility \\ 
+  \midrule
+  Our Acceptance Strategy       & 0.777                                                                 & 100 $\%$                                                             & 0.870                                                       \\ 
+  Nice-Tit-For-Tat              & 0.867                                                                 & 100 $\%$                                                             & 0.866                                                       \\ 
+  Agent K2                      & 0.865                                                                 & 97 $\%$                                                             & 0.865                                                       \\ 
+  IAMHaggler2011                & 0.633                                                                 & 97 $\%$                                                             & 0.865                                                       \\ 
+  Other - Time \{t=0.99\}       & 0.837                                                                 & 100 $\%$                                                             & 0.855                                                       \\ 
+  Other - False                 & 0.851                                                                 & 94 $\%$                                                             & 0.855                                                       \\ 
+  Other - Next \{a=1.0. b=0.0\} & 0.873                                                                 & 94 $\%$                                                              & 0.847                                                       \\ 
+  Other - Constant \{c=0.9\}    & 0.592                                                                 & 91 $\%$                                                              & 0.814                                                       \\ 
+  The Negotiator                & 0.862                                                                 & 100  $\%$                                                            & 0.743                                                       \\ 
+  BRAMAgent                     & 0.847                                                                 & 100 $\%$                                                             & 0.729                                                       \\ 
+  HardHeaded                    & 0.923                                                                 & 75 $\%$                                                              & 0.680                                                      
+  \\
+  \bottomrule
 \end{tabular}
 \caption{Performance of acceptance strategy compared with other acceptance strategies for our agent (Runtime: $30$s) \label{table:as-results}}
 \end{table}
@@ -63,13 +70,15 @@ To test if our opponent model is better than the default hardheaded frequency mo
 \begin{table}[H]
 	\centering
 	\small
-    \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    ~              & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
-    \hline
-    \emph{HardHeaded}		& 0.883  & 0.916  & 0.166  & 0.055  & 0.152   \\ \hline
-    \emph{Gahboninho}   	& 0.881  & 0.848  & 0.116  & 0.020  & 0.097   \\ \hline
-    \emph{The Negotiator} 	& 0.756  & 0.868  & 0.092  & 0.027  & 0.079   \\ \hline
-    \emph{Self}                 & 0.839  & 0.806  & 0.125  & 0.035  & 0.140   \\ \hline
+    \begin{tabular}{m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}}
+    \toprule
+    Agent              & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \midrule
+    \emph{HardHeaded}		& 0.883  & 0.916  & 0.166  & 0.055  & 0.152   \\ 
+    \emph{Gahboninho}   	& 0.881  & 0.848  & 0.116  & 0.020  & 0.097   \\ 
+    \emph{The Negotiator} 	& 0.756  & 0.868  & 0.092  & 0.027  & 0.079   \\ 
+    \emph{Self}                 & 0.839  & 0.806  & 0.125  & 0.035  & 0.140   \\ 
+    \bottomrule
     \end{tabular}
     \caption{Performance of our agent with \texttt{HardHeaded Frequency Modeling} (Runtime: $30$s) \label{table:anac2011-hh}}
 \end{table}
@@ -82,13 +91,15 @@ In order to test whether our agent can cope with different domains, we tested it
 \begin{table}[H]
   \centering
   \small
-  \begin{tabular}{l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    ~                     & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
-    \hline
-    \emph{HardHeaded}     & 0.807 & 0.750 & 0.142 & 0.032 & 0.150 \\ \hline
-    \emph{Gahboninho}     & 0.731 & 0.807 & 0.065 & 0.004 & 0.165 \\ \hline
-    \emph{The Negotiator} & 0.694 & 0.646 & 0.288 & 0.000 & 0.220 \\ \hline
-    \emph{Self}           & 0.744 & 0.712 & 0.165 & 0.012 & 0.179 \\ \hline
+  \begin{tabular}{m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}m{2cm}}
+  \toprule
+    Agent                     & Average Time Agreement & Average Discounted Util & Average Dist. to Nash & Average Dist. to Pareto & Average Dist. to Kalai \\
+    \midrule
+    \emph{HardHeaded}     & 0.807 & 0.750 & 0.142 & 0.032 & 0.150 \\ 
+    \emph{Gahboninho}     & 0.731 & 0.807 & 0.065 & 0.004 & 0.165 \\ 
+    \emph{The Negotiator} & 0.694 & 0.646 & 0.288 & 0.000 & 0.220 \\ 
+    \emph{Self}           & 0.744 & 0.712 & 0.165 & 0.012 & 0.179 \\ 
+    \bottomrule
   \end{tabular}
  \caption{Performance of our agent using a set of diverse domains (Runtime: $30$s) \label{table:anac2011-domains}}
 \end{table}
@@ -113,15 +124,18 @@ The laptop domain is very small and has only two bids on the Pareto frontier. Th
 \begin{table}[H]
   \centering
   \small
-  \begin{tabular}{l|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
-			    & HardHeaded     & Gahboninho     & The Negotiator & Self \\ \hline
-  Car                       & \textbf{0.972} & 0.923          & 0.960          & 0.893 \\ \hline
-  Amsterdam Party           & \textbf{0.850} & 0.843          & 0.808          & 0.834 \\ \hline
-  Camera                    & 0.766          & 0.698          & 0.732          & \textbf{0.777} \\ \hline
-  Nice or Die               & 0.500          & \textbf{1.000} & 0.160          & 0.413 \\ \hline
-  Grocery                   & 0.689          & 0.705          & 0.572          & \textbf{0.758} \\ \hline
-  IS BT Acquisition         & 0.762          & \textbf{0.809} & 0.803          & 0.683 \\ \hline
-  Laptop                    & \textbf{0.711} & 0.673          & 0.489          & 0.627 \\ \hline
+  \begin{tabular}{lp{2.5cm}p{2.5cm}p{2.5cm}p{2.5cm}}
+  \toprule
+  Domain                    & HardHeaded     & Gahboninho     & The Negotiator & Self \\ 
+  \midrule
+  Car                       & \textbf{0.972} & 0.923          & 0.960          & 0.893 \\
+  Amsterdam Party           & \textbf{0.850} & 0.843          & 0.808          & 0.834 \\ 
+  Camera                    & 0.766          & 0.698          & 0.732          & \textbf{0.777} \\ 
+  Nice or Die               & 0.500          & \textbf{1.000} & 0.160          & 0.413 \\ 
+  Grocery                   & 0.689          & 0.705          & 0.572          & \textbf{0.758} \\ 
+  IS BT Acquisition         & 0.762          & \textbf{0.809} & 0.803          & 0.683 \\ 
+  Laptop                    & \textbf{0.711} & 0.673          & 0.489          & 0.627 \\ 
+  \bottomrule
   \end{tabular}
   \caption{Average discounted utilities of the tested agents in the given domains (Runtime: $30$s) \label{table:anac2011-domains2}}
 \end{table}
@@ -131,12 +145,15 @@ In order to check whether taking discounts into account improved the results, we
 \begin{table}[H]
   \centering
   \small
-  \begin{tabular}{l|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
-                            & HardHeaded     & Gahboninho & The Negotiator & Self \\ \hline
-  Camera                    & 0.767          & 0.703          & 0.732          & \textbf{0.773} \\ \hline
-  Grocery                   & 0.685          & 0.705          & \textbf{0.756} & 0.732          \\ \hline
-  IS BT Acquisition         & 0.759          & \textbf{0.814} & 0.804          & 0.688          \\ \hline
-  Laptop                    & \textbf{0.713} & 0.673          & 0.488          & 0.627          \\ \hline
+  \begin{tabular}{lp{2.5cm}p{2.5cm}p{2.5cm}p{2.5cm}}
+   \toprule
+   Domain                   & HardHeaded     & Gahboninho & The Negotiator & Self \\ 
+   \midrule
+  Camera                    & 0.767          & 0.703          & 0.732          & \textbf{0.773} \\ 
+  Grocery                   & 0.685          & 0.705          & \textbf{0.756} & 0.732          \\ 
+  IS BT Acquisition         & 0.759          & \textbf{0.814} & 0.804          & 0.688          \\ 
+  Laptop                    & \textbf{0.713} & 0.673          & 0.488          & 0.627          \\ 
+   \bottomrule
   \end{tabular}
   \caption{Average discounted utilities of the tested agents in the given domains with phases scaled to bidding discount (Runtime: $30$s) \label{table:anac2011-domains3}}
 \end{table}

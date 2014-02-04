@@ -20,3 +20,5 @@ The advantage of this method over standard value iteration is that it approximat
 Bids that they have never done before leads to much bigger changes in the opponent model, which leads to a faster convergence towards to true opponent model. 
 However, for agents that concede much faster then the algorithm anticipates (e.g. skip much more than $I$ bids whenever they make a new bid), the opponent model is less accurate. 
 Since we found that most opponents are hardheaded for at least some part of the total time they are active, we think that, on average, this model will give better results.
+
+One last thing we added to the opponent model is a threshold to determine whether the opponent model is reliable. We assume the current model is reliable if more than 2.5\% of the total number of possible bids have been made by the opponent. This reliability measure is used by the acceptance strategy to determine if the calculated Nash- and Kalai- points are reliable enough to base an acceptance strategy on them.
