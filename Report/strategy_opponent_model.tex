@@ -2,7 +2,7 @@ Our opponent model is based on the standard \emph{frequency model}, but has some
 
 The main part of our adaptive frequency modeling happens in the method \texttt{updateValueWeights (oppBid)}.
 In order to estimate how ``wrong'' the estimate is, we first need to decide what offer we expect from the opponent.
-To do this, we make the assumption that new offers made by the opponent always close to old offers, but usually a bit lower. 
+To do this, we make the assumption that new offers made by the opponent are always close to old offers, but usually a bit lower. 
 We also assume that the opponent's utility space has a normal distribution with a mean around $\mu = 0.5$, and a variance around $\sigma^2 = 0.02$. 
 These values have been determined by examining some domains that were present in \textit{Genius}. 
 The expected utility of a bid is calculated when we receive a bid we haven't received yet from the opponent by the method \verb-ExpectedNewBidUtil()-. This function calculates how many distinct bids we have received ($D$) and what the size of the utility space is (the total number of bids possible, called $T$). We also approximate the average number of bids ignored by the opponent ($I$). We then use the quantile function of the normal distribution to calculate the expected utility (implemented by the function \verb-normInverseCdf(p, mu, sigma)-):
@@ -19,6 +19,6 @@ We pick the learn value addition value that leads to the smallest absolute diffe
 The advantage of this method over standard value iteration is that it approximates the opponent model better for agents that are hardheaded. 
 Bids that they have never done before leads to much bigger changes in the opponent model, which leads to a faster convergence towards to true opponent model. 
 However, for agents that concede much faster then the algorithm anticipates (e.g. skip much more than $I$ bids whenever they make a new bid), the opponent model is less accurate. 
-Since we found that most opponents are hardheaded for at least some part of the total time they are active, we think that, on average, this model will give better results.
+Since we found that most opponents are hardheaded for at least some part of the total time they are active, we think that, on average, this model will give better results (we do not expect our opponents to be conceders).
 
 One last thing we added to the opponent model is a threshold to determine whether the opponent model is reliable. We assume the current model is reliable if more than 2.5\% of the total number of possible bids have been made by the opponent. This reliability measure is used by the acceptance strategy to determine if the calculated Nash- and Kalai- points are reliable enough to base an acceptance strategy on them.

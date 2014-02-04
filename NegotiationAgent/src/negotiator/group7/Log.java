@@ -3,10 +3,11 @@ package negotiator.group7;
 import java.text.DecimalFormat;
 
 public class Log {
-	
+
 	/**
 	 * OPTIONS:
 	 */
+	private static final int BLACK_HOLE = Integer.MIN_VALUE; // no debug output at all
 	private static final int NONE = -1; // no ones debug output
 	private static final int ALL = 0; // everyones debug output
 	private static final int SCHUTTER = 1;
@@ -18,9 +19,7 @@ public class Log {
 	/**
 	 * What to print?
 	 */
-	private static final int PRINT = NONE; // set to NONE for only important outputs
-	
-	
+	private static int PRINT = BLACK_HOLE; // set to NONE for only important outputs
 	
 	public static void s(String msg) {
 		inLine(msg, SCHUTTER);
@@ -58,21 +57,21 @@ public class Log {
 	}
 	
 	public static void inLine(String msg) {
-		System.out.print(msg);
+		if (PRINT != BLACK_HOLE)
+			System.out.print(msg);
 	}
 	public static void newLine(String msg) {
-		System.out.println(msg);
+		if (PRINT != BLACK_HOLE)
+			System.out.println(msg);
 	}
 	
 	public static void inLine(String msg, int type) {
-		if (type == PRINT || PRINT == ALL) {
+		if (type == PRINT || PRINT == ALL)
 			inLine(msg);
-		}
 	}
 	public static void newLine(String msg, int type) {
-		if (type == PRINT || PRINT == ALL) {
+		if (type == PRINT || PRINT == ALL)
 			newLine(msg);
-		}
 	}
 	public static String format(double d) {
 		return format(d, "##.000"); // this will helps you to always keeps in three decimal places
