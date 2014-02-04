@@ -192,14 +192,14 @@ and discount factor.
 The PEAS elements are realized by different Java-classes. These will be explained in more detail in the Strategy section.
 
 \subsection{BOA Framework}
-In the BOA framework a negotation agent consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three components.
+In the BOA framework a negotiation agent consist of three components: \emph{Bidding strategy}, \emph{Opponent model} and \emph{Acceptance strategy}. As discussed by Baarslag et al., the advantages of separating the components using this framework are threefold \cite{baarslag2012decoupling}. In designing our negotiation agent the most useful advantage was the fact that it allows for easily changing individual components and analyze the interaction between the components. Below we provide a small description for the three components.
 
 \begin{description}
   \item[Bidding Strategy] \hfill \\
   The bidding strategy (BS) is arguably the most important component. It's goal is to determine the next bid that will be offered to the opponent. In determining the next bid the agent can interact with the opponent model to provide a suitable offer. 
 
   \item[Opponent Model] \hfill \\
-  Analyzing the opponents behavior is essential for being able to determine the opponent's preference profile.  With a more accurate preference profile, the opponent's utility of a bid can be determined more accurately. This is important, because when we know the preferences of the opponent we can try to create win-win situations in a negotation.
+  Analyzing the opponents behavior is essential for being able to determine the opponent's preference profile.  With a more accurate preference profile, the opponent's utility of a bid can be determined more accurately. This is important, because when we know the preferences of the opponent we can try to create win-win situations in a negotiation.
 
   \item[Acceptance Strategy] \hfill \\
   Negotiation sessions ideally end by reaching an agreement. The acceptance strategy (AS) decides whether the opponents offer should be accepted or a new bid has to be offered. A broad variety of acceptance strategies are available. An acceptance strategy should not accept too soon, because a better agreement might be reached, but also not too late to prevent a breakoff.

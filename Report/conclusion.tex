@@ -86,9 +86,9 @@ In fact, we were not able to construct utility spaces for most models except the
 \item \verb-Bid-s do not calculate a hash code that gives the same results as the equals function. This would 
 be useful for creating a \verb-Dictionary-/\verb-HashMap- where bids are mapped to utilities.
 \item It is very hard to retrieve the value names within the issues from the domain (if not impossible).
-\item The function to calculate the Kalai Smorodinsky point, which we used intensively,
+\item The function to calculate the Kalai-Smorodinsky point, which we used intensively,
 does not always return the correct bid. This is best demonstrated in the domain 
-\verb-NiceOrDie-, where it returns the ``Die'' offers as being the Kalai Smorodinsky point if the opponent model
+\verb-NiceOrDie-, where it returns the ``Die'' offers as being the Kalai-Smorodinsky point if the opponent model
 is not entirely correct, but slightly skewed.
 \item In Genius, when running tournament a second time, log files are not correctly saved.
 It will try to append the new log file to the old one, and because of this genius will throw
