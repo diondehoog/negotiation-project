@@ -73,10 +73,15 @@ public class Phase2 extends Phase {
 		UtilitySpace utilitySpaceOpponent = opponentModel.getOpponentUtilitySpace();
 		
 		BidPoint myBB = getBestBidPointFromUtilitySpace(ourUtilitySpace);
+		for (BidPoint koe : bidSpace.bidPoints) {
+			Log.vln("bids: " + koe);
+		}
 		Log.vln("my best: " + myBB);
 		BidPoint theirBB = getBestBidPointFromUtilitySpace(utilitySpaceOpponent);
 		Log.vln("their best: " + theirBB);
 		BidPoint ks = getKalaiSmorodisky();
+		
+		Log.vln("Kalai: " + ks);
 
 		double theirMaxDist = ks.getDistance(theirBB);
 		ourMaxDist = ks.getDistance(myBB);
