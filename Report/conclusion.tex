@@ -76,8 +76,8 @@ since for acceptance we wanted to check if bids were pareto optimal and so forth
 before accepting. Therefore, we created our \texttt{Helper} class.
 \item Conversions between \verb-bidDetails-, \verb-bid- and \verb-bidPoint- classes can be hard. Especially 
 converting \verb-bidPoints- back to bid or \verb-bidDetails- seemed impossible, we had to search through
-part of the bid-space to find back the bids corresponding to \verb-bidPoints-, as the \texttt{getBid()} method returned \texttt{null}.
-\item Built in functions of the opponents \verb-utilitySpace- do not work for all default included 
+part of the bid-space to find back the bids corresponding to \verb-bidPoints-, as the \texttt{BidPoint.getBid()} method returned \texttt{null}.
+\item Built in functions of the opponent's \verb-utilitySpace- do not work for all default included 
 opponent models. For example, the Bayesian model does not construct a \verb-utilitySpace- for the opponent. 
 In fact, we were not able to construct utility spaces for most models except the hardheaded frequency model. 
 \item \verb-Bid-s do not calculate a hash code that gives the same results as the equals function. This would 
@@ -87,11 +87,14 @@ be useful for creating a \verb-Dictionary-/\verb-HashMap- where bids are mapped 
 does not always return the correct bid. This is best demonstrated in the domain 
 \verb-NiceOrDie-, where it returns the ``Die'' offers as being the Kalai Smorodinsky point if the opponent model
 is not entirely correct, but slightly skewed.
-\item Using multi acceptance strategies in parallel only displays results in the commandline window and are not written to log files. This makes using this feature very unattractive.
-\item In genius, when running tournament a second time, log files are not correctly saved.
+\item In Genius, when running tournament a second time, log files are not correctly saved.
 It will try to append the new log file to the old one, and because of this genius will throw
 an exception. 
-\item It would be very nice if one could export a whole trace of values from a negotation
+\item In Genius, when loading tournaments or adding agents, the parameters are suddenly scrambled and don't comply to their original order. Also the descriptions are not saved or loaded, so one can not easily interpret the meaning of the parameters anymore. the only fix is to reselect the component, in order to load the descriptions and get the original order back.
+\item In Genius, when editing parameters of BOA components, the labels for the parameter names are super small and only display the first few characters. This is especially frustrating with the issue mentioned above.
+\item It would be very nice if one could export a whole trace of values from a negotiation
 session for analysis and debugging. We have implemented a logging BOA component to do this for us, but this worked very inefficient.
+\item When executing a tournament, it would be nice if it was shown in the results table what agent accepted a bid.
+\item Columns \texttt{AgentA params} and \texttt{AgentB params} are always empty and all parameters are summarized in the agent names instead.
 \end{itemize}
 
