@@ -5,12 +5,12 @@ we quantify how much our opponent model improves our results, and finally test i
 We present the results and discuss the efficiency of the agent in terms of reaching \emph{Nash solutions}, \emph{Kalai Smorodinski points} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
 
 \subsection{Intermediate tests}
-During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOAconstructor. 
+During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOA constructor. However, implementing the tit-for-tat strategy, that also performs concessions and also projects onto the pareto optimal frontier prooved very difficult. We have optimized many of the parameters
+using tests on the party domain. In some cases conceding made our agent offer the best bid for the opponent, consequently, this feature was disabled entirely in the final tests (below) for our agent.
 
-The initial version of the adaptive opponent model the BOAconstructor used assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
+The initial version of the adaptive opponent model the BOA constructor assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
 
-Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOAconstructor agent.
-
+Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOA constructor agent. This limited our time to perform important optimizations.
 
 \subsection{Performance against \texttt{ANAC 2011} agents}
 
