@@ -1,40 +1,37 @@
 
 
-For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Finding outcomes that are a win-win situation for both parties can be quite hard.
+For this project we performed an in-depth study in the world of automated negotiation. After reading a large amount of literature written about the subject we have designed and implemented our own agent using the BOA framework and \texttt{Genius} environment. It became clear to us that negotiation is not as straight forward as it might seem at first glance. Reaching an agreement that is a win-win situation for both parties can be quite hard.
 
 Our agent, the BOAconstructor, combines multiple existing ideas.
-However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters.
-Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space. Because of this, our agent is clearly performing suboptimal.
-In the tests we have seen that our acceptance strategy in combination the third phase of our bidding strategy
-almost always leads to acceptance, which is apparently too lenient compared to other agents.
-Furthermore, we found that many settings we tried for phase 2 led to a rapid concession compared to our opponent. 
-Therefore we have decided in final tests to disable concessions in phase 2 to prevent this from happening.
+However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters. Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space. Because of this, our agent is clearly performing suboptimal. In the tests we have seen that our acceptance strategy in combination with the third phase of our bidding strategy almost always leads to acceptance, which is apparently a tad too lenient when facing most other agents. Furthermore, we found that many settings we tried for phase two, led to a rapid concession compared to our opponent.  Therefore, we have decided to disable these concessions in final tests.
 
 We conclude that in automated negotiation, starting out with a simple agent and 
-continually improving this agent is a better strategy to develop agents. 
+continually improving this agent, would have been a better strategy to develop agents. 
 We clearly started out with a too complex agent, before optimizing any parameters.
-However, we think that by separating phases in a bidding strategy can lead to 
+However, we think that separating a bidding strategy into phases can lead to 
 better results than just using a single bidding strategy. By adding parameters
-to each individual phase, we can explore the space of strategies even more,
-just like the BOA model which makes it easier to search the space of strategies.
+to each individual phase, we can explore the space of strategies even more.
 
-This might be in part because of the too large seperation between group members.
-A lot of the time members in our group worked on their 'own' component, 
-and because of this, most of us made components too complex because others would not interfere.
-Furthermore, we had some practical issues with version control, from which we learned a lot.
+This might be in part, because of the too large separation between members of our project group.
+Each of us often worked on our 'own' component, and because of this, most of us made components too complex as there was no overview. Furthermore, we had some practical issues with version control, from which we learned a lot.
 Finally, we have really enjoyed this challenge, although we aren't entirely satisfied with 
-our results. We wish we could spend more time on this project looking at our mistakes
-on the way.
+our results. We wish we could spend more time on this project looking at our mistakes.
  
 \section{Future Perspectives}
 \subsection{Improving BOA constructor}
 During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
 
-For the Bidding Strategy ...
+\todo{For the Bidding Strategy ...}
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
+<<<<<<< HEAD
 \subsection{Future of BOA constructor for real-life negotations}
+=======
+Our the Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
+
+\subsubsection{Future of BOA constructor for real-life negotations}
+>>>>>>> 5ffcfa1231ca2dc58041c5d4e8d40bdbbd1fc2e7
 
 Before our agent, or most negotiation agents, can be used by humans in real negotation 
 session, we think a lot has to be done. People will want more control over the 
