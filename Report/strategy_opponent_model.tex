@@ -1,4 +1,4 @@
-Our opponent model is based on the standard \emph{frequency model}, but has some tweaks that attempt to improve the quality of the model. The issue weight estimation is still equal to the standard frequency model method. The difference is in the way we approximate values of the items within an issue. The improvement is based on the idea that if the opponent does a new, previously unseen bid, that this is probably close in utility to the other bids we have seen. This is implemented by changing the so-called learn value addition based on how ``wrong'' our opponent model is for the current bid. \\
+Our opponent model is based on the standard \emph{frequency model}, but has some tweaks that attempt to improve the quality of the model. The issue weight estimation is still equal to the standard frequency model method. The difference is in the way we approximate values of the items within an issue. The improvement is based on the idea that if the opponent does a new, previously unseen bid, that this is probably close in utility to the other bids we have seen. This is implemented by changing the so-called learn value addition based on how ``wrong'' our opponent model is for the current bid. 
 
 The main part of our adaptive frequency modeling happens in the method \texttt{updateValueWeights (oppBid)}.
 In order to estimate how ``wrong'' the estimate is, we first need to decide what offer we expect from the opponent.
@@ -14,7 +14,7 @@ Where $\text{erf}^{-1}(x)$ is the inverse error function (\verb-inverseErf(x)-).
 We save this expected utility for each bid in an \verb-ArrayList- called \verb-expectedUtils- and use it if the bid is repeated by the opponent. 
 Next we check if the utility calculated using the current opponent model is within a certain range of the expected utility. 
 If this is not the case we try a number of different learn value addition values ($1$ to $100$) and check for each of these values what the utility of the current bid would be if we used that value for the frequency modeling algorithm. 
-We pick the learn value addition value that leads to the smallest absolute difference between the utility calculated using our opponent model and the expected utility. \\
+We pick the learn value addition value that leads to the smallest absolute difference between the utility calculated using our opponent model and the expected utility. 
 
 The advantage of this method over standard value iteration is that it approximates the opponent model better for agents that are hardheaded. 
 Bids that they have never done before leads to much bigger changes in the opponent model, which leads to a faster convergence towards to true opponent model. 
