@@ -33,8 +33,8 @@ The Opponent Model now still uses default frequency modeling for adjusting the i
 
 Our Acceptance Strategy uses many acceptance conditions which in some cases overlap. We can imagine that we could leave out one or two of these conditions. However, our results are promising, as we seem to get the highest utility when we use our own acceptance strategy. This is not surprising though, since we take a lot of cases into account. This makes our acceptance strategy really complex, and by optimizing the parameters and refactoring the code we could possibly reduce its complexity. We suggest to test each condition and its parameters separately, in order to find out if they actually improve or worsen our results.
 
-\subsection{Future of BOA constructor for real-life negotations}
-Before our agent -- or most negotiation agents -- can be used by humans in real negotation 
+\subsection{Future of BOA constructor for real-life negotiations}
+Before our agent -- or most negotiation agents -- can be used by humans in real negotiation 
 session, we think a lot has to be done. People probably want more control over the 
 negotiation process of the agent, and specifically in understandable terms, e.g. no hard but fuzzy parameters.
 Also it is important for people to understand what it is doing. 
@@ -67,6 +67,7 @@ downloaded to your pocket negotiator. Then it would be useful to remove all the 
 There are also other possibilities. Considering humans when negotiating, they are able to offer issues outside the negotiation domain, to convince the opponent to get this deal. Well known examples are money or, in the case of cars, extra tires. In the current \texttt{Genius} environment it is impossible to offer new issues in a negotiation session, maybe this could be a feature in the future when negotiators are able to rate unknown issues or when they can ask for input of a human. 
 
 \subsection{Feedback concerning genius}
+\label{sec:genius}
 
 Because our agent's quite complex behavior, we tried to use as much functions
 already in the Genius API to reduce our workload. However, using the Genius API 
