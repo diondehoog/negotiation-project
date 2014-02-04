@@ -25,6 +25,22 @@ From the results in Table~\ref{table:anac2011-results} we notice a fairly high a
 \subsection{Choosing Different Acceptance Strategies}
 
 The next test consists of running our agent with varying \emph{acceptance strategies}. We perform those test so we are able to compare our acceptance strategy with other available ones (our strategy is discussed in Section~\ref{sec:strategyAS}). Again these tests are performed by starting a small tournament. \\
+\begin{table}[h]
+\begin{tabular}{llll}
+Agent                         & \begin{tabular}[c]{@{}c@{}}Average\\   time to agreement\end{tabular} & \begin{tabular}[c]{@{}c@{}}Percentage\\   of agreement\end{tabular} & \begin{tabular}[c]{@{}c@{}}Average\\   utility\end{tabular} \\
+Our Acceptance Strategy       & 0.777                                                                 & 100 $\%$                                                             & 0.870                                                       \\
+Nice-Tit-For-Tat              & 0.867                                                                 & 100 $\%$                                                             & 0.866                                                       \\
+Agent K2                      & 0.865                                                                 & 97 $\%$                                                             & 0.865                                                       \\
+IAMHaggler2011                & 0.633                                                                 & 97 $\%$                                                             & 0.865                                                       \\
+Other - Time \{t=0.99\}       & 0.837                                                                 & 100 $\%$                                                             & 0.855                                                       \\
+Other - False                 & 0.851                                                                 & 94 $\%$                                                             & 0.855                                                       \\
+Other - Next \{a=1.0. b=0.0\} & 0.873                                                                 & 94 $\%$                                                              & 0.847                                                       \\
+Other - Constant \{c=0.9\}    & 0.592                                                                 & 91 $\%$                                                              & 0.814                                                       \\
+The Negotiator                & 0.862                                                                 & 100  $\%$                                                            & 0.743                                                       \\
+BRAMAgent                     & 0.847                                                                 & 100 $\%$                                                             & 0.729                                                       \\
+HardHeaded                    & 0.923                                                                 & 75 $\%$                                                              & 0.680                                                      
+\end{tabular}
+\end{table}
 
 \todo{Insert results and discuss them...}
 
