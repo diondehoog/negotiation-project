@@ -30,66 +30,54 @@ public class Phase3 extends Phase {
 		List<BidDetails> bh = negotiationSession.getOwnBidHistory().getHistory();
 		fallback = bh.get(randgen.nextInt(bh.size()));
 		
-			//Log.hln("Opponent is assumed to be HardHeaded, decreasingly offering random bid that approaches the pareto");
+		BidDetails best = null;
+		double time = (negotiationSession.getTime() - phaseStart) * (1 / (1 - phaseStart));
+		int tries = 15;
+		
+		while (best == null && tries > 0) 
+		{
+			double u;
+			if (ourHelper.getBidsLeft() == null || ourHelper.getBidsLeft() > 3) {
+				u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
+			} else {
+				Log.newLine("\n Panic!! Conceding faster..\n");
+				u = randgen.nextDouble() * 0.2 + 0.5;
+			}
 
-			BidDetails best = null;
-			double time = (negotiationSession.getTime() - phaseStart) * (1 / (1 - phaseStart));
-			int tries = 15;
-			
-			while (best == null && tries > 0) 
+			if (opponentStrategy != 1 && ourHelper.getKalaiPoint() != null) // Opponent is assumed to be Conceder
 			{
-				double u;
-				if (ourHelper.getBidsLeft() == null || ourHelper.getBidsLeft() > 3) {
-					u = randgen.nextDouble() * 0.1 + 0.7 + 0.2 * (1 - time);
-				} else {
-					Log.newLine("\n Panic!! Conceding faster..\n");
-					u = randgen.nextDouble() * 0.2 + 0.5;
-				}
-
-				if (opponentStrategy != 1 && ourHelper.getKalaiPoint() != null) // Opponent is assumed to be Conceder
-				{
-					u = Math.max(ourHelper.getKalaiPoint().getMyUndiscountedUtil(), u);
-				}
-				
-				Range r = new Range(u - 0.01, u + 0.01);
-				List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
-				
-				if (ourHelper.getOpponentModel() != null) {
-					double bestValue = 0.0;
-					for (BidDetails b : randBid) 
-					{
-						double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
-						if (value > bestValue) 
-						{
-							best = b;
-							bestValue = value;
-						}
-					}
-				} else {
-					int size = randBid.size();
-					if (size > 0)
-						best = randBid.get(randgen.nextInt(size));
-					else 
-						best = null;
-				}
-				
-				tries--;
+				u = Math.max(ourHelper.getKalaiPoint().getMyUndiscountedUtil(), u);
 			}
 			
-			if (best == null)
-				return fallback;
-			else
-				return best;
-
-//		else 
-//		{
-//			// Opponent is assumed to be Conceder
-//			Log.hln("Opponent is assumed to be Conceder, offering KS point");
-//			if (ourHelper.getKalaiPoint() != null)
-//				return ourHelper.getKalaiPoint();
-//			else
-//				return fallback;
-//		}
+			Range r = new Range(u - 0.01, u + 0.01);
+			List<BidDetails> randBid = negotiationSession.getOutcomeSpace().getBidsinRange(r);
+			
+			if (ourHelper.getOpponentModel() != null) {
+				double bestValue = 0.0;
+				for (BidDetails b : randBid) 
+				{
+					double value = ourHelper.getOpponentModel().getBidEvaluation(b.getBid());
+					if (value > bestValue) 
+					{
+						best = b;
+						bestValue = value;
+					}
+				}
+			} else {
+				int size = randBid.size();
+				if (size > 0)
+					best = randBid.get(randgen.nextInt(size));
+				else 
+					best = null;
+			}
+			
+			tries--;
+		}
+		
+		if (best == null)
+			return fallback;
+		else
+			return best;
 		
 	}
 }

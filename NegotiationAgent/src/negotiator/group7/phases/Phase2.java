@@ -94,9 +94,10 @@ public class Phase2 extends Phase {
 			Log.vln("Match concession: " + ourDist);
 			ourMaxDist = ks.getDistance(myBB); // find our max distance to kalai
 		}
-		/*
+		
 		double deltaDist = 0; 
 		double concedestep = 0;
+		this.Pconcede = -1.0; // force to not concede, because this leads to worse performance
 		if ((concedeStep == -1) && (Math.random()<this.Pconcede)) { // sometimes randomly concede
 			concedeStep = 1;
 		}
@@ -110,13 +111,7 @@ public class Phase2 extends Phase {
 				}
 			}
 		}
-		*/
-		if (Double.isNaN(avg)) {
-			Log.vln("NAN!!!");
-		}
 		
-		double concedestep = 0;
-		double deltaDist = 0;
 		// play tit for tat and concede sometimes
 		deltaDist += (avg*niceFactor-concedestep)*(ourMaxDist/theirMaxDist);
 		ourDist += deltaDist; // add their difference distance to our distance
