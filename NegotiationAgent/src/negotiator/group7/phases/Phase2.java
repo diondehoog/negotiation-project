@@ -41,11 +41,9 @@ public class Phase2 extends Phase {
 	private BidPoint ks = null;
 	private int it = 0;
 	
-	private double hardcodefix = 0.0;
-	
 	public Phase2(NegotiationSession negSession, OpponentModel opponentModel, double phaseStart, double phaseEnd, 
 			double Ppareto, int averageOver, double niceFactor, double Pconcede, double concedeFactor, int concedeSteps, 
-			double k, double e, double[] phaseBoundary, double phase2LowerBound, double hardcodefix,
+			double k, double e, double[] phaseBoundary, double phase2LowerBound,
 			SortedOutcomeSpace outcomespace) {
 		super(negSession, opponentModel, phaseStart, phaseEnd);
 		this.outcomespace = outcomespace;
@@ -56,7 +54,6 @@ public class Phase2 extends Phase {
 		this.Pconcede = Pconcede;
 		this.concedeFactor = concedeFactor;
 		this.concedeSteps = concedeSteps;
-		this.hardcodefix = hardcodefix;
 		
 		// Set our utility space once
 		ourUtilitySpace = negotiationSession.getUtilitySpace();
@@ -135,13 +132,11 @@ public class Phase2 extends Phase {
 		W = Double.isNaN(W) ? 1.0 : W;
 		if (W > 1) W = 1;
 		if (W < 0) W = 0;
-		if (hardcodefix > 0.5) {
-			if (it < 150) { // dont walk directly to opponent
-				if (W < 0.5) {
-					W = 1;
-				}
-			} 
-		}
+		if (it < 150) { // dont walk directly to opponent
+			if (W < 0.5) {
+				W = 1;
+			}
+		} 
 		it++;
 		Log.vln("W: " + W);
 		BidDetails nextBid = interpolateBidPoints(ks, myBB, W); // W = 1 means return myBB, W = 0 means return ks
