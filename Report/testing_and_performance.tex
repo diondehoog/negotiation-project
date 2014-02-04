@@ -5,16 +5,18 @@ we quantify how much our opponent model improves our results, and finally test i
 We present the results and discuss the efficiency of the agent in terms of reaching \emph{Nash solutions}, \emph{Kalai Smorodinski points} and outcomes that lie on the \emph{Pareto Optimal Frontier} (POF).
 
 \subsection{Intermediate tests}
-During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOA constructor. However, implementing the tit-for-tat strategy, that also performs concessions and also projects onto the pareto optimal frontier prooved very difficult. We have optimized many of the parameters
+During the development of BOAconstructor a lot of tests were run with various versions of the agent. This lead to numerous improvements, both small and big, in our agent. The initial version of the agent barely took the opponent model into account for it's tit for that implementation, but we found that the results of this technique were unsatisfactory, which lead to us implementing the current version of BOA constructor. However, implementing the tit-for-tat strategy, that also performs concessions and also projects onto the Pareto optimal frontier proved very difficult. We have optimized many of the parameters
 using tests on the party domain. In some cases conceding made our agent offer the best bid for the opponent, consequently, this feature was disabled entirely in the final tests (below) for our agent.
 
 The initial version of the adaptive opponent model the BOA constructor assumed a uniform distribution of the opponent's bids. However, tests showed that the estimated utilities using this model were often incorrect for agents that are very conceding. This lead to the approximation using the inverse normal distribution. Testing also showed that using the estimated utilities from the last time a bid was received lead to better results then just using the most recent result for every bid.
+
+Testing during development of the acceptance conditions brought forth many failing and winning acceptance conditions, of which the latter has been implemented. We were also able to optimize the corresponding parameters, such as the weight of a single $\Delta t_{bid}$ to the current running average. Furthermore, we concluded that we should use a sliding window, instead of always looking at the complete time line. As a result of our tests, we were also able to come up with the idea to let the formula for $AC_{curve}$ approach the opponent's first bid, instead of using a static value -- like, say $0.5$.
 
 Furthermore, many tests were run to try different parameters for and find bugs in all components. It turned out that bugs kept popping up in all components until very late in the development of the BOA constructor agent. This limited our time to perform important optimizations.
 
 \subsection{Performance against \texttt{ANAC 2011} agents}
 
-In this part we compare our agent to three of the agents that attended in the ANAC 2011 competitio: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. The results have been obtained by running a tournament using multiple utility profiles for the (undiscounted) Party domain and setting the negotiation time to $30$ seconds,
+In this part we compare our agent to three of the agents that attended in the ANAC 2011 competition: \emph{HardHeaded}, \emph{Gahboninho} and \emph{The Negotiatior}. The results have been obtained by running a tournament using multiple utility profiles for the (undiscounted) Party domain and setting the negotiation time to $30$ seconds,
 we use these same settings for further testing also unless otherwise specified. 
 
 \begin{table}[H]
