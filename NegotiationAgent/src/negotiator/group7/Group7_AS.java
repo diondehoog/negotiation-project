@@ -120,6 +120,7 @@ public class Group7_AS extends AcceptanceStrategy {
 		if (bhOpp.getHistory().size() > 0) hisLast = bhOpp.getHistory().get(0).getMyUndiscountedUtil();
 		if (bhOpp.getHistory().size() > 0) hisBest = bhOpp.getBestBidDetails().getMyUndiscountedUtil();
 		double ourWorst = negotiationSession.getOwnBidHistory().getWorstBidDetails().getMyUndiscountedUtil();
+		// TODO: bug! ourWorst does not depend on time window.......... :(
 		double ourNext = offeringStrategy.getNextBid().getMyUndiscountedUtil();
 		
 		// checks
