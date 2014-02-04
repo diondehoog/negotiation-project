@@ -44,10 +44,6 @@ public class Phase1 extends Phase {
 		double lowerBound = 0.9;
 		double normTime = t/this.phaseEnd; // Normalized time
 		
-		// Center of the utility range
-		
-		//double val = 1-(normTime/10);
-		
 		// Best bid that the opponent has offered so far
 		BidDetails bestOpponent = negotiationSession.getOpponentBidHistory().getBestBidDetails();
 		double bestUtilOpp = 0.0;
@@ -71,20 +67,6 @@ public class Phase1 extends Phase {
 		// Set the bounds for the range
 		double lb = val-margin;
 		double ub = val+margin;
-		/*
-		if (bestOpponent.getMyUndiscountedUtil() > val){
-			// The opponent has offered a better bid (for us)
-			// than the center of our bid range, we counter this
-			// by choosing a bid higher (+0.05) than the opponents bid.
-			
-			
-			// Update boundaries
-			lb = val; ub = val+margin;
-			
-			Log.newLine("NOTICE: Updated boundary because opponent has chosen higher bid.");
-		}
-		*/
-		//Log.rln("Center of our bidRange = " + val + ", Best opponents bid = " + bestOpponent.getMyUndiscountedUtil());
 		
 		// Range in which bids are randomly generated
 		Range r = new Range(lb, ub); 
