@@ -129,9 +129,9 @@ spaces = [
 	["etc/templates/anac/y2011/Laptop/laptop_buyer_utility.xml", "etc/templates/anac/y2011/Laptop/laptop_seller_utility.xml"]
 	]
 spacesNames = ['Camera', 'Grocery', 'IS BT Acquisition BT prof', 'Laptop']
-filename = "genius/log/2014-02-04 00.22.53.xml"
+filename = "Logs/Discount Tests/2014-02-04 06.44.48.xml"
 
-own = "bs: Group7_BS2 {Pconcede=0.05, Ppareto=0.5, averageOver=5.0, concedeFactor=0.3, concedeSteps=10.0, discount=1.0, e=0.3, niceFactor=0.5, phase2=0.1, phase3=0.95} as: Group7_AS {acceptCurveApproach=0.8, acceptCurveStart=1.0, acceptCurveType=2, capWorstMinimal=0.6, capWorstSlope=-0.3, panicConcede=0.05, panicWhenBidsLeft=3, percentDurationWeight=0.25, timeWindow=0.2} om: Group7_OM: Adaptive Frequency Model  oms: Group7_OMS "
+own = "bs: Group7_BS2 {Pconcede=0.05, Ppareto=0.5, averageOver=5.0, concedeFactor=0.3, concedeSteps=10.0, discount=1.0, e=0.3, niceFactor=0.5, phase2=0.1, phase3=0.95} as: Group7_AS {acceptCurveApproach=0.8, acceptCurveStart=1.0, acceptCurveType=2, capWorstMinimal=0.6, capWorstSlope=-0.3, panicConcede=0.05, panicWhenBidsLeft=3, percentDurationWeight=0.5, timeWindow=0.2} om: Group7_OM: Adaptive Frequency Model  oms: Group7_OMS "
 gabber = 'Gahboninho V3'
 hardHeaded = 'HardHeaded'
 negotiator = 'bs: 2011 - The Negotiator  as: 2011 - The Negotiator  om: CUHKFrequencyModelV2  oms: Best bid {t=1.0}'
@@ -139,3 +139,4 @@ negotiator = 'bs: 2011 - The Negotiator  as: 2011 - The Negotiator  om: CUHKFreq
 agents = [hardHeaded, gabber, negotiator, own]
 
 printTableForDomains(filename, agents, shortNames, spaces, spacesNames)
+
