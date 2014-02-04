@@ -6,45 +6,50 @@ For this project we performed an in-depth study in the world of automated negoti
 Our agent, the BOAconstructor, combines multiple existing ideas.
 However, we tried to implement the tit-for-tat strategy which was very hard to get to work properly, and we have also introduced multiple phases that introduced a lot of parameters.
 Our resulting agent is very complex, and because of this we had many difficulties optimizing the parameters of each of our components because of the high dimensional parameter search space. Because of this, our agent is clearly performing suboptimal.
-In the tests we have seen that our acceptance strategy in combination with phase 3 
+In the tests we have seen that our acceptance strategy in combination the third phase of our bidding strategy
 almost always leads to acceptance, which is apparently too lenient compared to other agents.
-Furthermore, when optimizing phase 2 this resulted in parameters that were not a good
-fit for our agent at all, sometimes resulting in very early acceptance. We have decided 
-in final tests to disable concessions in phase 2 to prevent this from happening.
+Furthermore, we found that many settings we tried for phase 2 led to a rapid concession compared to our opponent. 
+Therefore we have decided in final tests to disable concessions in phase 2 to prevent this from happening.
 
-We conclude that in automated negotation, starting out with a simple agent and 
-continueally improving this agent is a better strategy to develop agents. 
+We conclude that in automated negotiation, starting out with a simple agent and 
+continually improving this agent is a better strategy to develop agents. 
 We clearly started out with a too complex agent, before optimizing any parameters.
-However, we think that by seperating phases in a bidding strategy can lead to 
-improvements than just using a single bidding strategy. By adding parameters
+However, we think that by separating phases in a bidding strategy can lead to 
+better results than just using a single bidding strategy. By adding parameters
 to each individual phase, we can explore the space of strategies even more,
-just like the BOA model which makes it easier to search in the space of strategies.
+just like the BOA model which makes it easier to search the space of strategies.
  
 \subsection{Future Perspectives}
+\subsubsection{BOAconstructor}
+During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
+
+For the Bidding Strategy ...
+
+The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
 \subsubsection{Using a mediator}
-In the proces of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.\\
+In the process of optimizing the agent to reach the best possible outcome of the negotiation session, it turned out to be hard to find a deal that is Pareto optimal. Another way of negotiating is by using a mediator, which objectively mediates between two or more agents. The agents which take part of the negotiation all get the same bid from the mediator, which the agents can accept or reject. This means that the \textit{bidding} actuator is now canceled, the only actuator now is \textit{accepting/rejecting}.
 
-While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they got a good utility themselves.  \\
+While agents can only reject or accept a bid of the mediator, so seeing no bids of the opponents, it is very hard to make a preference profile of the opponents. Therefore, it is most probable that agents will focus on their own utility. Besides that, agents won't care much about the utility of the other agent as long as they get a good utility themselves. 
 
-Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \textit{Nash-point} and the \textit{Kalai-Smorodinsky solution}. An objective mediator can walk over the Pareto Optimal Frontier, offerings bids until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome. \\
+Since the mediator has both preference profiles, it is able to calculate all the bids on the Pareto frontier including the \emph{Nash-point} and the \emph{Kalai-Smorodinsky solution}. An objective mediator can walk over the Pareto Optimal Frontier, offerings bids until both agents accept. An objective negotiation should end in the Nash-point or Kalai-Smorodinsky point, however, since we are at the optimal frontier, the first bid which is accepted by both parties will be the outcome.
 
 This way of negotiating will compute an optimal outcome, however in a restricted optimal outcome space. There are less possibilities for strong negotiating agents to influence and analyze the opponent, so they could get a worse outcome. Especially in bidding spaces which are poorly distributed in favor of one agent, the agent will probably get a worse outcome.
 
 \subsubsection{Other options}
 Extending agents with more communication abilities would probably not increase the performance significantly. They could
-communicate about certain issues, for example if they would concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. \\
+communicate about certain issues, for example if they would concede or stay. However, it will never be sure when an agent is telling the truth or using a communication strategy. 
 
-Communication that however could be useful, is communication about what agents do not want. After communicating this, agents could neglect certain offers to shrink the negotiation space. This could save time, and could be useful when there is a time constraint or a discount factor. \\
+Communication that however could be useful, is communication about what agents do not want. After communicating this, agents could neglect certain offers to shrink the negotiation space. This could save time, and could be useful when there is a time constraint or a discount factor. 
 
 However, another way to look at this is that the domain could be specified better at the start of the negotiation, by filtering the issues which never would be accepted by the opponent beforehand. For example, when buying a car, one could have a default domain where all possible values for all possible cars are specified, which is 
-downloaded to your pocket negotiator. Then it would be useful to remove all the cars without certain features, so which are not matching your preferences, beforehand. \\
+downloaded to your pocket negotiator. Then it would be useful to remove all the cars without certain features, so which are not matching your preferences, beforehand. 
 
 There are also other possibilities. Considering humans when negotiating, they are able to offer issues outside the negotiation domain, to convince the opponent to get this deal. Well known examples are money or, in the case of cars, extra tires. In the current \texttt{Genius} environment it is impossible to offer new issues in a negotiation session, maybe this could be a feature in the future when negotiators are able to rate unknown issues or when they can ask for input of a human. 
 
 \subsubsection{Feedback concerning genius}
 
-Because our agent used quite complex behaviour, we tried to use as much functions
+Because our agent's quite complex behaviour, we tried to use as much functions
 already in the genius API to reduce our workload. However, using the Genius API 
 sometimes was very challenging. Below we make a short list of issues we encountered,
 which we hope can be improved in next versions of Genius:
@@ -54,15 +59,19 @@ which we hope can be improved in next versions of Genius:
 opponent model strategy or opponent model. This is a real problem, 
 since for acceptance we wanted to check if bids were pareto optimal and so forth
 before accepting.
-\item Conversions between bidDetails, bid and bidPoint classes can be hard. Especially 
-converting bidPoints back to bid or bidDetails seemed impossible, we had to search through
-part of the bidspace to find back the bids corresponding to bidPoints.
-\item Built in functions of the opponentSpace do not work for all default included 
-opponent models. For example, we were not able to construct bidspaces for most
-models except the hardheaded frequency model. 
+\item Conversions between \verb-bidDetails-, \verb-bid- and \verb-bidPoint- classes can be hard. Especially 
+converting \verb-bidPoints- back to bid or \verb-bidDetails- seemed impossible, we had to search through
+part of the bidspace to find back the bids corresponding to \verb-bidPoints-.
+\item Built in functions of the opponents \verb-utilitySpace- do not work for all default included 
+opponent models. For example, the Bayesian model does not construct a \verb-utilitySpace- for the opponent. 
+In fact, we were not able to construct utility spaces for most models except the hardheaded frequency model. 
+\item \verb-Bid-s do not calculate a hash code that gives the same results as the equals function. This would 
+be useful for creating a \verb-Dictionary-/\verb-HashMap- where bids are mapped to utilities.
+\item It is very hard to retrieve the value names within the issues from the domain (if not impossible).
 \item The function to calculate the Kalai Smorodinsky point, which we used intensively,
 does not always return the correct bid. This is best demonstrated in the domain 
-niceOrDie.
+\verb-NiceOrDie-, where it returns the ``Die'' offers as being the Kalai Smorodinsky point if the opponent model
+is not entirely correct, but slightly skewed.
 \item Using multi acceptance strategies in parallel only displays results in the commandline window and are not written to log files. This makes using this feature very unattractive.
 \item In genius, when running tournament a second time, log files are not correctly saved.
 It will try to append the new log file to the old one, and because of this genius will throw
