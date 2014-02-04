@@ -21,7 +21,9 @@ our results. We wish we could spend more time on this project looking at our mis
 \subsection{Improving BOA constructor}
 During the development of the BOAconstructor agent, we found that there are features that could improve the results, but we didn't have time to implement. This happened for each of the BOA components.
 
-\todo{For the Bidding Strategy ...}
+The Bidding Strategy phase 2 has too many parameters which are not correctly optimized.
+The agent could be considerable improved by this optimization. Furthermore, 
+the last phase is also not fully optimized, sometimes conceding too much.
 
 The Opponent Model now still uses default frequency modeling for adjusting the issue weights. Estimating the issue weights using a system similar to the one used to estimate the value weights might lead to improved results. Another method to potentially improve the results is to cross check whether the learn rate used doesn't brake the estimates for previous offers. In other words: check if after the value iteration the estimates of all previous bids are still within range of the expected utility. 
 
