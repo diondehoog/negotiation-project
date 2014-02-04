@@ -75,7 +75,7 @@ public class Group7_AS extends AcceptanceStrategy {
 	private double acceptCurveStart = 1.0; // the starting value of the accept curve if type == 1. Otherwise, this is the percentage between 1.0 and the value the curve has to approach that the curves starts at. If 0.8 and type is 3 (kalai), then start is 0.8 + 0.2 * kalai
 	private double acceptCurveApproach = 0.6; // the value that the accept curve will approach if type == 1
 	private int acceptCurveType = 2; // 1 = static, surve simply reaches the 'acceptCurveApproach' value and starts at 'acceptCurveStart'. 2 = curve approach avg of 1.0 and first bid opponent. 3 = curve approach kalai. 4 = curve approach nash.
-	private double percentDurationWeight = 0.25; // how much the duration of the last bid weighs in with the current running average
+	private double percentDurationWeight = 0.5; // how much the duration of the last bid weighs in with the current running average
 	private double panicConcede = 0.05; // amount of utility we allow ourself to concede from opponents best bid during panic mode (from time window)
 	private int panicWhenBidsLeft = 3; // amount of bids left after which we should panic and accept ASAP
 	

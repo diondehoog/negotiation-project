@@ -21,7 +21,7 @@ public class Phase2 extends Phase {
 	private double Ppareto = 0.5; // probability of offering pareto
 	private int averageOver = 5; // how many bids to average over to determine concession of opponent
 	private double niceFactor = 0.33; // when opponent concedes, their concession is multiplied by this
-	private double Pconcede = 0.05; // probability of conceding to make opponent happy
+	private double Pconcede = 0; // probability of conceding to make opponent happy
 	private double concedeFactor = 0.3; // amount of distance to concede to KS
 	private int concedeSteps = 10; // concession steps taken after each other
 	private int concedeStep = -1; // current concession step
