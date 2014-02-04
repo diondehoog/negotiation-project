@@ -1,12 +1,8 @@
 package negotiator.group7;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import negotiator.Bid;
@@ -21,6 +17,12 @@ import negotiator.utility.Evaluator;
 import negotiator.utility.EvaluatorDiscrete;
 import negotiator.utility.UtilitySpace;
 
+/**
+ * Opponent Model using Adaptive Frequency Modeling. The learn value addition is adjusted to how wrong
+ * the current utility is expected to be.
+ * @author Bas Dado (b.dado@student.tudelft.nl)
+ *
+ */
 public class Group7_FrequencyOM extends OpponentModel {
 
 
@@ -70,10 +72,15 @@ public class Group7_FrequencyOM extends OpponentModel {
 	 */
 	private final int maxLearnValueAddition = 100;
 	
-	private Map<Integer, Double> expectedUtils; 
-	private ArrayList<ArrayList<String>> values;
-	private ArrayList<BidMap> expectedUtils2;
+	/**
+	 * List containing all expected utilities we have estimated each time a new bid arrived.
+	 * Used to check the quality of the model if bid is repeated 
+	 */
+	private ArrayList<BidMap> expectedUtils;
 	
+	/**
+	 * The number of distinct bids required before we assume the model is reliable
+	 */
 	private int opponentModelReliableThreshold;
 	
 	private Helper ourHelper;
@@ -100,12 +107,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 		opponentModelReliableThreshold = (int)Math.round((double)opponentUtilitySpace.getDomain().getNumberOfPossibleBids() * 0.025);
 		opponentModelReliableThreshold = Math.max(opponentModelReliableThreshold, 5);
 		
-		expectedUtils = new HashMap<Integer, Double>();
-		values = new ArrayList<ArrayList<String>>(amountOfIssues);
-		for(int i = 0; i < amountOfIssues; i++) {
-			values.add(new ArrayList<String>());
-		}
-		expectedUtils2 = new ArrayList<BidMap>();
+		expectedUtils = new ArrayList<BidMap>();
 	}
 	
 	private void initializeModel(){
@@ -189,18 +191,28 @@ public class Group7_FrequencyOM extends OpponentModel {
 				opponentUtilitySpace.setWeight(opponentUtilitySpace.getDomain().getObjective(i), opponentUtilitySpace.getWeight(i)/totalSum);
 		}
 		
+		// Update the value weights
+		updateValueWeights(oppBid);
+	}
+
+	/**
+	 * Uses the adaptive frequency modeling algorithm to update the values weights within each issue 
+	 * based on the last bid
+	 * @param oppBid The most recent bid done by the opponent
+	 */
+	private void updateValueWeights(BidDetails oppBid) {
 		List<Bid> distinctBids = ourHelper.getDistinctBids(negotiationSession.getOpponentBidHistory());
 		try {
 			double curUtil = this.getBidEvaluation(oppBid.getBid());
 			
 			BidMap match = null;
-			for (BidMap bm: expectedUtils2) {
+			for (BidMap bm: expectedUtils) {
 				if (bm.bid.equals(oppBid.getBid()))
 					match = bm;
 			}
 			if (match == null) {
 				match = new BidMap(oppBid.getBid(), ExpectedNewBidUtil());
-				expectedUtils2.add(match);
+				expectedUtils.add(match);
 			}
 			double expectedUtil = match.util;
 			
@@ -212,8 +224,7 @@ public class Group7_FrequencyOM extends OpponentModel {
 				// U(offer) = sum_i(w_i (v_{i,j} + x)/(sum_j(v_{i,j}) + x))
 				// However this is a bit hard to solve algebraically, so we just try some values for x and choose the best one.
 				double closestUtil = 0;
-				double utilToApproach = expectedUtil //curUtil < expectedUtil - rightMargin ? expectedUtil - rightMargin : expectedUtil + leftMargin
-						;
+				double utilToApproach = expectedUtil;
 					
 				// Estimate the utility for all possible learn rates
 				for (int i = 1; i <= maxLearnValueAddition; i++) {
@@ -343,6 +354,11 @@ public class Group7_FrequencyOM extends OpponentModel {
 		return "Group7 Adaptive Frequency Model";
 	}
 	
+	/**
+	 * Class used as a wrapper to save both a bid and the estimated util used for that bid
+	 * @author Bas Dado
+	 *
+	 */
 	private class BidMap {
 		public Bid bid;
 		public Double util;
