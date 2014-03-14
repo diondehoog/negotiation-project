@@ -1,18 +1,19 @@
 #!/bin/bash
 clear
-CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-FOLDER=$CURDIR/negotiator
-FOLDER2=$CURDIR/negotiator/group7
 
-if [ ! -d "$FOLDER" ]
-then
-	mkdir $FOLDER
-fi
+#CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#FOLDER=$CURDIR/negotiator
+#FOLDER2=$CURDIR/negotiator/group7
 
-if [ ! -e "$FOLDER2" ]
-then
-	ln -s $CURDIR/../NegotiationAgent/bin/negotiator/* $FOLDER
-fi
+#if [ ! -d "$FOLDER" ]
+#then
+#	mkdir $FOLDER
+#fi
 
-cd $CURDIR & java -jar negosimulator.jar
+#if [ ! -e "$FOLDER2" ]
+#then
+#	ln -s $CURDIR/../NegotiationAgent/bin/negotiator/* $FOLDER
+#fi
+
+java -jar negosimulator.jar
 

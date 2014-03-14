@@ -8,9 +8,36 @@ import negotiator.BidHistory;
 import negotiator.analysis.BidPoint;
 import negotiator.bidding.BidDetails;
 import negotiator.boaframework.NegotiationSession;
+import negotiator.issue.Issue;
+import negotiator.utility.UtilitySpace;
 
+/**
+ * @author 	Tom Runia, Tom Viering, Bas Dado, Olivier Hokke, Arnold Schutter
+ * @since	01-04-2014
+ * @version	1.0
+ */
 public class Helper {
 	
+	private BOAconstructor_AS as;
+	private BOAconstructor_BS bs;
+	private BOAconstructor_OM om;
+	private BOAconstructor_OMS oms;
+	
+	private NegotiationSession negSession;
+	private UtilitySpace utilSpace;
+	private ArrayList<Issue> issues;
+	private double reservationValue;
+	
+	private BidDetails kalaiPoint;
+	private BidDetails nashPoint;
+	
+	
+	private Integer bidsLeft;
+	private Integer bidsTotal;
+	private Integer bidsMade;
+	private boolean opponentModelReliable;
+	
+	// Method for Helper communication (static object)
 	private static HashMap<NegotiationSession, Helper> osToHelper = new HashMap<NegotiationSession, Helper>();
 	public static Helper get(NegotiationSession os) {
 		if (!osToHelper.containsKey(os)) {
@@ -18,39 +45,28 @@ public class Helper {
 		}
 		return osToHelper.get(os);
 	}
+
+	public Helper() { /* constructor */ }
 	
-	public Helper() { }
+	/**
+	 * Initializes the Helper object. 
+	 * This method is only called by the Bidding Strategy!
+	 * 
+	 * @param negotiationSession
+	 * @param biddingStrategy
+	 */
+	public void init (NegotiationSession negotiationSession, BOAconstructor_BS biddingStrategy) {
+		
+		// Set some important variables
+		this.negSession = negotiationSession;
+		this.bs = biddingStrategy;
+		utilSpace = negSession.getUtilitySpace();
+		issues = utilSpace.getDomain().getIssues();
+		reservationValue = utilSpace.getReservationValueUndiscounted();
+		
+		Log.newLine("Succesfully initialized Helper object.");
+	}
 	
-	private BidDetails kalaiPoint;
-	private BidDetails nashPoint;
-	private NegotiationSession session;
-	
-	private BOAconstructor_AS as;
-	private BOAconstructor_BS bs;
-	private BOAconstructor_OM om;
-	private BOAconstructor_OMS oms;
-	
-	private Integer bidsLeft;
-	private Integer bidsTotal;
-	private Integer bidsMade;
-	private boolean opponentModelReliable;
-
-	public boolean isOpponentModelReliable() {
-		return opponentModelReliable;
-	}
-
-	public void setOpponentModelReliable(boolean opponentModelReliable) {
-		this.opponentModelReliable = opponentModelReliable;
-	}
-
-	public NegotiationSession getSession() {
-		return session;
-	}
-
-	public void setSession(NegotiationSession session) {
-		this.session = session;
-	}
-
 	/**
 	 * @return The amount of bids that are possibly left, based on the (running) average duration per bid. (based on the view of the AS! so if the AS is called later than you, this number can be outdated by 1 bid)
 	 */
@@ -92,6 +108,30 @@ public class Helper {
 	public void setBidsMade(Integer bidsMade) {
 		this.bidsMade = bidsMade;
 	}
+	
+	public UtilitySpace getUtilSpace() {
+		return utilSpace;
+	}
+
+	public void setUtilSpace(UtilitySpace utilSpace) {
+		this.utilSpace = utilSpace;
+	}
+
+	public ArrayList<Issue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(ArrayList<Issue> issues) {
+		this.issues = issues;
+	}
+
+	public double getReservationValue() {
+		return reservationValue;
+	}
+
+	public void setReservationValue(double reservationValue) {
+		this.reservationValue = reservationValue;
+	}
 
 	public BOAconstructor_AS getAcceptanceStrategy() {
 		return as;
@@ -126,7 +166,8 @@ public class Helper {
 	}
 	
 	public void setKalaiPoint (BidPoint ks) {
-		kalaiPoint = getBidDetails(ks);
+		// TODO: fix this
+		kalaiPoint = null;
 	}
 	
 	public BidDetails getKalaiPoint () {
@@ -141,47 +182,57 @@ public class Helper {
 		return nashPoint;
 	}
 	
-	/**
-	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
-	 * @param hist The BidHistory from which we want to get the list of distinct bids.
-	 * @return List of recent bids
-	 */
-	public BidDetails getBidDetails(BidPoint point) {
-		if (getOpponentModel() == null) return null;
-		if (getSession() == null) return null;
-		if (getSession().getOutcomeSpace() == null) return null;
-		
-		Range r = new Range(point.getUtilityA() - 0.001, point.getUtilityA() + 0.001);
-		List<BidDetails> bidsInRange = getSession().getOutcomeSpace().getBidsinRange(r);
-		for (BidDetails B2: bidsInRange)
-			if (B2.getMyUndiscountedUtil() == point.getUtilityA())
-				if (getOpponentModel().getBidEvaluation(B2.getBid()) == point.getUtilityB())
-					return B2;
-		
-		return null;
+	public boolean isOpponentModelReliable() {
+		return opponentModelReliable;
+	}
+
+	public void setOpponentModelReliable(boolean opponentModelReliable) {
+		this.opponentModelReliable = opponentModelReliable;
 	}
 	
-	/**
-	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
-	 * @param hist The BidHistory from which we want to get the list of distinct bids.
-	 * @return List of recent bids
-	 */
-	public List<Bid> getDistinctBids(BidHistory hist)
-	{
-		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
-		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
-		// Also the most recent bid should be ignored in the calculation.
-		List<Bid> distinctBids = new ArrayList<Bid>();
-		boolean ignoredFirst = false;
-		for (BidDetails bidDet: opponentBids) {
-			Bid bid = bidDet.getBid();
-			if (!ignoredFirst)
-				ignoredFirst = true;
-			if (!distinctBids.contains(bid))
-				distinctBids.add(bid);			
-		}
-		
-		//Log.rln("Number of distinct opponent bids: " + distinctBids.size());
-		return distinctBids;
-	}
+/* METHODS BELOW MIGHT HAVE TO BE REWRITTEN */
+	
+//	/**
+//	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+//	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+//	 * @return List of recent bids
+//	 */
+//	public BidDetails getBidDetails(BidPoint point) {
+//		if (getOpponentModel() == null) return null;
+//		if (negSession == null) return null;
+//		if (negSession.getOutcomeSpace() == null) return null;
+//		
+//		Range r = new Range(point.getUtilityA() - 0.001, point.getUtilityA() + 0.001);
+//		List<BidDetails> bidsInRange = getSession().getOutcomeSpace().getBidsinRange(r);
+//		for (BidDetails B2: bidsInRange)
+//			if (B2.getMyUndiscountedUtil() == point.getUtilityA())
+//				if (getOpponentModel().getBidEvaluation(B2.getBid()) == point.getUtilityB())
+//					return B2;
+//		
+//		return null;
+//	}
+	
+//	/**
+//	 * Returns a list (ordered in time where the first item is the oldest bid, and the last new item is the newest bid.
+//	 * @param hist The BidHistory from which we want to get the list of distinct bids.
+//	 * @return List of recent bids
+//	 */
+//	public List<Bid> getDistinctBids(BidHistory hist)
+//	{
+//		List<BidDetails> opponentBids = hist.sortToTime().getHistory();
+//		// Make sure we ignore the most recent bid. This is necessary to check whether the most recent bid is a new one. 
+//		// Also the most recent bid should be ignored in the calculation.
+//		List<Bid> distinctBids = new ArrayList<Bid>();
+//		boolean ignoredFirst = false;
+//		for (BidDetails bidDet: opponentBids) {
+//			Bid bid = bidDet.getBid();
+//			if (!ignoredFirst)
+//				ignoredFirst = true;
+//			if (!distinctBids.contains(bid))
+//				distinctBids.add(bid);			
+//		}
+//		
+//		//Log.rln("Number of distinct opponent bids: " + distinctBids.size());
+//		return distinctBids;
+//	}
 }

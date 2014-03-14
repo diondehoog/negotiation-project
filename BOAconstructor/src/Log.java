@@ -1,5 +1,10 @@
 import java.text.DecimalFormat;
 
+/**
+ * @author 	Tom Runia, Tom Viering, Bas Dado, Olivier Hokke, Arnold Schutter
+ * @since	01-04-2014
+ * @version	1.0
+ */
 public class Log {
 
 	// General logging
