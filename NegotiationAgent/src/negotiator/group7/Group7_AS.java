@@ -7,6 +7,7 @@ import negotiator.boaframework.AcceptanceStrategy;
 import negotiator.boaframework.Actions;
 import negotiator.boaframework.NegotiationSession;
 import negotiator.boaframework.OfferingStrategy;
+import negotiator.boaframework.OpponentModel;
 
 /**
  * Checking all different acceptance strategies
@@ -32,7 +33,7 @@ public class Group7_AS extends AcceptanceStrategy {
 	}
 
 	@Override
-	public void init(NegotiationSession negoSession, OfferingStrategy strat,
+	public void init(NegotiationSession negoSession, OfferingStrategy strat, OpponentModel OM,
 			HashMap<String, Double> parameters) throws Exception {
 		this.negotiationSession = negoSession;
 		this.offeringStrategy = strat;
