@@ -4,22 +4,20 @@ import java.text.DecimalFormat;
 
 public class Log {
 
-	/**
-	 * OPTIONS:
-	 */
+	// General logging
 	private static final int BLACK_HOLE = Integer.MIN_VALUE; // no debug output at all
 	private static final int NONE = -1; // no ones debug output
-	private static final int ALL = 0; // everyones debug output
+	private static final int ALL = 0; 	// everyones debug output
+	
+	// Personal logging
 	private static final int SCHUTTER = 1;
 	private static final int VIERING = 2;
 	private static final int RUNIA = 3;
 	private static final int DADO = 4;
 	private static final int HOKKE = 5;
-	
-	/**
-	 * What to print?
-	 */
-	private static int PRINT = BLACK_HOLE; // set to NONE for only important outputs
+
+	// Only very important outputs
+	private static int PRINT = BLACK_HOLE;
 	
 	public static void s(String msg) {
 		inLine(msg, SCHUTTER);
@@ -74,13 +72,11 @@ public class Log {
 			newLine(msg);
 	}
 	public static String format(double d) {
-		return format(d, "##.000"); // this will helps you to always keeps in three decimal places
+		return format(d, "##.000");
 	}
 	
 	public static String format(double d, String decimalFormat) {
 		DecimalFormat f = new DecimalFormat(decimalFormat);  
 		return f.format(d);
 	}
-	
-	
 }

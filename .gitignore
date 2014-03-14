@@ -1,13 +1,10 @@
-/genius/boarepository.xml
-/Report/negotiation_final_report.pdf
+CourseContent/Report/negotiation_final_report.pdf
+CourseContent/Logs/
 .metadata/
-genius/negotiator
-genius/log/
-genius/negotiator/
-genius/previousTournament
 NegotiationAgent/bin/
-NegotiationAgent/report/*.pdf
+BOAconstructor/bin/
 genius/previousTournament
+genius/log
 *.bbl
 *.aux
 *.blg
